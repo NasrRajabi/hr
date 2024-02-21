@@ -1,0 +1,249 @@
+{% extends "master.twig" %}
+{% block style %}
+<style>
+.custom-min-width {
+  min-width: 170px;
+}
+</style>
+
+{% endblock %}
+
+{% block main %}
+
+
+	<div class="row mb-3 g-3 ">
+		<div class="col-12 col-md-12 col-xxl-12 d-flex">
+			<div class="card flex-fill ">
+				<div class="position-relative mb-5">
+					<img src="/img/cover/cover1.png" class="img-thumbnail border border-0 p-0" alt="..." style="max-height: 15rem; min-width: 100%;">
+					<div class="position-absolute top-100 start-5 translate-middle ">
+
+						<img src="{{data.avatar}}" class="rounded-circle border border-5 border-light-subtle" alt="..." style="max-height: 12rem; max-width: 12rem;">
+
+					</div>
+
+				</div>
+				<div class="card-body mt-4 me-1 me-md-5" style="min-height: 13rem;">
+
+
+					<div class="row  g-3 mt-3 me-1 me-md-4 ">
+						<div class="col-12 col-md-8 col-xxl-8 d-flex ">
+							<p>
+								<span class="fw-semibold fs-5 ">{{ data.f_name ~ ' ' ~ data.s_name ~ ' ' ~ data.t_name ~ ' ' ~ data.l_name }} </span>
+								<span class="badge bg-success-subtle rounded-0 text-success me-3">{{ lookups.contract_type[data.contract_type] }}
+								</span>
+								<br>
+								<span class="badge text-bg-light">{{ lookups.job_title[data.job_title] }}</span>
+								<br>
+								<span class="text-body-secondary ">الادارة العامة للمعلوماتية</span>
+								<span class="text-body-info  ">
+									|
+								</span>
+								<span class="text-body-secondary ">مقر الوزارة</span>
+								<br>
+								<span class="text-body-secondary ">
+									دائرة تطوير الانظمة والبرمجيات القياسية</span>
+							</p>
+						</div>
+						<div class="col-12 col-md-4 col-xxl-4 d-flex float-end">
+
+							<p>
+								<span class="badge rounded-circle  bg-warning-subtle rounded-0 text-warning fs-6 mb-1 py-2 px-2">
+									<i class="bi bi-envelope"></i>
+								</span>
+								<span class="text-body-secondary fw-bold fs-6 mb-2 me-1">{{data.g_email}}</span>
+								<br>
+								<span class="badge rounded-circle  bg-warning-subtle rounded-0 text-warning fs-6 mb-1 py-2 px-2">
+									<i class="bi bi-phone "></i>
+								</span>
+								<span class="text-body-secondary fw-bold fs-6 mb-2 me-1">{{data.g_mobile}}</span>
+								<br>
+								<span class="badge rounded-circle  bg-warning-subtle rounded-0 text-warning fs-6 mb-1 py-2 px-2">
+									<i class="bi bi-telephone"></i>
+								</span>
+								<span class="text-body-secondary fw-bold fs-6 mb-2 me-1 ">{{data.g_telephone}}</span>
+							</p>
+
+
+						</div>
+
+					</div>
+
+				</div>
+
+
+			</div>
+		</div>
+
+	</div>
+
+
+	<div class="row mb-3 g-3 ">
+		<div class="col-12 col-md-7 col-xxl-8 d-flex">
+			<div class="card flex-fill ">
+				<div class="card-header">
+					<h6 class="card-title">البيانات الوظيفية (بيانات الديوان)</h6>
+				</div>
+				<div class="card-body me-2 mt-4" style="min-height: 15rem;">
+
+					<div class="row justify-content-around">
+						<div class="col-12">
+
+						<ul class="list-group">
+								<li class="list-group-item d-flex justify-content-start">
+									<div class="fw-bold ms-3 ps-3 border-start custom-min-width">الرقم الوظيفي </div>
+
+									<div class="">{{data.employee_no}}</div>
+								</li>
+								<li class="list-group-item d-flex justify-content-start">
+									<div class="fw-bold ms-3 ps-3 border-start custom-min-width">الادارة العامة  </div>
+
+									<div class=""></div>
+								</li>
+								<li class="list-group-item d-flex justify-content-start">
+									<div class="fw-bold ms-3 ps-3 border-start custom-min-width">الدائرة  </div>
+
+									<div class=""></div>
+								</li>
+								<li class="list-group-item d-flex justify-content-start">
+									<div class="fw-bold ms-3 ps-3 border-start custom-min-width"> القسم </div>
+
+									<div class=""></div>
+								</li>
+								<li class="list-group-item d-flex justify-content-start">
+									<div class="fw-bold ms-3 ps-3 border-start custom-min-width"> الشعبة</div>
+
+									<div class=""></div>
+								</li>
+							</ul>
+
+
+						
+
+						</div>
+
+					</div>
+
+
+				</div>
+
+
+			</div>
+		</div>
+
+		<div class="col-12 col-md-5 col-xxl-4 d-flex">
+			<div class="card flex-fill ">
+				<div class="card-header">
+					<h6 class="card-title">البيانات الشخصية</h6>
+				</div>
+				<div class="card-body me-2 mt-4" style="min-height: 15rem;">
+
+					<div class="row justify-content-around">
+						<div class="col-12">
+
+							<ul class="list-group">
+								<li class="list-group-item d-flex justify-content-start">
+									<div class="fw-bold ms-3 ps-3 border-start custom-min-width">رقم الهوية</div>
+
+									<div class="">{{data.national_id}}</div>
+								</li>
+								<li class="list-group-item d-flex justify-content-start">
+									<div class="fw-bold ms-3 ps-3 border-start custom-min-width">تاريخ الميلاد </div>
+
+									<div class="">{{data.birthday}}</div>
+								</li>
+								<li class="list-group-item d-flex justify-content-start">
+									<div class="fw-bold ms-3 ps-3 border-start custom-min-width">الحالة الاجتماعية </div>
+
+									<div class="">{{ lookups.marital_status[data.marital_status] }}</div>
+								</li>
+								<li class="list-group-item d-flex justify-content-start">
+									<div class="fw-bold ms-3 ps-3 border-start custom-min-width"> مكان الشكن</div>
+
+									<div class="">{{data.national_id}}</div>
+								</li>
+								<li class="list-group-item d-flex justify-content-start">
+									<div class="fw-bold ms-3 ps-3 border-start"> </div>
+
+									<div class=""></div>
+								</li>
+							</ul>
+
+						
+
+						</div>
+
+					</div>
+
+
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+
+
+	<div class="row mb-3 g-3 ">
+		<div class="col-12 col-md-6 col-xxl-6 d-flex">
+			<div class="card flex-fill ">
+				<div class="card-header">
+					<h6 class="card-title">البيانات التعليمية</h6>
+				</div>
+				<div class="card-body me-2" style="min-height: 15rem;">
+
+					<div class="row justify-content-around">
+						<div class="col-12">
+							<div class="d-flex justify-content-end">
+								<span class="badge text-bg-warning ">بكالوريوس
+									<i class="bi bi-patch-check fs-6"></i>
+								</span>
+							</div>
+							<ul class="list-group list-group-flush">
+								<li class="list-group-item">الجامعة: جامعة القدس المفتوحة</li>
+								<li class="list-group-item">الخصص: تكنولوجيا المعلومات والاتصالات</li>
+								<li class="list-group-item">تاريخ الالتحاق: 1/9/2011</li>
+								<li class="list-group-item">تاريخ التخرج: 1/2/2016</li>
+							</ul>
+
+						</div>
+
+					</div>
+
+				</div>
+
+
+			</div>
+		</div>
+		<div class="col-12 col-md-6 col-xxl-6 d-flex">
+			<div class="card flex-fill ">
+				<div class="card-header">
+					<h6 class="card-title">بيانات التكليف</h6>
+				</div>
+				<div class="card-body me-2 mt-4" style="min-height: 15rem;">
+
+					<div class="row justify-content-around">
+						<div class="col-12">
+							<ul class="list-group list-group-flush">
+								<li class="list-group-item">الادارة العامة للمعلوماتية</li>
+								<li class="list-group-item">دائرة تطوير الانظمة والبرمجيات القياسية
+								</li>
+								<li class="list-group-item">قسم البرمجة</li>
+								<li class="list-group-item">شعبة البرمجة</li>
+							</ul>
+
+						</div>
+
+					</div>
+
+
+				</div>
+
+
+			</div>
+		</div>
+
+	</div>
+
+
+{% endblock %}

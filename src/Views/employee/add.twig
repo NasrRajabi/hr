@@ -1,0 +1,499 @@
+{% extends "master.twig" %}
+
+
+{% block main %}
+
+	<form action="/employee/add" method="post">
+		{{ csrf.fields | raw }}
+		<div class="row mb-3 g-3 ">
+			<div class="col-12 col-md-12 col-xxl-12 d-flex">
+				<div class="card flex-fill ">
+					<div class="position-relative mb-5">
+						<img src="/img/cover/cover1.png" class="img-thumbnail border border-0 p-0" alt="..." style="max-height: 15rem; min-width: 100%;">
+						<div class="position-absolute top-100 start-5 translate-middle ">
+
+							<img src="/img/users/default.png" class="rounded-circle border border-5 border-light-subtle" alt="..." style="max-height: 12rem; max-width: 12rem;">
+
+						</div>
+					</div>
+					<div class="card-body mt-4 me-1 me-md-5" style="min-height: 7rem;">
+						<div class="d-flex justify-content-center">
+							<h3>
+								اضافة موظف جديد
+							</h3>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="row mb-3 g-3 ">
+			<div class="col-12 col-md-12 col-xxl-12 d-flex">
+				<div class="card flex-fill ">
+					<div class="card-header">
+						<h6 class="card-title">البيانات الشخصية</h6>
+					</div>
+					<div class="card-body mt-1" style="min-height: 15rem;">
+
+						<div class="row  g-3 mt-1">
+
+							<div class="col-12 col-md-4 col-xxl-4 ">
+
+								<div class="mb-3">
+									<input type="text" name="f_name" value="{{ old.f_name }}" class="form-control {{ errors.f_name ? 'is-invalid' : '' }}" placeholder="الاسم الأول" aria-label="الاسم الأول">
+									<div class="invalid-feedback">
+										{{ errors.f_name | first }}
+									</div>
+								</div>
+								<div class="mb-3">
+									<input type="text" name="s_name" value="{{ old.s_name }}" class="form-control {{ errors.s_name ? 'is-invalid' : '' }}" placeholder="الاسم الثاني" aria-label="الاسم الثاني">
+									<div class="invalid-feedback">
+										{{ errors.s_name | first }}
+									</div>
+								</div>
+								<div class="mb-3">
+									<input type="text" name="t_name" value="{{ old.t_name }}" class="form-control {{ errors.t_name ? 'is-invalid' : '' }}" placeholder="الاسم الثالث" aria-label="الاسم الثالث">
+									<div class="invalid-feedback">
+										{{ errors.t_name | first }}
+									</div>
+								</div>
+								<div class="mb-3">
+									<input type="text" name="l_name" value="{{ old.l_name }}" class="form-control {{ errors.l_name ? 'is-invalid' : '' }}" placeholder="الاسم الرابع" aria-label="الاسم الرابع">
+									<div class="invalid-feedback">
+										{{ errors.l_name | first }}
+									</div>
+								</div>
+								<div class="mb-3">
+									<input type="text" name="en_name" value="{{ old.en_name }}" class="form-control {{ errors.en_name ? 'is-invalid' : '' }}" placeholder="الاسم بالانجليزي" aria-label="الاسم بالانجليزي">
+									<div class="invalid-feedback">
+										{{ errors.en_name | first }}
+									</div>
+								</div>
+								<div class="mb-3">
+									<select name="gender" class="form-select form-select-sm {{ errors.gender ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+										<option value="null">-- اختر الجنس --</option>
+										{% for key, value in lookups.gender %}
+											<option value="{{ key }}" {{ old.gender == key ? 'selected' : '' }}>{{ value }}</option>
+										{% endfor %}
+									</select>
+									<div class="invalid-feedback">
+										{{ errors.gender | first }}
+									</div>
+								</div>
+							</div>
+							<div class="col-12 col-md-4 col-xxl-4 ">
+
+								<div class="mb-3">
+									<select name="religion" class="form-select form-select-sm {{ errors.religion ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+										<option value="null">-- اختر الديانة --</option>
+										{% for key, value in lookups.religion %}
+											<option value="{{ key }}" {{ old.religion == key ? 'selected' : '' }}>{{ value }}</option>
+										{% endfor %}
+									</select>
+									<div class="invalid-feedback">
+										{{ errors.religion | first }}
+									</div>
+								</div>
+								<div class="form-floating mb-3">
+									<input type="date" name="birthday" value="{{ old.birthday }}" class="form-control {{ errors.birthday ? 'is-invalid' : '' }}" placeholder="تاريخ الميلاد" aria-label="تاريخ الميلاد">
+									<label for="floatingInput">تاريخ الميلاد</label>
+									<div class="invalid-feedback">
+										{{ errors.birthday | first }}
+									</div>
+								</div>
+								<div class="mb-3">
+									<input type="text" name="birthplace" value="{{ old.birthplace }}" class="form-control {{ errors.birthplace ? 'is-invalid' : '' }}" placeholder="مكان الولادة" aria-label="مكان الولادة">
+									<div class="invalid-feedback">
+										{{ errors.birthplace | first }}
+									</div>
+								</div>
+								<div class="mb-3">
+									<select name="nationality" class="form-select form-select-sm {{ errors.nationality ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+										<option value="null">-- اختر الجنسية --</option>
+										{% for key, value in lookups.nationality %}
+											<option value="{{ key }}" {{ old.nationality == key ? 'selected' : '' }}>{{ value }}</option>
+										{% endfor %}
+									</select>
+									<div class="invalid-feedback">
+										{{ errors.nationality | first }}
+									</div>
+								</div>
+
+								<div class="mb-3">
+									<input type="text" name="national_id" value="{{ old.national_id }}" class="form-control {{ errors.national_id ? 'is-invalid' : '' }}" placeholder="رقم الهوية" aria-label="رقم الهوية">
+									<div class="invalid-feedback">
+										{{ errors.national_id | first }}
+									</div>
+
+								</div>
+								<div class="mb-3">
+									<input type="text" name="passport_no" class="form-control" placeholder="رقم جواز السفر" aria-label="رقم جواز السفر">
+								</div>
+							</div>
+							<div class="col-12 col-md-4 col-xxl-4 ">
+								<div class="mb-3">
+									<select name="marital_status" class="form-select form-select-sm {{ errors.marital_status ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+										<option value="null">-- اختر الحالة الاجتماعية --</option>
+										{% for key, value in lookups.marital_status %}
+											<option value="{{ key }}" {{ old.marital_status == key ? 'selected' : '' }}>{{ value }}</option>
+										{% endfor %}
+									</select>
+									<div class="invalid-feedback">
+										{{ errors.marital_status | first }}
+									</div>
+								</div>
+								<div class="mb-3">
+									<select name="disability" class="form-select form-select-sm {{ errors.disability ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+										<option value="null">-- هل الموظف من ذوي الاحتياجات الخاصة--</option>
+										{% for key, value in lookups.boolean %}
+											<option value="{{ key }}" {{ old.disability == key ? 'selected' : '' }}>{{ value }}</option>
+										{% endfor %}
+									</select>
+									<div class="invalid-feedback">
+										{{ errors.disability | first }}
+									</div>
+								</div>
+
+								<div class="mb-3">
+									<textarea name="disability_desc" class="form-control {{ errors.disability_desc ? 'is-invalid' : '' }}" rows="3" placeholder="وصف العجز ان وجد">{{ old.disability_desc }}</textarea>
+									<div class="invalid-feedback">
+										{{ errors.disability_desc | first }}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row mb-3 g-3 ">
+			<div class="col-12 col-md-8 col-xxl-8 d-flex">
+				<div class="card flex-fill ">
+					<div class="card-header">
+						<h6 class="card-title">البيانات الوظيفية</h6>
+					</div>
+					<div class="card-body mt-1" style="min-height: 15rem;">
+
+						<div class="row  g-3 ">
+
+
+							<div class="d-flex justify-content-end">
+								<span class="badge text-bg-info">بيانات الديوان
+									<i class="bi bi-patch-check fs-6"></i>
+								</span>
+							</div>
+							<div class="col-12 col-md-6 col-xxl-6">
+								<div class="mb-3">
+									<input type="text" name="employee_no" value="{{ old.employee_no }}" class="form-control {{ errors.employee_no ? 'is-invalid' : '' }}" placeholder="الرقم الوظيفي" aria-label="الرقم الوظيفي">
+									<div class="invalid-feedback">
+										{{ errors.employee_no | first }}
+									</div>
+								</div>
+								<div class="mb-3">
+									<select name="contract_type" class="form-select form-select-sm {{ errors.contract_type ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+										<option selected>-- اختر نوع العقد --</option>
+										{% for key, value in lookups.contract_type %}
+											<option value="{{ key }}" {{ old.contract_type == key ? 'selected' : '' }}>{{ value }}</option>
+										{% endfor %}
+									</select>
+									<div class="invalid-feedback">
+										{{ errors.contract_type | first }}
+									</div>
+								</div>
+								<div class="mb-3">
+									<select name="job_title" class="form-select form-select-sm {{ errors.job_title ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+										<option selected>-- اختر المسمى الوظيفي  --</option>
+										{% for key, value in lookups.job_title %}
+											<option value="{{ key }}" {{ old.job_title == key ? 'selected' : '' }}>{{ value }}</option>
+										{% endfor %}
+									</select>
+									<div class="invalid-feedback">
+										{{ errors.job_title | first }}
+									</div>
+								</div>
+								<div class="mb-3">
+									<select name="general_management" class="form-select form-select-sm" aria-label=".form-select-sm example">
+										<option selected>الادارة العامة</option>
+										<option value="1">الادارة العامة للمعالوماتية</option>
+										<option value="2">الادارة العامة للاتصالات</option>
+										<option value="3">الادارة العامة للترددات</option>
+										<option value="3">الادارة العامة للحاسوب الحكومي</option>
+									</select>
+
+								</div>
+								<div class="mb-3">
+									<select name="department" class="form-select form-select-sm" aria-label=".form-select-sm example">
+										<option selected>
+											الدائرة</option>
+										<option value="1">دائرة تطوير الانظمة والبرمجيات القياسية</option>
+										<option value="2">دائرة التطوير التقني</option>
+									</select>
+								</div>
+								<div class="mb-3">
+									<select name="division" class="form-select form-select-sm" aria-label=".form-select-sm example">
+										<option selected>القسم</option>
+										<option value="1">قسم البرمجة</option>
+										<option value="2">قسم تحليل الانظمة</option>
+									</select>
+								</div>
+
+							</div>
+							<div class="col-12 col-md-6 col-xxl-6 ">
+								<div class="mb-3">
+									<select name="div" class="form-select form-select-sm" aria-label=".form-select-sm example">
+										<option selected>الشعبة</option>
+										<option value="1">شعبة قواعد البيانات</option>
+										<option value="2">شعبة البرمجة</option>
+									</select>
+								</div>
+								<div class="mb-3">
+									<select name="class" class="form-select form-select-sm" aria-label=".form-select-sm example">
+										<option selected>-- اختر  الفئة  --</option>
+										{% for key, value in lookups.class %}
+
+
+											<option value="{{ key }} ">{{ value }}</option>
+
+										{% endfor %}
+									</select>
+								</div>
+								<div class="mb-3">
+									<select name="grade" class="form-select form-select-sm" aria-label=".form-select-sm example">
+										<option selected>الدرجة</option>
+										<option value="1">الخامسة</option>
+										<option value="2">الرابعة</option>
+									</select>
+								</div>
+								<div class="form-floating mb-3">
+									<input name="job_start_date" type="date" value="{{ old.job_start_date }}" class="form-control {{ errors.job_start_date ? 'is-invalid' : '' }}" placeholder="تاريخ استلام العمل" aria-label="تاريخ الميلاد">
+									<label for="floatingInput">تاريخ استلام العمل</label>
+									<div class="invalid-feedback">
+										{{ errors.job_start_date | first }}
+									</div>
+								</div>
+								<div class="form-floating mb-3">
+									<input name="job_end_date" type="date" value="{{ old.job_end_date }}" class="form-control {{ errors.job_end_date ? 'is-invalid' : '' }}" placeholder="تاريخ انتهاء العمل" aria-label="تاريخ الميلاد">
+									<label for="floatingInput">تاريخ انتهاء العمل</label>
+									<div class="invalid-feedback">
+										{{ errors.job_end_date | first }}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-12 col-md-4 col-xxl-4 d-flex">
+				<div class="card flex-fill ">
+					<div class="card-header">
+						<h6 class="card-title">عنوان السكن</h6>
+					</div>
+					<div class="card-body mt-1" style="min-height: 15rem;">
+
+						<div class="row  g-3 ">
+							<div class="d-flex justify-content-end">
+								<span class="badge text-bg-success">
+									السكن الحالي
+									<i class="bi bi-patch-check fs-6"></i>
+								</span>
+							</div>
+							<div class="col-12 col-md-12 col-xxl-12 ">
+								<div class="mb-3">
+									<input type="text" name="address" value="{{ old.address }}" class="form-control {{ errors.address ? 'is-invalid' : '' }}" placeholder="عنوان السكن " aria-label="عنوان السكن ">
+									<div class="invalid-feedback">
+										{{ errors.address | first }}
+									</div>
+								</div>
+								<div class="mb-3">
+									<select name="city" class="form-select form-select-sm {{ errors.city ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+										<option selected>-- اختر  المدينة  --</option>
+										{% for key, value in lookups.city %}
+
+											<option value="{{ key }}" {{ old.city == key ? 'selected' : '' }}>{{ value }}</option>
+
+										{% endfor %}
+									</select>
+									<div class="invalid-feedback">
+										{{ errors.city | first }}
+									</div>
+								</div>
+								<div class="mb-3">
+									<input type="text" name="region" value="{{ old.region }}" class="form-control {{ errors.region ? 'is-invalid' : '' }}" placeholder="الحي" aria-label="الحي">
+									<div class="invalid-feedback">
+										{{ errors.region | first }}
+									</div>
+								</div>
+								<div class="mb-3">
+									<input type="text" name="street" value="{{ old.street }}" class="form-control {{ errors.street ? 'is-invalid' : '' }}" placeholder="الشارع" aria-label="الشارع">
+									<div class="invalid-feedback">
+										{{ errors.street | first }}
+									</div>
+								</div>
+								<div class="mb-3">
+									<input type="text" name="postal_code" value="{{ old.postal_code }}" class="form-control {{ errors.postal_code ? 'is-invalid' : '' }}" placeholder="postal code" aria-label="postal code">
+									<div class="invalid-feedback">
+										{{ errors.postal_code | first }}
+									</div>
+								</div>
+							</div>
+
+						</div>
+
+
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+
+		<div class="row mb-3 g-3 ">
+			<div class="col-12 col-md-7 col-xxl-7 d-flex">
+				<div class="card flex-fill ">
+					<div class="card-header">
+						<h6 class="card-title">البيانات التعليمية</h6>
+					</div>
+					<div class="card-body me-2" style="min-height: 15rem;">
+
+						<div class="row  g-3 ">
+
+							<div class="d-flex justify-content-end">
+								<span class="badge text-bg-warning ">آخر تحصيل علمي
+									<i class="bi bi-patch-check fs-6"></i>
+								</span>
+							</div>
+							<div class="col-12 col-md-6 col-xxl-6 ">
+								<div class="mb-3">
+									<select name="academic_degree" class="form-select form-select-sm {{ errors.academic_degree ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+										<option selected>--  الدرجة العلمية --</option>
+										{% for key, value in lookups.academic_degree %}
+											<option value="{{ key }}" {{ old.academic_degree == key ? 'selected' : '' }}>{{ value }}</option>
+
+										{% endfor %}
+									</select>
+									<div class="invalid-feedback">
+										{{ errors.academic_degree | first }}
+									</div>
+								</div>
+								<div class="mb-3">
+									<input type="text" name="unviersity" value="{{ old.unviersity }}" class="form-control {{ errors.unviersity ? 'is-invalid' : '' }}" placeholder="اسم الجامعة/ المدرسة" aria-label="اسم الجامعة/ المدرسة">
+									<div class="invalid-feedback">
+										{{ errors.unviersity | first }}
+									</div>
+								</div>
+								<div class="mb-3">
+									<input type="text" name="major" value="{{ old.major }}" class="form-control {{ errors.major ? 'is-invalid' : '' }}" placeholder="التخصص / الفرع" aria-label="التخصص / الفرع">
+									<div class="invalid-feedback">
+										{{ errors.major | first }}
+									</div>
+								</div>
+								<div class="mb-3">
+									<select name="degree" class="form-select form-select-sm {{ errors.degree ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+
+										<option selected>--  التقدير  --</option>
+										{% for key, value in lookups.degree %}
+
+											<option value="{{ key }}" {{ old.degree == key ? 'selected' : '' }}>{{ value }}</option>
+
+										{% endfor %}
+									</select>
+									<div class="invalid-feedback">
+										{{ errors.degree | first }}
+									</div>
+								</div>
+							</div>
+							<div class="col-12 col-md-6 col-xxl-6 ">
+								<div class="form-floating mb-3">
+									<input type="date" name="edu_start_date" value="{{ old.edu_start_date }}" class="form-control {{ errors.edu_start_date ? 'is-invalid' : '' }}" placeholder="تاريخ الالتحاق" aria-label="تاريخ الالتحاق">
+									<label for="floatingInput">تاريخ الالتحاق</label>
+									<div class="invalid-feedback">
+										{{ errors.edu_start_date | first }}
+									</div>
+								</div>
+								<div class="form-floating mb-3">
+									<input type="date" name="edu_end_date" value="{{ old.edu_end_date }}" class="form-control {{ errors.edu_end_date ? 'is-invalid' : '' }}" placeholder="تاريخ التخرج" aria-label="تاريخ التخرج">
+									<label for="floatingInput">تاريخ التخرج</label>
+									<div class="invalid-feedback">
+										{{ errors.edu_end_date | first }}
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+				</div>
+
+
+			</div>
+
+			<div class="col-12 col-md-5 col-xxl-5 d-flex">
+				<div class="card flex-fill ">
+					<div class="card-header">
+						<h6 class="card-title">البيانات الاتصال</h6>
+					</div>
+					<div class="card-body me-2 mt-4" style="min-height: 15rem;">
+
+						<div class="row justify-content-around">
+							<div class="col-12 col-md-6 col-xxl-6">
+								<div class="mb-3">
+									<input type="text" name="g_email" value="{{ old.g_email }}" class="form-control {{ errors.g_email ? 'is-invalid' : '' }}" placeholder="الايميل الحكومي" aria-label="الايميل الحكومي">
+									<div class="invalid-feedback">
+										{{ errors.g_email | first }}
+									</div>
+								</div>
+								<div class="mb-3">
+									<input type="text" name="g_mobile" value="{{ old.g_mobile }}" class="form-control {{ errors.g_mobile ? 'is-invalid' : '' }}" placeholder="رقم الهاتف المحمول الحكومي" aria-label="رقم الهاتف المحمول الحكومي">
+										<div class="invalid-feedback">
+										{{ errors.g_mobile | first }}
+									</div>
+								</div>
+								<div class="mb-3">
+									<input type="text" name="g_telephone" value="{{ old.g_telephone }}" class="form-control {{ errors.g_telephone ? 'is-invalid' : '' }}" placeholder="رقم الهاتف الداخلي" aria-label="الرقم الهاتف الداخلي">
+										<div class="invalid-feedback">
+										{{ errors.g_telephone | first }}
+									</div>
+								</div>
+							</div>
+							<div class="col-12 col-md-6 col-xxl-6">
+								<div class="mb-3">
+									<input type="text" name="p_email" value="{{ old.p_email }}" class="form-control {{ errors.p_email ? 'is-invalid' : '' }}" placeholder="الايميل الشخصي" aria-label="الايميل الشخصي">
+										<div class="invalid-feedback">
+										{{ errors.p_email | first }}
+									</div>
+								</div>
+								<div class="mb-3">
+									<input type="text" name="p_mobile" value="{{ old.p_mobile }}" class="form-control {{ errors.p_mobile ? 'is-invalid' : '' }}" placeholder="رقم الهاتف المحمول الشخصي" aria-label="رقم الهاتف المحمول">
+										<div class="invalid-feedback">
+										{{ errors.p_mobile | first }}
+									</div>
+								</div>
+								<div class="mb-3">
+									<input type="text" name="p_telephone" value="{{ old.p_telephone }}" class="form-control {{ errors.p_telephone ? 'is-invalid' : '' }}" placeholder="رقم الهاتف الارضي الشخصي" aria-label="الرقم الهاتف الارضي الشخصي">
+										<div class="invalid-feedback">
+										{{ errors.p_telephone | first }}
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="row mb-5 g-3 ">
+			<div class="col-12 col-md-12 col-xxl-12 d-flex">
+				<div class="card flex-fill ">
+					<div class="card-body me-3 mt-1">
+						<div class="d-flex justify-content-center">
+							<button type="submit" class="btn btn-primary">حفظ البيانات</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+{% endblock %}

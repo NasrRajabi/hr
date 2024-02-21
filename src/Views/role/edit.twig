@@ -1,0 +1,38 @@
+{% import "forms_helpers.twig" as forms %}
+{% extends "master.twig" %}
+{% block main %}
+
+<div class="row justify-content-md-center">
+    <div class="col-lg-8 col-md-8 col-sm-12 ">
+        <div class="card">
+            <div class="card-body">
+                <form action="/roles/edit" method="post">
+                    {{ csrf.fields | raw }}
+                    <input type="hidden" name="id" id="id" value="{{role.id}}">
+                    <div class="mb-3">
+                        <label for="role_name" class="form-label">الدور</label>
+                        <input type="text" class="form-control" name="role_name" id="role_name" value="{{role.role_name}}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">الوصف</label>
+                        <input type="text" class="form-control" name="description" id="description" value="{{role.description}}">
+                    </div>
+                    <br>
+                    <p class="fs-4 fw-bolder">اختر الصلاحيات التي يمكن أن يمتلكها هذا الدور</p>                    
+                    {# TODO_Aya: fix the style #}
+                    {% for key, value in permissions %}
+                        {% set color = cg.random_color() %}
+                        <h4 class="{{color}}">{{key}}</h4>
+                        {{ forms.arraySwitches('permission_', value, "key", role_permissions, 'background-color: #'~ color) }}                            
+                    {% endfor %}
+                    <br>
+                    <div class="col text-center">
+                        <button type="submit" class="btn btn-dark btn-lg"> <i class='align-middle ' data-feather='save'></i> حفظ</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {# TODO_Aya: return btn #}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,163 @@
+{% extends "master.twig" %}
+
+{% block style %}{% endblock %}
+
+{% block main %}
+	<main class="col ms-1">
+		<div class="row">
+			<div class="card">
+				<div class="card-header row justify-content-between p-3 border-bottom">
+					<div class="col-md-6">
+						<h4 class="text-end me-3 mt-3">سجل البريد الالكتروني الحكومي</h4>
+					</div>
+				</div>
+
+				<div class="card-body">
+					<div x-data="dataTable()">
+						<div class="table-responsive">
+							<div class="mb-5">
+								<input type="text" id="search" x-model="searchTerm" class="form-control" placeholder="ابحث عن موظف"/>
+							</div>
+                            <input type="button" class="align-items-left btn btn-icon btn-primary" onclick="printableDiv('p')" value="طباعة" />
+							<table class="table table-hover align-middle mt-3" id="p">
+								<thead>
+									<tr>
+										<th class="text-center fit">#</th>
+										<th class="text-center fit">الرقم الوظيفي</th>
+										<th class="text-center fit">اسم الموظف</th>
+										<th class="text-center fit">البريد الالكتروني</th>
+										<th class="text-center fit">الاجراءات</th>
+									</tr>
+								</thead>
+								<tbody class="table-group-divider">
+									<template x-for="(row, index) in filteredRows" :key="index">
+										<tr>
+											<td class="text-center fit" x-text="row.id"></td>
+											<td class="text-center fit" x-text="row.employeeNo"></td>
+											<td class="text-center fit" x-text="row.name"></td>
+											<td class="text-center fit" id="form">
+											
+													<input type="text" :disabled="row.editMode" x-model="row.email" class="form-control" id="email" name="email">
+											
+											</td>
+											<td class="text-center fit">
+												<div class="d-flex">
+													<div class="row ms-1">
+														<div x-show="row.editMode">
+															<button x-on:click="row.editMode = !row.editMode" class="btn btn-primary">
+																<i class="bi bi-pencil-square"></i>
+															</button>
+														</div>
+														<div x-show="!row.editMode">
+															<button x-on:click="addEmail($event.target, row)" type="button" class="btn btn-success">
+																<i class="bi bi-save"></i>
+																حفظ
+															</button>
+														</div>
+													</div>
+													<template x-if="!row.email">
+														{% if not value.email %}
+															<button class="btn btn-danger" type="button" disabled>
+																<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+																لم يتم تعيين بريد الكتروني للموظف
+															</button>
+														{% endif %}
+													</template>
+												</div>
+											</td>
+										</tr>
+									</template>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+<div id="errorContainer"></div>
+
+		<script>
+			const dataTable = () => {
+return {
+table: null,
+options: {
+searching: true,
+ordering: true,
+paging: true,
+lengthChange: true,
+info: true,
+autoWidth: true
+},
+searchTerm: '',
+rows: [{% for value in data %}
+{
+id: {{ value.employee_id }},
+employeeNo: {{ value.employee_no }},
+name: '{{ value.f_name ~ ' ' ~ value.s_name ~ ' ' ~ value.t_name ~ ' ' ~ value.l_name }}',
+email: '{{ value.g_email }}',
+editMode: true // Add the editMode property
+},{% endfor %}],
+
+filteredRows() {
+if (!this.searchTerm) {
+return this.rows;
+}
+return this.rows.filter((row) => {
+return row.name.toLowerCase().includes(this.searchTerm.toLowerCase()) || row.employeeNo.toLowerCase().includes(this.searchTerm.toLowerCase());
+});
+},
+
+addEmail(button, row) {
+
+const addEmpModal = document.getElementById("form");
+post(`/official_reach/gov_email/add`, {
+id: row.id,
+email: row.email
+}, button, addEmpModal).then((response) => {
+if (response.ok) {
+response.json().then((response) => {
+console.log(response);
+// Update the editMode after a successful save
+row.editMode = true;
+});
+}
+});
+}
+};
+};
+
+Alpine.data('dataTable', dataTable);
+
+
+
+		</script>
+
+
+
+<script language="javascript">
+function printableDiv(p) {
+var disp_setting="toolbar=yes,location=no,";
+disp_setting+="directories=yes,menubar=yes,";
+disp_setting+="scrollbars=yes,width=650, height=600, left=100, top=25";
+   var content_vlue = document.getElementById(p).innerHTML;
+   var docprint=window.open("","",disp_setting);
+   docprint.document.open();
+   docprint.document.write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"');
+   docprint.document.write('"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">');
+   docprint.document.write('<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">');
+   docprint.document.write('<head><title></title>');
+   docprint.document.write('<style type="text/css">body{ margin:10px;');
+
+   docprint.document.write('a{color:#000;text-decoration:none;} </style>');
+   docprint.document.write('</head><body onLoad="self.print()"><center>');
+   docprint.document.write(content_vlue);
+   docprint.document.write('</center></body></html>');
+   docprint.document.close();
+   docprint.focus();
+}
+
+ 
+</script>
+        
+	</main>
+{% endblock %}

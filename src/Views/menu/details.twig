@@ -1,0 +1,52 @@
+% extends "master.twig" %}
+{% block main %}
+    <div class="row justify-content-md-center">
+        <div class="col-lg-8 col-md-8 col-sm-12 ">
+            <div class="card">
+                <div class="card-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">الاسم</label>
+                            <input type="text" class="form-control" name="name" id="name" value="{{role.role_name}}" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="display_name" class="form-label">اسم الدور المتداول</label>
+                            <input type="text" class="form-control" name="display_name" id="display_name" value="{{role.description}}" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="os_id" class="form-label">الوظيفة</label>
+                            <input type="text" class="form-control" name="display_name" id="display_name" value="{{role.os_name}}" disabled>
+                        </div>  
+                        <br>
+                        <p class="fs-4 fw-bolder"> الصلاحيات التي يمتلكها هذا الدور</p>
+                        {% set group_name = null %}
+                        {% for permission in permissions %}
+                            {% if permission.group_name != group_name %}
+                                {% set color = cg.random_color() %}
+                            {% endif %}
+
+                            <ul class="list-group">
+                                <li class="list-group-item " style="background-color: #{{color}}">
+                                    <div class="form-check form-switch">
+                                        <div class="ms-2 me-auto">
+                                            <div class="fw-bold">{{permission.key}}</div>
+                                            <span class="{{color}}">{{permission.group_name}}</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                            {% set group_name = permission.group_name %}
+                        {% endfor %}
+                        <br>
+                        {% if permissions['edit_role']  %}
+                            <div class="col text-center">
+                                {# TODO: check edit_roles #}
+                                <a href='/roles/edit/{{role.id}}' type="button" class="btn btn-dark btn-lg"> <i class='align-middle ' data-feather='edit-2'></i> تعديل</a>
+                            </div>
+                        {% endif  %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

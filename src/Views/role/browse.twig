@@ -1,0 +1,50 @@
+{% extends "master.twig" %}
+{% block main %}
+    {% if permissions['add_role']  %}
+        <td><a href='/roles/add' class="text-success"><i class="bi bi-plus  fs-4 p-1"></i>أضف</a></td>
+    {% endif  %}
+    <div id="Table" class="d-none d-sm-none  d-md-block ">
+        <div class="row justify-content-md-center">
+            <div class="row ">
+                <div class="card mtit-card">
+                    <div class="card-body">
+                        <table class="table table-responsive-md table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">اسم الدور</th>
+                                    <th scope="col">الوصف</th>
+                                    {% if permissions['view_role']  %}
+                                        <th scope="col" style="width: 5%">عرض</th>
+                                    {% endif %}
+                                    {% if permissions['edit_role']  %}
+                                        <th scope="col" style="width: 5%">تعديل</th>
+                                    {% endif %}
+                                    {% if permissions['delete_role']  %}
+                                        <th scope="col" style="width: 5%">حذف</th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for role in roles %}
+                                    <tr>
+                                        <td>{{role.role_name}}</td>
+                                        <td>{{role.description}}</td>
+                                        {% if permissions['view_role']  %}
+                                            <td><a href='/roles/details/{{role.id}}' class="text-success"><i class="bi bi-eye fs-4 p-1"></i> </a></td>
+                                        {% endif %}
+                                        {% if permissions['edit_role']  %}
+                                            <td><a href='/roles/edit/{{role.id}}' class="text-warning"><i class="bi bi-pencil fs-4 p-1"></i> </a></td>
+                                        {% endif  %}
+                                        {% if permissions['delete_role']  %}
+                                            <td><a href='/roles/delete/{{role.id}}' class="text-danger"><i class="bi bi-trash  fs-4 p-1"></i> </a></td>
+                                        {% endif  %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

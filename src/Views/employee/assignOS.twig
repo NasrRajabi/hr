@@ -1,0 +1,229 @@
+{% extends "master.twig" %}
+{% import "forms_helpers.twig" as forms %}
+{% block style %}
+	<style>
+		
+		.social-link {
+			width: 30px;
+			height: 30px;
+			border: 1px solid #ddd;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #666;
+			border-radius: 50%;
+			transition: all 0.3s;
+			font-size: 0.9rem;
+		}
+
+		.social-link:hover,
+		.social-link:focus {
+			background: #ddd;
+			text-decoration: none;
+			color: #555;
+		}
+	</style>
+	{{ parent() }}
+{% endblock %}
+
+{% block main %}
+
+
+    <div class="container-fluid">
+        <div class="row h-100">
+            <div class="col-12 d-flex flex-column">
+				<div class="card flex-fill pb-5">
+
+					<div class="card-body">
+						<h5 class="card-title">تكليف الموظفين</h5>
+						<br>
+						<!--  <input type="text" id="search" x-model="searchTerm" class="form-control" placeholder="ابحث عن اجازة ... " >-->
+						<div class="row">
+
+							<div class="col-12">
+								<form onsubmit="getEmployeeOSHistory();return false">
+									<div class="d-flex m-1">
+										<input type="text" id="employee_no_input" name="employee_no_input" class="form-control" value="{{emp_no}}" placeholder=" ابحث عن موظف لعرض تكليفاته او اضافة  تكليف له او الغاء تكليف له...">
+										<button type="submit" class="btn btn-success mx-2">
+											<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewbox="0 0 16 16">
+												<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+											</svg>
+											بحث
+										</button>
+
+									</div>
+
+								</form>
+							</div>
+
+
+							<div aria-label="View Toggle">
+								<div class="row mt-5   py-3">
+									<div class="col-12 col-md-6 col-xxl-6 mx-auto">
+
+										<div class="form-floating mb-3">
+											<input type="text" class="form-control" name="name" id="name" disabled>
+											<label for="name">الاسم</label>
+										</div>
+
+
+										<div class="form-floating mb-3">
+											<input type="text" class="form-control " name="emp_no" id="emp_no" disabled>
+											<label for="emp_no">الرقم الوظيفي</label>
+										</div>
+										{% if permissions['assigne_end_os']  %}
+											<div class="text-center">
+												<button class="btn btn-primary mx-2" id="assigneOsBtn" onclick="openModel('assignOS')" disabled>
+													<i class="bi bi-person-plus-fill"></i>
+													اضافة تكليف
+												</button>
+											</div>
+										{% endif  %}
+									</div>
+								</div>
+							</div>
+							<div id="tableData" class="d-block mt-5">
+								<div class="row">
+									<div class="col-md-12">
+										<div>
+											<div class="table-responsive">
+												<table class="table table-striped table-bordered  table-hover   align-middle">
+													<thead>
+														<tr>
+															<th class="text-center fit">#</th>
+															<th class="text-center fit">الموقع</th>
+															<th class="text-center fit">الإدارة العامة</th>
+															<th class="text-center fit"> المسمى الوظيفي</th>
+															<th class="text-center fit">تاريخ التكليف</th>
+															<th class="text-center fit">تاريخ انتهاء التكليف</th>
+															<th class="text-center fit">
+																اجراءات
+															</th>
+
+														</tr>
+													</thead>
+													<tbody class="table-group-divider" id="tableBody"></tbody>
+
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+						</div>
+					</div>
+					<br>
+					<br>
+					<br>
+					<br>
+					<br>
+					<br>
+					<br>
+					<br>
+					<br>
+				</div>
+
+		
+			</div>
+			
+		</div>
+
+	</div>	
+	<div class="modal fade position-absolute" id="confirmEndAssignmentOS" tabindex="-1" aria-labelledby="confirmEndAssignmentOSLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="confirmEndAssignmentOSLabel">تعيين الموظف على الهيكلية</h5>
+					<button type="button" class="btn-close ms-0" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form id="assignOSForm" action="/employee/end_user_os" method="post">
+						{{ csrf.fields | raw }}
+						<input type="hidden" class="form-control" id="c_id" name="c_id">
+						<input type="hidden" class="form-control" id="start_date" name="start_date">
+						<div class="mb-3">
+							<label for="employee_name" class="form-label">اسم الموظف</label>
+							<input type="text" class="form-control" id="employee_name" name="employee_name" disabled>
+						</div>
+						<div class="mb-3">
+							<label for="employee_no" class="form-label">الرقم الوظيفي</label>
+							<input type="text" class="form-control" name="employee_no" id="employee_no" readonly>
+						</div>
+						<div class="mb-3">
+							<label for="c_os" class="form-label">الشاغر</label>
+							<input type="text" class="form-control" name="c_os" id="c_os" disabled>
+						</div>
+						<div class="mb-3">
+							<label for="end_date" class="form-label">تاريخ انتهاء التكليف</label>
+							<input type="date" class="form-control" name="end_date" placeholder="تاريخ انتهاء التكليف" aria-label="تاريخ انتهاء التكليف">
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+							<button type="submit" class="btn btn-primary" data-bs-dismiss="modal">حفظ</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade position-absolute" id="assignOS" tabindex="-1" aria-labelledby="assignOSLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="assignOSModalLabel">تعيين الموظف على الهيكلية</h5>
+					<button type="button" class="btn-close ms-0" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form id="assignOSForm" action="/os/assign_os" method="post" onsubmit="return setDataListValues()">
+						{{ csrf.fields | raw }}
+						<input type="hidden" class="form-control" name="assignOsView" value="1">
+						<input type="hidden" class="form-control" id="c_employee_id" name="c_employee_id">
+						<input type="hidden" class="form-control" name="is_delegate" value="false">
+						<div class="mb-3">
+							<label for="employee_name" class="form-label">اسم الموظف</label>
+							<input type="text" class="form-control" name="employee_name" readonly>
+						</div>
+						<div class="mb-3">
+							<label for="employee_no" class="form-label">الرقم الوظيفي</label>
+							<input type="text" class="form-control" name="employee_no" id="employee_no" readonly>
+						</div>
+						<div class="mb-3">
+							<label for="c_os" class="form-label">الموقع</label>
+							<input type="hidden" class="form-control" name="c_os_id" value="" >
+							{{ forms.arrayDataList("os_dl", "os_dlx", null, empty_os, 'name', 'id', 'اختر الموقع')  }}
+						</div>
+						<div class="mb-3">
+							<label for="c_job" class="form-label">المسمى الوظيفي</label>
+							<input type="hidden" class="form-control" name="c_job_id" value="" >
+							{{ forms.arrayDataList("job_dl", "job_dlx", null, job_list, 'job_title', 'id', 'اختر الوظيفة')  }}
+						</div>
+						<div class="mb-3">
+							<label for="role_dl" class="form-label">الدور</label>
+							<input type="hidden" class="form-control" name="c_role_id" value="" >
+							{{ forms.arrayDataList("role_dl", "role_dlx", null, roles, 'role_name', 'id', 'اختر الدور')  }}
+						</div>
+						<div class="mb-3">
+							<label for="start_date" class="form-label">تاريخ التكليف</label>
+							<input type="date" class="form-control" name="start_date" placeholder="تاريخ التكليف" aria-label="تاريخ التكليف">
+						</div>
+						<div class="mb-3">
+							<label for="end_date" class="form-label">تاريخ انتهاء التكليف</label>
+							<input type="date" class="form-control" name="end_date" placeholder="تاريخ انتهاء التكليف" aria-label="تاريخ انتهاء التكليف">
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+							<button type="submit" class="btn btn-primary" data-bs-dismiss="modal">حفظ</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+{% endblock %}
+
+{% block script %}
+	<script src='/app/js/employee.js'></script>
+{% endblock %}

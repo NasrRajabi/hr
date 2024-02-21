@@ -1,0 +1,281 @@
+{% extends "master.twig" %}
+
+{% block style %}{% endblock %}
+
+{% block main %}
+
+	<form action="/vacation/addEmpVacation" method="post">
+		{{ csrf.fields | raw }}
+
+		<div class="row">
+			<div class="col-12 col-md-12 col-xxl-12 d-flex">
+				<div class="card flex-fill ">
+	
+					<div class="card-header">
+						<h5 class="card-title">بيانات الاجازة</h5>
+					</div>	
+                    <br><br>
+					<div class="card-body">	
+
+						<div class="row justify-content-md-center">
+
+							<div class="col-12 col-md-6 col-xxl-6">
+                                
+                                <input type="hidden" id="employee_id" name="employee_id" value="{{ employee_id }}">
+                                
+                                <div class="mb-3">
+                                    <select id="vacation_type" name="vacation_type" value="{{ old.vacation_type }}" class="form-select  {{ errors.vacation_type ? 'is-invalid' : '' }}" aria-label=".form-select-sm example" onchange=" getbalance()">
+										<option value="null">-- نوع الاجازة --</option>
+										{% for key, value in lookups.vacation_type %}
+											<option value="{{ key }}" {{ old.vacation_type == key ? 'selected' : '' }}>{{ value }}</option>
+										{% endfor %}
+									</select>
+                                      <div class="invalid-feedback">
+										{{ errors.vacation_type | first }}
+									  </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div id="annual_div" class="d-none" onchange="get_ann_vac_type()">
+
+                                        <select id="annual_vac_type" name="annual_vac_type" value="{{ old.annual_vac_type }}" class="form-select  {{ errors.annual_vac_type ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+                                            <option value="null">-- سبب الاجازة --</option>                                               
+                                            {% for key, value in lookups.annual_vacation_type %}
+                                                <option value="{{ key }}" {{ old.annual_vac_type == key ? 'selected' : '' }}>{{ value }}</option>
+                                            {% endfor %}
+                                        </select>
+
+                                      <div class="invalid-feedback">
+										{{ errors.annual_vac_type | first }}
+									  </div>
+                                      
+                                    </div>
+                                </div>
+
+                                <div class="row mb-2">                                    
+                                    <div class="col-4">
+                                        <div class="form-floating mb-4" >
+                                            <input type="text" value="{{ old.start_balance }}" id="start_balance" name="start_balance" class="form-control" placeholder="الرصيد الكلي" aria-label="الرصيد الكلي" readonly>
+                                            <label for="floatingInput" >الرصيد الكلي</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4">
+                                        <div class="form-floating mb-4">
+                                            <input type="text" value="{{ old.spent_balance }}" id="spent_balance" name="spent_balance" class="form-control" placeholder="الرصيد المستنفذ" aria-label="الرصيد المستنفذ" readonly>
+                                            <label for="floatingInput">الرصيد المستنفذ<label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4">
+                                        <div class="form-floating mb-4">
+                                            <input type="text" value="{{ old.current_balance }}" id="current_balance" name="current_balance" class="form-control  {{ errors.current_balance ? 'is-invalid' : '' }}" placeholder="الرصيد المتبقي" aria-label="الرصيد المتبقي" readonly>
+                                            
+                                            <div class="invalid-feedback">
+                                                {{ errors.current_balance | first }}
+                                            </div>
+
+                                            <label for="floatingInput">الرصيد المتبقي<label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-2">                                    
+                                    <div class="col-4">
+                                        <div class="form-floating mb-4">
+                                            <input type="date" value="{{ old.start_date }}" id="start_date" name="start_date" class="form-control {{ errors.start_date ? 'is-invalid' : '' }}" placeholder="من تاريخ" aria-label=".form-select-sm example" onchange="cal_days()">                                            
+
+                                            <div class="invalid-feedback">
+                                                {{ errors.start_date | first }}
+                                            </div>
+
+                                            <div id="invalid-dates" class="invalid-feedback" ></div>   
+                                            
+                                            <label for="start_date">من تاريخ</label>
+                                        </div>                                            
+                                    </div>
+
+                                    <div class="col-4">
+                                        <div class="form-floating mb-4">
+                                            <input type="date" value="{{ old.end_date }}" id="end_date" name="end_date" class="form-control {{ errors.end_date ? 'is-invalid' : '' }}" placeholder="إلى تاريخ" aria-label="إلى تاريخ" onchange="cal_days()">
+                                            
+                                            <div class="invalid-feedback">
+                                                {{ errors.end_date | first }}
+                                            </div>
+                                            
+                                            <label for="end_date">إلى تاريخ<label>
+                                        </div>
+                                    </div>                                
+                                   
+
+                                
+                                <div class="col-4">
+                                    <div class="form-floating mb-4">                                                                     
+                                        <input type="text" style="background-color:#edf2f9" value="{{ old.day_count }}" id="day_count" name="day_count" class="form-control" placeholder="عدد الايام" aria-label="عدد الايام" readonly>
+                                        <label for="floatingInput">عدد الأيام<label>
+                                    </div>
+                                </div>                               
+                           
+                            </div>    
+
+                                <div class="mb-2">
+                                    <div class="form-floating mb-4">                                                                     
+                                        <input type="text" value="{{ old.address }}" id="floatingInput" name="address" class="form-control" placeholder="العنوان" aria-label="العنوان">
+                                        <label for="floatingInput">العنوان<label>
+                                    </div>
+                                </div>          
+                            
+                                <div class="row mb-2">                                    
+                                    <div class="col-6">
+                                        <div class="form-floating mb-4">
+                                            <input type="text" value="{{ old.phone }}" id="floatingInput" name="phone" class="form-control" placeholder="الهاتف" aria-label="الهاتف">
+                                            <label for="floatingInput">الهاتف</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-floating mb-4">
+                                            <input type="text" value="{{ old.mobile }}" id="floatingInput" name="mobile" class="form-control {{ errors.mobile ? 'is-invalid' : '' }}" placeholder="المحمول" aria-label="المحمول">
+                                            
+                                            <div class="invalid-feedback">
+                                                {{ errors.mobile | first }}
+                                            </div>  
+                                            
+                                            <label for="floatingInput">المحمول<label>                                                                            
+                                        </div> 
+                                    </div> 
+                                                                            
+                              
+                                </div>   
+
+                                <div class="mb-3">
+                                    <div class="form-floating mb-4">                                                                     
+                                        <textarea  id="floatingInput" name="notes"  style="height: 100px" class="form-control" placeholder="ملاحظات" aria-label="ملاحظات">{{ old.notes }}</textarea>
+                                        <label for="floatingInput">ملاحظات<label>
+                                    </div>
+                                </div>     
+
+							</div>                     
+
+						</div>
+                        <br>
+                        <div class="d-flex justify-content-center d-grid gap-2">
+							<button type="submit" class="btn btn-outline-primary">حفظ الاجازة</button>
+                            <button type="submit" class="btn btn-outline-info">حفظ وطباعة</button>
+						</div> 
+
+					</div>
+				</div>
+			</div>
+		</div>
+	
+
+	</form>
+
+
+
+<script>
+ 
+    function getbalance() {
+
+        let vacation_type = document.getElementById("vacation_type").value;
+        
+        post('/vacation/get_balance', {vacation_type: vacation_type})
+            .then(response => {
+                if (response.ok) {                     
+                    response.json().then(response => set_balance_data(response))
+                }
+            })
+
+    }
+
+    function set_balance_data(data){
+        console.log(data);
+        if(data['rowCount'] === 0){
+            document.getElementById("start_balance").value = '';
+            document.getElementById("current_balance").value = '';
+            document.getElementById("spent_balance").value = '';
+        }else{
+            document.getElementById("start_balance").value = data['result'].start_balance;
+            document.getElementById("current_balance").value = data['result'].current_balance;
+            document.getElementById("spent_balance").value = (data['result'].start_balance - data['result'].current_balance);
+        }
+        get_ann_vac_type();
+
+    }
+    
+  
+    function get_ann_vac_type() {
+    
+        var vacation_type = document.getElementById("vacation_type").value;
+
+        if (vacation_type == 1) {        
+        document.getElementById("annual_div").className = "d-block";
+        }else{
+            document.getElementById("annual_div").className = "d-none";
+        }
+    }
+
+
+function addClassNameListener(elemId, callback) {
+    var elem = document.getElementById("annual_div");
+    var lastClassName = elem.className;
+     var className = elem.className;
+        if (className !== lastClassName) {
+            callback();   
+            lastClassName = className;
+        }
+   // get_ann_vac_type();
+}
+ 
+addClassNameListener("annual_div", get_ann_vac_type());
+
+  function cal_days() {
+
+    let start_date = document.getElementById("start_date").value;
+    let end_date = document.getElementById("end_date").value;
+    let current_balance = document.getElementById("current_balance").value;
+    
+    let day_count = 0;
+   
+
+    //if(start_date.length !== 0 && end_date.length !== 0 ){
+        
+        let date1 = Date.parse (start_date);
+        let date2 = new Date (end_date);
+        let now = new Date();
+
+        document.getElementById("day_count").value = '';
+        document.getElementById("invalid-dates").style.display = 'none';
+      //  if(start_date.length !== 0 && end_date.length !== 0 ){
+
+
+            if((Math.round((date1 - now) / (1000 * 60 * 60 * 24))) < 0) {
+                 document.getElementById("invalid-dates").style.display = 'block';
+                document.getElementById("invalid-dates").innerHTML ='خطأ في تاريح البداية';   
+
+            }else{
+                document.getElementById("day_count").value = '';
+                day_count = (Math.round((date2 - date1) / (1000 * 60 * 60 * 24))) + 1 ;
+
+                if (day_count > 0) {
+
+                    if(current_balance.length !==0 && current_balance < day_count){
+                        document.getElementById("day_count").value = day_count;
+                        document.getElementById("invalid-dates").style.display = 'block';
+                        document.getElementById("invalid-dates").innerHTML ='الرصيد اقل من عدد ايام الاجازة';
+                    }else{
+                        document.getElementById("day_count").value = day_count;
+                    }
+                
+                }else if (day_count <= 0){
+                    document.getElementById("invalid-dates").style.display = 'block';
+                    document.getElementById("invalid-dates").innerHTML = 'خطأ في ادخال التواريخ';
+
+                }
+            }
+       // }
+  }
+  </script>
+
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "master.twig" %}
+{% block main %}
+    {# TODO: check read_menus #}
+
+    {# List view #}
+    <div id="Table" >
+        <div class="row justify-content-md-center">
+            <div class="row ">
+                <div class="card">
+                    <div class="row justify-content-between  p-2 ">
+                        <div class="col-md-6">
+                            <h4 class="text-end me-3 mt-3">
+                                القوائم (الاقسام الرئيسية)
+                            </h4>
+                        </div>
+                        <div class="col-md-6">
+                            <nav class="nav justify-content-end p-2">
+                                <a type="button" class="btn btn-success ms-2" href="/menus/add">
+                                    <i class="bi bi-plus-lg"></i>
+                                    اضافة قائمة رئيسية جديدة
+                                </a>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-responsive-md table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col" >اسم القائمة</th>
+                                    <th scope="col">الوصف</th>
+                                    {# TODO: check edit_menus #}
+                                    <th scope="col" style="width: 5%">تعديل</th>
+                                    {# TODO: check delete_menus #}
+                                    <th scope="col" style="width: 5%">حذف</th>
+                                    <th class="text-center" scope="col" style="width: 20%">اضافة عناوين على القائمة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for menu in menus %}
+                                    <tr>
+                                        <td>{{menu.menu_name}}</td>
+                                        <td>{{menu.description}}</td>
+
+                                        {# TODO: check edit_menus #}
+                                        <td><a href='/menus/edit/{{menu.id}}' class="text-warning"><i class="bi bi-pencil fs-5"></i> </a></td>
+                                        {# TODO: check delete_menus #}
+                                        <td><a href='/menus/delete/{{menu.id}}' class="text-danger"><i class="bi bi-trash  fs-5"></i> </a></td>
+
+                                        <td class="text-center" scope="col" style="width: 20%"><a href='/menu_items/{{menu.id}}' class="btn btn-info"><i class="bi bi-list-stars fs-5 "></i> </a></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

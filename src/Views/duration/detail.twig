@@ -1,0 +1,297 @@
+{% extends "master.twig" %}
+
+{% block style %}
+
+	<style>
+
+		.employee-card {
+
+			position: relative;
+		}
+
+
+		.social-link {
+			width: 30px;
+			height: 30px;
+			border: 1px solid #ddd;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #666;
+			border-radius: 50%;
+			transition: all 0.3s;
+			font-size: 0.9rem;
+		}
+
+		.social-link:hover,
+		.social-link:focus {
+			background: #ddd;
+			text-decoration: none;
+			color: #555;
+		}
+	</style>
+
+	{{ parent() }}
+
+{% endblock %}
+{% block main %}
+
+	<div class="container-fluid">
+		<div class="card">
+			<div class="card-header p-3">
+				<h3>
+					دوام الموظف
+					<span class="text-info">{{ data[0].f_name ~ ' ' ~ data[0].s_name ~ ' ' ~ data[0].t_name ~ ' ' ~ data[0].l_name }}
+					</span>
+					الرقم الوظيفي
+					<span class="text-info">{{ data[0].employee_no }}
+
+					</h3>
+
+
+					<h3>لشهر
+						<span class="text-info">{{ comment.created|date('Y-m') }}
+						</span>
+					</h3>
+
+
+				</div>
+
+
+				<div id="tableData" class="d-block mt-5 mb-5 px-2">
+					<div class="row">
+						<div class="col-md-12">
+
+
+							<div x-data="data()">
+								<table class="table table-striped table-hover ">
+									<thead>
+										<tr>
+											<th></th>
+
+											<th @click="sortByColumn" class="cursor-pointer select-none text-center">
+												<i class="bi bi-arrow-down-up"></i>
+												رقم</th>
+											<th @click="sortByColumn" class="cursor-pointer select-none text-center">
+												<i class="bi bi-arrow-down-up"></i>
+												التاريخ</th>
+											<th @click="sortByColumn" class="cursor-pointer select-none text-center">
+												<i class="bi bi-arrow-down-up"></i>
+												الحاله</th>
+
+											<th @click="sortByColumn" class="cursor-pointer select-none text-center">
+												<i class="bi bi-arrow-down-up"></i>
+												الحضور</th>
+
+											<th @click="sortByColumn" class="cursor-pointer select-none text-center">
+												<i class="bi bi-arrow-down-up"></i>
+												التاخير الصباحي
+											</th>
+											<th @click="sortByColumn" class="cursor-pointer select-none text-center">
+												<i class="bi bi-arrow-down-up"></i>
+												نهاية الدوام</th>
+											<th @click="sortByColumn" class="cursor-pointer select-none text-center">
+												<i class="bi bi-arrow-down-up"></i>
+												الذهاب باكرا
+											</th>
+											<!--
+																					<th class="text-center">
+																						اجراءت</th>-->
+
+										</tr>
+									</thead>
+									<tbody x-ref="tbody">
+
+										{% set diff_tot = 0%}
+										{% set diff_out_tot = 0%}
+										{% for item in data %}
+											<tr>
+												<td class="align-middle">
+													<i class="bi bi-three-dots-vertical " id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"></i>
+													<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+														<a class="dropdown-item" href="/employee/profile/{{item.id}}">مشاهدة الملف</a>
+														<a class="dropdown-item" href="#">تعديل</a>
+													</div>
+												</td>
+
+
+												<td class="text-right align-middle text-center">{{ item.employee_id }}</td>
+												<td class="text-right align-middle text-center">{{ item.date }}</td>
+												{% if(item.check_in !="") %}
+													<td class="text-right align-middle   text-center bg-success p-2 text-dark bg-opacity-25">دوام</td>
+												{% else %}
+													<td class="text-right align-middle text-center">--</td>
+												{%  endif %}
+												<td class="text-right align-middle text-center">{{item.check_in}}</td>
+												{% if(item.diff > 0 ) %}
+													{% set diff_tot = diff_tot + item.diff %}
+												{%  endif %}
+												{% if(item.diff > 0 and item.diff <= 15) %}
+													<td class="text-right align-middle text-center border border-warning" title="دقيقه
+																									">{{item.diff}}</td>
+												{% elseif item.diff > 15  %}
+													<td class="text-right align-middle text-center border border-danger" title="دقيقه">{{item.diff}}</td>
+												{% else %}
+													<td class="text-right align-middle text-center " title="بالدقيقه">{{item.diff}}</td>
+												{%  endif %}
+												{% if(item.check_out != "") %}
+													<td class="text-right align-middle text-center">{{item.check_out}}</td>
+												{% else %}
+													<td class="text-right align-middle text-center">--</td>
+												{%  endif %}
+												{% if item.diff_out > 0  %}
+													{% set diff_out_tot = diff_out_tot + item.diff_out %}
+													<td class="text-right align-middle text-center " title="بالدقيقه">{{item.diff_out}}</td>
+												{% else %}
+													<td class="text-right align-middle text-center">--</td>
+												{%  endif %}
+												<td
+													class="text-center align-middle "><!--
+																										<button x-on:click="($event.target, row)" type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title=" تغيير اتفاقية الدوام">
+																											<i class="bi bi-calendar3 fs-5"></i>
+																										</button>
+																										<button x-on:click="($event.target, row)" type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="إلغاء تكليف">
+																											<i class="bi bi-clipboard-x fs-5"></i>
+																										</button>
+														
+																										<button x-on:click="($event.target, row)" type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="اضافة تكليف ">
+																											<i class="bi bi-person-workspace fs-5"></i>
+																										</button>
+																									
+																										{% if permissions['view_user_attendance_details']  %}
+																										<button   type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="  عرض دوام الموظفي الشهري ">
+																											<a href="/duration/detail/{{item.id}}" ><i  class="bi bi-person-gear fs-5" ></i></a>
+																										</button>
+																										{% endif  %}
+																											-->
+
+
+												</td>
+											</tr>
+
+
+										{%  endfor %}
+										<tr>
+											<td collapse="6">
+												&nbsp;</td>
+										</tr>
+										<tr>
+											{% set toto =0 %}
+											{% set toto = diff_tot + diff_out_tot %}
+
+
+											<td collapse="2">مجموع التاخير الصباحي
+											</td>
+											<td collapse="2" title="دقيقه">{{diff_tot}}
+											</td>
+											<td collapse="2">
+												مجموع الذهاب باكرا</td>
+											<td title="دقيقه">
+												{{diff_out_tot}}</td>
+											<td collapse="2">مجموع  الكلي
+											</td>
+											<td title="دقيقه">
+												{{toto}}</td>
+											<td title="دقيقه">
+												{{ h_tot }}</td>
+										</tr>
+										<!-- Add more employee data rows here -->
+									</tbody>
+								</table>
+
+
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div id="gridData" class="d-none">
+
+					<div class="container">
+						<div class="row text-center">
+							{% for item in data %}
+								<!-- Team item -->
+								<div class="col-xl-3 col-sm-6 mb-5">
+									<div class="employee-card position-relative">
+
+
+										<i class="bi bi-three-dots-vertical position-absolute top-0 end-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"></i>
+										<div class="dropdown-menu text-body-secondary text-end" aria-labelledby="dropdownMenuButton">
+											<a class="dropdown-item" href="/employee/profile/{{item.id}}">
+												<i class="bi bi-eye-fill"></i>
+												مشاهدة الملف
+											</a>
+											<a class="dropdown-item" href="#">
+												<i class="bi bi-pencil-square"></i>
+												تعديل</a>
+										</div>
+
+										<div class="bg-white rounded shadow-sm py-5 px-4">
+											<img src="{{ item.avatar }}" alt="" width="100" class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
+											<h5 class="mb-0">
+												{{ item.f_name ~ ' ' ~ item.s_name ~ ' ' ~ item.t_name ~ ' ' ~ item.l_name }}</h5>
+											<span class="small text-uppercase text-muted">{{ lookups.job_title[item.job_title] }}</span>
+										</div>
+									</div>
+								</div>
+								<!-- End -->
+
+							{% endfor %}
+
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+			function showTable() {
+var tableData = document.getElementById("tableData");
+var gridData = document.getElementById("gridData");
+tableData.classList.remove("d-none");
+gridData.classList.add("d-none");
+}
+
+function showGrid() {
+var tableData = document.getElementById("tableData");
+var gridData = document.getElementById("gridData");
+tableData.classList.add("d-none");
+gridData.classList.remove("d-none");
+}
+
+
+function data() {
+return {
+sortBy: "",
+sortAsc: false,
+sortByColumn($event) {
+if (this.sortBy === $event.target.innerText) {
+if (this.sortAsc) {
+this.sortBy = "";
+this.sortAsc = false;
+} else {
+this.sortAsc = !this.sortAsc;
+}
+} else {
+this.sortBy = $event.target.innerText;
+}
+
+let rows = this.getTableRows().sort(this.sortCallback(Array.from($event.target.parentNode.children).indexOf($event.target))).forEach((tr) => {
+this.$refs.tbody.appendChild(tr);
+});
+},
+getTableRows() {
+return Array.from(this.$refs.tbody.querySelectorAll("tr"));
+},
+getCellValue(row, index) {
+return row.children[index].innerText;
+},
+sortCallback(index) {
+return(a, b) => ((row1, row2) => {
+return row1 !== "" && row2 !== "" && !isNaN(row1) && !isNaN(row2) ? row1 - row2 : row1.toString().localeCompare(row2);
+})(this.getCellValue(this.sortAsc ? a : b, index), this.getCellValue(this.sortAsc ? b : a, index));
+}
+};
+}
+		</script>
+	{% endblock %}

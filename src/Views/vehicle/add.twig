@@ -1,0 +1,129 @@
+{% extends "master.twig" %}
+
+{% block main
+
+ %}
+
+	<form action="/vehicle/store" method="post">
+		{{ csrf.fields | raw }}
+		<div class="row mb-3 g-3 ">
+			<div class="col-12 col-md-12 col-xxl-12 d-flex">
+				<div class="card flex-fill ">
+					<div class="position-relative mb-5">
+						<img src="/img/cover/cover1.png" class="img-thumbnail border border-0 p-0" alt="..." style="max-height: 15rem; min-width: 100%;">
+						<div class="position-absolute top-100 start-5 translate-middle ">
+
+							<img src="/img/users/default.png" class="rounded-circle border border-5 border-light-subtle" alt="..." style="max-height: 12rem; max-width: 12rem;">
+
+						</div>
+					</div>
+					<div class="card-body mt-1" style="min-height: 15rem;">
+						<div class="row  g-3 mt-1">
+							<div class="col-12 col-md-8 col-xxl-8 ">
+								<div class="card-body mt-4 me-1 me-md-5" style="min-height: 7rem;">
+									<div class="d-flex justify-content-center">
+										<h3>
+											اضافة مركبة 
+										</h3>
+									</div>
+									<div class="mb-3">
+										<input type="text" name="vehicle_no" value="{{ old.vehicle_no }}" class="form-control {{ errors.vehicle_no ? 'is-invalid' : '' }}" placeholder="رقم المركبة" aria-label="رقم المركبة">
+										<div class="invalid-feedback">
+											{{ errors.vehicle_no | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<input type="text" name="vehicle_name" value="{{ old.vehicle_name }}" class="form-control {{ errors.vehicle_name ? 'is-invalid' : '' }}" placeholder="اسم المركبة" aria-label="اسم المركبة">
+										<div class="invalid-feedback">
+											{{ errors.vehicle_name | first }}
+										</div>
+									</div>
+									
+									<div class="mb-3">
+										<select name="vehicle_type" id="vehicle_type" value="{{ old.vehicle_type }}"  class="form-select form-select-sm {{ errors.vehicle_type ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+											<option  disabled selected hidden >-- اختر نوع المركبة --</option>
+												<option value="خصوصي" >خصوصي</option>
+												<option value="تجاري" >تجاري</option>
+												<option value="دراجة نارية" >دراجة نارية</option>
+												<option value="دراجة هوائية" >دراجة هوائية</option>
+												<option value="شحن" >شحن</option>
+										</select>
+										<div class="invalid-feedback">
+											{{ errors.vehicle_type | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<input type="text" name="chassis_no" value="{{ old.chassis_no }}" class="form-control {{ errors.chassis_no ? 'is-invalid' : '' }}" placeholder="رقم الشاصي" aria-label="رقم الشاصي">
+										<div class="invalid-feedback">
+											{{ errors.chassis_no | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<input type="text" name="engine_no" value="{{ old.engine_no }}" class="form-control {{ errors.engine_no ? 'is-invalid' : '' }}" placeholder="رقم المحرك" aria-label="رقم المحرك">
+										<div class="invalid-feedback">
+											{{ errors.engine_no | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<input type="text" name="engine_capacity" value="{{ old.engine_capacity }}" class="form-control {{ errors.engine_capacity ? 'is-invalid' : '' }}" placeholder="سعة المحرك" aria-label="سعة المحرك">
+										<div class="invalid-feedback">
+											{{ errors.engine_capacity | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<input type="text" name="vehicle_model" value="{{ old.vehicle_model }}" class="form-control {{ errors.vehicle_model ? 'is-invalid' : '' }}" placeholder="موديل المركبة" aria-label="موديل المركبة">
+										<div class="invalid-feedback">
+											{{ errors.vehicle_model | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<select name="fuel_type" id="fuel_type" value="{{ old.fuel_type }}"  class="form-select form-select-sm {{ errors.fuel_type ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+											<option  disabled selected hidden >-- اختر نوع الوقود --</option>
+												<option value="بنزين" >بنزين</option>
+												<option value="سولار" >سولار</option>
+										</select>
+										<div class="invalid-feedback">
+											{{ errors.fuel_type | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<select name="lime_type" id="lime_type" value="{{ old.lime_type }}"  class="form-select form-select-sm {{ errors.lime_type ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+											<option  disabled selected hidden >-- اختر نوع الجير --</option>
+												<option value="عادي" >عادي</option>
+												<option value="اتوماتيك" >اتوماتيك</option>
+										</select>
+										<div class="invalid-feedback">
+											{{ errors.lime_type | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<input type="text" name="vehicle_color" value="{{ old.vehicle_color }}" class="form-control {{ errors.vehicle_color ? 'is-invalid' : '' }}" placeholder="لون المركبة المركبة" aria-label="لون المركبة المركبة">
+										<div class="invalid-feedback">
+											{{ errors.vehicle_color | first }}
+										</div>
+									</div>
+									<div class="row mb-5 g-3 ">
+										<div class="col-12 col-md-12 col-xxl-12 d-flex">
+											<div class="card flex-fill ">
+												<div class="card-body me-3 mt-1">
+													<div class="d-flex justify-content-center">
+														<button type="submit" class="btn btn-primary">حفظ المركبة</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>	
+		</div>
+
+		
+	</form>
+
+
+{% endblock %}

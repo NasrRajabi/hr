@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
+		<meta name="author" content="AdminKit">
+		<meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+
+		<link rel="preconnect" href="https://fonts.gstatic.com">
+		<link rel="shortcut icon" href="img/logo/HR_LOGO.svg"/>
+
+		<title>تسجيل الدخول | HR System</title>
+
+		<link href="css/app.css" rel="stylesheet">
+
+		<style>
+			body {
+				background: url('img/photos/10.webp') no-repeat center center fixed;
+				-webkit-background-size: cover;
+				-moz-background-size: cover;
+				-o-background-size: cover;
+				background-size: cover;
+			}
+			body {
+				font-family: 'Cairo', sans-serif;
+			}
+			.card {
+				border: none;
+			}
+			.form-floating:not(.form-control:disabled):before {
+				background-color: #ffffff00;
+			}
+			button {
+				box-shadow: 0 8px 15px #00000063;
+			}
+
+			/* Chrome, Safari, Edge, Opera */
+			input::-webkit-outer-spin-button,
+			input::-webkit-inner-spin-button {
+				-webkit-appearance: none;
+				margin: 0;
+			}
+
+			/* Firefox */
+			input[type=number] {
+				-moz-appearance: textfield;
+			}
+		</style>
+
+		<script src="https://www.google.com/recaptcha/api.js?render=6Lc3zPsgAAAAADvuUhjQ7f3w_byNQOxtkvmnMCfo"></script>
+
+	</head>
+
+	<body>
+		<div class="container-fluid">
+
+			<main class="d-flex w-100">
+
+				<div class="container d-flex flex-column">
+
+					<div class="row vh-100">
+
+						<div class="col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100">
+
+							<div class="d-table-cell align-middle">
+								<div class="card" style="background-color: rgba(255, 255, 255, .15); backdrop-filter: blur(20px);">
+									<div class="card-body">
+										<div class="text-center">
+											<img src="img/logo/MTIT_LOGIN.webp" class="img-fluid" width="250" height="300" alt="MTIT"/>
+										</div>
+									</div>
+								</div>
+								<br>
+								<div class="card" style=" background-color: rgba(255, 255, 255, .15);backdrop-filter: blur(5px);">
+									<div class="card-body">
+
+										<div class="text-center m-5">
+											<img src="img/logo/HR_LOGO.svg" class="img-fluid" width="200" height="200" alt="HR"/>
+										</div>
+										<div class="m-sm-5">
+											<form id="login" action="login" method="post">
+												{{ csrf.fields | raw }}
+
+												<input type="hidden" name="Re_Token" id="Re_Token">
+
+												<div class="form-floating mb-4">
+													<input id="floatingInput" type="number" name="employee_no" value="{{ old.employee_no }}" class="form-control {{ errors.employee_no ? 'is-invalid' : '' }}" placeholder="الرقم الوظيفي" style=" background-color: rgba(255, 255, 255, .15); backdrop-filter: blur(5px);" autocomplete="off">
+													<label for="floatingInput">الرقم الوظيفي</label>
+													<div class="invalid-feedback">
+														{{ errors.employee_no | first }}
+													</div>
+												</div>
+												<div class="form-floating mb-4">
+													<input id="floatingPassword" type="password" name="password" value="{{ old.password }}" class="form-control {{ errors.password ? 'is-invalid' : '' }}" placeholder="كلمة المرور" style=" background-color: rgba(255, 255, 255, .15); backdrop-filter: blur(5px);" autocomplete="off">
+													<label for="floatingPassword">كلمة المرور</label>
+													<div class="invalid-feedback">
+														{{ errors.password | first }}
+													</div>
+												</div>
+
+
+												<div class="text-center mt-4">
+													<div class="d-grid gap-1 col-4 mx-auto">
+														<button type="submit" class="btn btn-grad text-light fw-bold   g-recaptcha">
+															<i class="align-middle me-1" data-feather="log-in"></i>
+															تسجيل الدخول</button>
+													</div>
+												</div>
+
+											</form>
+										</div>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</main>
+		</div>
+
+		<script>
+			grecaptcha.ready(function () {
+grecaptcha.execute('6Lc3zPsgAAAAADvuUhjQ7f3w_byNQOxtkvmnMCfo', {action: 'HR_login'}).then(function (token) {
+var Re_Token = document.getElementById('Re_Token');
+Re_Token.value = token;
+});
+});
+		</script>
+	</body>
+
+</html>

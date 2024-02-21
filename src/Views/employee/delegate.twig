@@ -1,0 +1,175 @@
+{% extends "master.twig" %}
+{% import "forms_helpers.twig" as forms %}
+{% block style %}
+	<style>
+		.employee-card {
+			position: relative;
+		}
+		.social-link {
+			width: 30px;
+			height: 30px;
+			border: 1px solid #ddd;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #666;
+			border-radius: 50%;
+			transition: all 0.3s;
+			font-size: 0.9rem;
+		}
+
+		.social-link:hover,
+		.social-link:focus {
+			background: #ddd;
+			text-decoration: none;
+			color: #555;
+		}
+	</style>
+	{{ parent() }}
+{% endblock %}
+
+{% block main %}
+	<div class="container-fluid">
+        <div class="row h-100">
+            <div class="col-12 d-flex flex-column">
+				<div class="card flex-fill pb-5">
+					<div class="card-body">
+						<h5 class="card-title">تكليف الموظفين</h5>
+						<br>
+						<div class="row">
+							<div class="col-12">
+								<div class="d-flex justify-content-start my-3" aria-label="View Toggle">
+									<div class="d-flex justify-content-start w-50 m-1">
+										{{ forms.arrayDataList("employee_no_select", "employee_no_input", employee_name, employees, 'name', 'emp_id', 'اختر موظف') }}
+										{% if permissions['save_os_delegation']  %}
+											<button class="btn btn-primary mx-2" id="delegateBtn" onclick="openModel('delegate')" disabled>
+												<i class="bi bi-person-plus-fill"></i>
+												تفويض 
+											</button>
+										{% endif %}
+									</div>    
+								</div>
+							</div>
+							<div id="tableData" class="d-block mt-5">
+								<div class="row">
+									<div class="col-md-12">
+										<div>
+											<table class="table table-striped table-bordered  table-hover   align-middle">
+												<thead>
+													<tr>
+														<th class="text-center fit">#</th>
+														<th class="text-center fit">الموقع</th>
+														<th class="text-center fit"> المسمى الوظيفي</th>
+														<th class="text-center fit">تاريخ التفويض</th>
+														<th class="text-center fit">تاريخ انتهاء التفويض</th>
+														<th class="text-center fit">
+															اجراءات
+														</th>
+
+													</tr>
+												</thead>
+												<tbody class="table-group-divider" id="tableBody"></tbody>
+
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<br>
+					<br>
+					<br>
+					<br>
+					<br>
+					<br>
+					<br>
+					<br>
+					<br>
+				</div>
+			</div>			
+		</div>
+	</div>	
+
+    <div class="modal fade position-absolute" id="confirmEditDelegation" tabindex="-1" aria-labelledby="confirmEditDelegationLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="confirmEditDelegationLabel"> الغاء/تعديل التفويض</h5>
+					<button type="button" class="btn-close ms-0" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form id="delegateForm" action="/delegate/edit_user_delegate" method="post"> 
+						{{ csrf.fields | raw }}
+                        <input type="hidden" class="form-control" id="start_date" name="start_date" >
+						<input type="hidden" class="form-control" id="os_id" name="os_id">
+						<input type="hidden" class="form-control" id="d_id" name="d_id">
+						
+						<div class="mb-3">
+							<label for="employee_name" class="form-label">اسم الموظف</label>
+							<input type="text" class="form-control" id="employee_name" name="employee_name" disabled>
+						</div>
+						<div class="mb-3">
+                            <label for="employee_no" class="form-label">الرقم الوظيفي</label>
+                            <input type="text" class="form-control" name="employee_no" id="employee_no" readonly>
+                        </div>
+						<div class="mb-3">
+                            <label for="end_date" class="form-label">تاريخ انتهاء التفويض</label>
+							<input type="date" class="form-control" name="end_date" placeholder="تاريخ انتهاء التفويض" aria-label="تاريخ انتهاء التفويض">
+                        </div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+							<button type="submit" class="btn btn-primary" data-bs-dismiss="modal">حفظ</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+    <div class="modal fade position-absolute" id="delegate" tabindex="-1" aria-labelledby="delegateLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="delegateModalLabel">تفويض الموظف</h5>
+					<button type="button" class="btn-close ms-0" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form id="assignOSForm" action="/delegate/save_delegate" method="post"> 
+						{{ csrf.fields | raw }}
+                        <input type="hidden" class="form-control" name="is_delegate" value="true" >
+                        <input type="hidden" class="form-control" id="c_employee_id" name="c_employee_id" >
+						<div class="mb-3">
+							<label for="employee_name" class="form-label">اسم الموظف</label>
+							<input type="text" class="form-control" name="employee_name" readonly>
+						</div>
+						<div class="mb-3">
+                            <label for="employee_no" class="form-label">الرقم الوظيفي</label>
+                            <input type="text" class="form-control" name="employee_no" id="employee_no" readonly>
+                        </div>
+						<br>
+						<p class="fs-4 fw-bolder">اختر الصلاحيات التي لتفويضها</p>                    
+						{# TODO_Aya: fix the style #}
+						{{ forms.arraySwitches('permission_', rolePermissions, "permissions_key") }}  
+						<br>
+						<div class="mb-3">
+                            <label for="start_date" class="form-label">تاريخ التفويض</label>
+							<input type="date" class="form-control" name="start_date" placeholder="تاريخ التفويض" aria-label="تاريخ التفويض">
+                        </div>
+						<div class="mb-3">
+                            <label for="end_date" class="form-label">تاريخ انتهاء التفويض</label>
+							<input type="date" class="form-control" name="end_date" placeholder="تاريخ انتهاء التفويض" aria-label="تاريخ انتهاء التفويض">
+                        </div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+							<button type="submit" class="btn btn-primary" data-bs-dismiss="modal">حفظ</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block script %}    
+    <script src='/app/js/employee.js'></script>
+{% endblock %}

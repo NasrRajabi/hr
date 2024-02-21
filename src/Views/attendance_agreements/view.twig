@@ -1,0 +1,178 @@
+{% extends "master.twig" %}
+
+
+{% block style %}
+
+	<link rel="stylesheet" href="/css/tree.css"/>
+
+
+	{{ parent() }}
+{% endblock %}
+
+
+{% block main %}
+
+	<main class="col ms-1">
+		<div class="card">
+			<div class="card-header row justify-content-between  p-3 border-bottom">
+				<div class="col-md-6">
+					<h4 class="text-end me-3 mt-3">اتفاقيات الدوام
+					</h4>
+				</div>
+				<div class="col-md-6">
+					<nav class="nav justify-content-end p-3">
+						<a href="/attendance_agreements/create" type="button" class="btn btn-primary">
+							<i class="bi bi-plus-circle-dotted"></i>
+							اضافة اتفاقية
+						</a>
+					</nav>
+				</div>
+			</div>
+
+			<div class="card-body">
+
+				<div class="accordion accordion-flush" id="accordionFlushExample">
+
+					{% for name, items in data %}
+						<div class="accordion-item mb-2">
+							<h2 class="accordion-header">
+								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}" aria-expanded="false" aria-controls="collapse{{ loop.index }}">
+									<div class="d-flex mb-3">
+										<div class="p-2">
+											{{ name }}</div>
+
+									</div>
+								</button>
+							</h2>
+							<div id="collapse{{ loop.index }}" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+
+
+								<div class="accordion-body">
+
+									<button type="button" class="btn btn-outline-success float-start px-5 mb-3 me-3" data-bs-toggle="modal" data-bs-target="#applyAgreement">
+										<i class="bi bi-calendar-check fs-5"></i>
+										تنفيذ
+									</button>
+
+									<!-- Modal -->
+									<div class="modal fade" id="applyAgreement" tabindex="-1" aria-labelledby="" aria-hidden="true">
+										<div class="modal-dialog modal-lg modal-dialog-scrollable">
+											<div class="modal-content">
+												<div class="modal-header">
+													<h1 class="modal-title fs-5" id="exampleModalLabel">
+														تنفيذ اتفاقية دوام
+													</h1>
+													{# <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> #}
+												</div>
+												<div class="modal-body">
+
+													<div class="row">
+
+														<div class="form-check m-3">
+															<input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+															<label class="form-check-label" for="flexCheckDefault">
+																الكل
+															</label>
+														</div>
+														{% for emp in employee %}
+															<div class="d-flex flex-column">
+																<div class="d-flex justify-content-between border-bottom">
+																	<div class="form-check m-3">
+																		<input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+																		<label class="form-check-label" for="flexCheckDefault">
+																			{{ emp.f_name ~ ' ' ~ emp.s_name ~ ' ' ~ emp.t_name ~ ' ' ~ emp.l_name }}
+																		</label>
+																	</div>
+
+																	<div>{{emp.employee_no}}
+																	</div>
+																</div>
+
+															</div>
+														{% endfor %}
+													</div>
+												</div>
+												<div class="modal-footer">
+													<button type="button" class="btn btn-primary" data-bs-dismiss="modal">تنفيذ اتفاقية</button>
+													<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+
+												</div>
+											</div>
+										</div>
+									</div>
+									{# close #}
+
+									<a href="/attendance_agreements/edit/{{items[0].id }}" class="btn btn-outline-primary float-start px-5 mb-3">
+										<i class="bi bi-pencil-square fs-5"></i>
+										تعديل
+									</a>
+
+
+									<table class="table table-bordered text-center  ">
+										<thead class="thead-dark">
+											<tr class="bg-dark-subtle">
+
+												<th>
+													اليوم</th>
+												<th>
+													بداية الدوام</th>
+												<th>
+													نهاية الدوام</th>
+												<th>آخر وقت لاحتساب بصمة الحضور
+												</th>
+												<th>فترة السماح للحضور (بالدقائق )</th>
+												<th>
+													فترة السماح للانصراف (بالدقائق)</th>
+												<th>الحد الأعلى لعدد ساعات المغادرات الخاصة</th>
+											</tr>
+										</thead>
+										<tbody>
+											{% for item in items %}
+												{% if item.att_status == 3 %}
+													<tr class="bg-success-subtle">
+
+
+														<td>{{ lookups.days[item.day] }}</td>
+														<td>{{ item.start_time }}</td>
+														<td>{{ item.end_time }}</td>
+														<td>{{ item.check_in_end }}</td>
+														<td>{{ item.allowed_time_check_in }}</td>
+														<td>{{ item.allowed_time_check_out }}</td>
+														<td>{{ item.allowed_p_leave_hours }}</td>
+													</tr>
+												{% else %}
+
+													<tr class="bg-danger-subtle">
+
+														<td>{{ lookups.days[item.day] }}</td>
+														<td colspan="6">
+															<span class="badge text-bg-danger fs-6">{{  lookups.att_status[item.att_status]  }}</span>
+														</td>
+
+
+													</tr>
+												{% endif %}
+
+											{% endfor %}
+										</tbody>
+									</table>
+
+
+								</div>
+
+
+							</div>
+						</div>
+
+					{% endfor %}
+
+				</div>
+
+			</div>
+		</div>
+	</main>
+
+
+{% endblock %}
+
+{% block script %}{% endblock %}

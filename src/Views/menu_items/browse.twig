@@ -1,0 +1,309 @@
+{% import "forms_helpers.twig" as forms %}
+{% extends "master.twig" %}
+{% block main %}
+
+	<div class="row justify-content-md-center">
+
+		<div class="card">
+        		<div class="row justify-content-between  p-2 ">
+					<div class="col-md-6">
+						<h4 class="text-end me-3 mt-3">
+							قائمة :	({{ menu.menu_name }})
+						</h4>
+					</div>
+					<div class="col-md-6">
+						<nav class="nav justify-content-end p-2">
+							<a type="button" class="btn btn-info ms-2" href="/menus">
+								عرض جميع القوائم الرئيسية
+							</a>
+							<button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#addNewMenuTitleID" data-bs-whatever="@mdo">
+								اضافة عنوان جديد الى القائمة
+							</button>
+						</nav>
+					</div>
+				</div>
+			<div class="card-body mt-4">
+
+
+
+				<form action="/menu_items/update/{{ menu.id }}" method="post">
+					<table class="table table-responsive-md table-hover">
+						<thead>
+							<tr class="text-center">
+								<th scope="col" style="width: 5%">Id</th>
+								<th scope="col">Title</th>
+								<th scope="col" style="width: 5%">Parent Id</th>
+								<th scope="col" style="width: 5%">Order</th>
+								<th scope="col">Icon Class</th>
+								<th scope="col">Permission</th>
+								<th scope="col">Color</th>
+								<th scope="col">Parameters</th>
+								<th scope="col">URL (Route)</th>
+								<th scope="col">Delete</th>
+							</tr>
+						</thead>
+						<tbody id="menuItemsTable">
+
+
+							{{ csrf.fields | raw }}
+							{% for item in menu_items %}
+
+								<tr>
+									<td class="text-center">
+										<div class="input-group mb-3">
+											<input type="text" name="id_{{item.item_id}}" class="form-control" placeholder="id" aria-label="id" aria-describedby="basic-addon1" value="{{item.item_id}}" disabled readonly>
+										</div>
+									</td>
+									<td>
+										<div class="input-group mb-3">
+											<input type="text" name="title_{{item.item_id}}" class="form-control" placeholder="title" aria-label="title" aria-describedby="basic-addon1" value="{{item.title}}">
+										</div>
+									</td>
+									<td>
+										<div class="input-group mb-3">
+											<input type="text" name="parent_id_{{item.item_id}}" class="form-control" placeholder="parent_id" aria-label="parent_id" aria-describedby="basic-addon1" value="{{item.parent_id}}">
+										</div>
+									</td>
+									<td>
+										<div class="input-group mb-3">
+											<input type="text" name="order_no_{{item.item_id}}" class="form-control" placeholder="Order" aria-label="order_no" aria-describedby="basic-addon1" value="{{item.order_no}}">
+										</div>
+									</td>
+									<td>
+										<div class="input-group mb-3">
+											<input type="text" name="icon_class_{{item.item_id}}" class="form-control" placeholder="icon_class" aria-label="icon_class" aria-describedby="basic-addon1" value="{{item.icon_class}}" dir="ltr">
+										</div>
+									</td>
+									<td dir="ltr">
+										{{ forms.arrayDropDown('permission_id_' ~ item.item_id, 'permission_id_' ~ item.item_id, item.permission_id, permissions, 'key', 'id', 'اختر الصلاحية') }}
+
+
+									</td>
+									<td>
+										<div class="input-group mb-3">
+											<input type="color" name="color_{{item.item_id}}" class="form-control" placeholder="color" aria-label="color" aria-describedby="basic-addon1" value="{{item.color}}">
+										</div>
+									</td>
+									<td>
+										<div class="input-group mb-3">
+											<input type="text" name="parameters_{{item.item_id}}" class="form-control" placeholder="parameters" aria-label="parameters" aria-describedby="basic-addon1" value="{{item.parameters}}" dir="ltr">
+										</div>
+									</td>
+									<td>
+										<div class="input-group mb-3">
+											<input type="text" name="url_{{item.item_id}}" class="form-control" placeholder="url" aria-label="url" aria-describedby="basic-addon1" value="{{item.url}}" dir="ltr">
+										</div>
+									</td>
+									<td class="text-center">
+										<a href="/menu_items/delete/{{ menu.id }}/{{item.item_id}}" class="text-danger"><i class="bi bi-trash  fs-5"></i> </a>
+									</td>
+								</tr>
+							{% endfor %}
+
+
+						</tbody>
+					</table>
+					<div class="d-grid gap-2 col-2 mx-auto m-5">
+						<button class="btn btn-primary" type="submit">حفظ</button>
+					</div>
+				</form>
+
+			</div>
+		</div>
+
+	</div>
+	<div x-data="dataMenu()" class="modal" id="addNewMenuTitleID" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="exampleModalLabel">اضافة عنوان جديد الى قائمة ({{ menu.menu_name }})</h1>
+					<div class="d-flex flex-row-reverse mb-3">
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+				</div>
+				<div class="modal-body">
+					<form id="form">
+						<input type="hidden" name="menu_id" x-model="menu.menu_id" class="form-control" id="menu_id" placeholder="menu_id">
+						<div class="form-floating mb-3">
+							<input type="text" name="title" x-model="menu.title" class="form-control" id="title" placeholder="Title">
+							<label for="title">Title</label>
+						</div>
+
+						<div class="form-floating mb-3">
+							<input type="text" name="parent_id" x-model="menu.parent_id" class="form-control" id="parent_id" placeholder="Parent Id">
+							<label for="parent_id">Parent Id</label>
+						</div>
+
+						<div class="form-floating mb-3">
+							<input type="number" step="0.01" name="order_no" x-model="menu.order_no" class="form-control" id="order_no" placeholder="Order">
+							<label for="order_no">Order</label>
+						</div>
+
+						<div class="form-floating mb-3">
+							<input type="text" name="icon_class" x-model="menu.icon_class" class="form-control" id="icon_class" placeholder="Icon Class" dir="ltr">
+							<label for="icon_class">Icon Class</label>
+						</div>
+
+						<div class="form-floating mb-3" dir="ltr">
+							{{ forms.arrayDropDown('permission_id', 'permission_id', item.permission_id, permissions, 'key', 'id', 'Choose Permission', 'menu.permission_id') }}
+							<label for="permission_id">Permission</label>
+						</div>
+
+						<div class="form-floating mb-3">
+							<input type="color" name="color" x-model="menu.color" class="form-control form-control-sm" id="color" placeholder="Color">
+							<label for="color">Color</label>
+						</div>
+
+						<div class="form-floating mb-3">
+							<input type="text" name="parameters" x-model="menu.parameters" class="form-control" id="parameters" placeholder="Parameters" dir="ltr">
+							<label for="parameters">Parameters</label>
+						</div>
+
+						<div class="form-floating mb-3">
+							<input type="text" name="url" x-model="menu.url" class="form-control" id="url" placeholder="URL" dir="ltr">
+							<label for="url">URL (Route)</label>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary"  onclick="hideModal('addNewMenuTitleID')" data-bs-dismiss="modal">اغلاق</button>
+							<div class="d-grid gap-2 col-6 mx-auto ">
+								<button class="btn btn-primary" type="button"  x-on:click="addNewMenuTitle($event.target, menu)">حفظ</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<script>
+		const dataMenu = () => {
+			return {
+				menu: {
+					menu_id: {{ menu.id }},
+					title: '',
+					parent_id: '',
+					order_no: '',
+					icon_class: '',
+					permission_id: '',
+					color: '',
+					parameters: '',
+					url: ''
+				},
+				menu_items: {{ menu_items | json_encode | raw }},
+				addedItems: [],
+			};
+		}
+		function addNewMenuTitle(button, menu, progress = false) {
+
+			const addNewMenuTitleModal = new bootstrap.Modal(
+					document.getElementById("addNewMenuTitleID")
+			);
+			console.log(menu)
+			let data = {
+				menu_id: menu.menu_id,
+				title: menu.title,
+				parent_id: menu.parent_id,
+				order_no: menu.order_no,
+				icon_class: menu.icon_class,
+				permission_id: menu.permission_id,
+				color: menu.color,
+				parameters: menu.parameters,
+				url: menu.url
+			};
+
+
+
+			post(`/menu_items/add`,
+					data,
+					button,
+					addNewMenuTitleModal
+			).then((response) => {
+				if (response.ok) {
+					response.json().then((response) => {
+						addToViewItems(response);
+						// Clear the input fields in the modal
+						const form = document.getElementById('form');
+						form.reset();
+						menu.color = "#000000"; // Set default color value
+					});
+				} else {
+					console.log('Error...!');
+				}
+			});
+		}
+
+		function addToViewItems(response) {
+
+			// Hide the modal
+			hideModal('addNewMenuTitleID');
+
+			// Add the new item to the table dynamically
+			const tableBody = document.getElementById('menuItemsTable');
+			const newRow = document.createElement('tr');
+			newRow.innerHTML = `
+              <td class="text-center">
+                <div class="input-group mb-3">
+                  <input type="text" name="id_${response.item_id}" class="form-control" placeholder="id" aria-label="id" aria-describedby="basic-addon1" value="${response.item_id}" disabled readonly>
+                </div>
+              </td>
+              <td>
+                <div class="input-group mb-3">
+                  <input type="text" name="title_${response.item_id}" class="form-control" placeholder="title" aria-label="title" aria-describedby="basic-addon1" value="${response.title}">
+                </div>
+              </td>
+              <td>
+                <div class="input-group mb-3">
+                  <input type="text" name="parent_id_${response.item_id}" class="form-control" placeholder="parent_id" aria-label="parent_id" aria-describedby="basic-addon1" value="${response.parent_id}">
+                </div>
+              </td>
+              <td>
+                <div class="input-group mb-3">
+                  <input type="text" name="order_no_${response.item_id}" class="form-control" placeholder="Order" aria-label="order_no" aria-describedby="basic-addon1" value="${response.order_no}">
+                </div>
+              </td>
+              <td>
+                <div class="input-group mb-3">
+                  <input type="text" name="icon_class_${response.item_id}" class="form-control" placeholder="icon_class" aria-label="icon_class" aria-describedby="basic-addon1" value="${response.icon_class}" dir="ltr">
+                </div>
+              </td>
+				<td dir="ltr">
+				  <select name="permission_id_${response.item_id}" id="permission_id_${response.item_id}" class="form-control">
+					{% for permission in permissions %}
+					  <option value="{{ permission.id }}" {% if permission.id == response.permission_id %}selected="selected"{% endif %}>{{ permission.key }}</option>
+					{% endfor %}
+				  </select>
+				</td>
+
+              <td>
+                <div class="input-group mb-3">
+                  <input type="color" name="color_${response.item_id}" class="form-control" placeholder="color" aria-label="color" aria-describedby="basic-addon1" value="${response.color}">
+                </div>
+              </td>
+              <td>
+                <div class="input-group mb-3">
+                  <input type="text" name="parameters_${response.item_id}" class="form-control" placeholder="parameters" aria-label="parameters" aria-describedby="basic-addon1" value="${response.parameters}" dir="ltr">
+                </div>
+              </td>
+              <td>
+                <div class="input-group mb-3">
+                  <input type="text" name="url_${response.item_id}" class="form-control" placeholder="url" aria-label="url" aria-describedby="basic-addon1" value="${response.url}" dir="ltr">
+                </div>
+              </td>
+				<td class="text-center">
+						<a href="/menu_items/delete/{{ menu.id }}/${response.item_id}" class="text-danger"><i class="bi bi-trash  fs-5"></i> </a>
+				</td>
+						`;
+			tableBody.appendChild(newRow);
+
+		}
+
+
+	</script>
+{% endblock %}
+
+
+
+

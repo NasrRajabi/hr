@@ -1,0 +1,166 @@
+{% extends "master.twig" %}
+
+
+{% block style %}
+
+{% endblock %}
+
+{% block main %}
+
+
+
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12 col-md-12 col-xxl-12 d-flex">
+                <div class="card flex-fill ">
+                    <div class="card-body">	
+                        <h5 class="card-title">قائمة الفواتير</h5>
+                        <br>
+                        <div class="table-responsive">
+                            <div class="m-4">
+                                <div class="accordion" id="myAccordion">
+                                    <div class="accordion-item">
+                                        <div class="card-body">
+                                            <div class="accordion accordion-flush" id="accordionFlushExample">
+                                                {% for name, items in data %}
+                                                    <div class="accordion-item mb-2">
+                                                        <h2 class="accordion-header">
+                                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}" aria-expanded="false" aria-controls="collapse{{ loop.index }}">
+                                                                <div class="d-flex mb-3">
+                                                                    <div class="p-2">
+                                                                    {{ lookups.invoice_type[name] }}</div>
+                                                                </div>
+                                                            </button>
+                                                        </h2>
+                                                        <div id="collapse{{ loop.index }}" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                                                            <div class="accordion-body">
+                                                                <table class="table table-striped table-bordered  table-hover table-sm  align-middle" x-ref="dataTable">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th class="text-center fit">#</th>
+                                                                            <th class="text-center fit">حالة الفاتورة</th>
+                                                                            <th class="text-center fit">المركبة</th>
+                                                                            <th class="text-center fit"> نوع الفاتورة </th>
+                                                                            <th class="text-center fit">تاريخ الفاتورة </th>
+                                                                            <th class="text-center fit">رقم الفاتورة</th>
+                                                                            <th class="text-center fit">قيمة الفاتورة</th>
+                                                                            <th class="text-center fit">تاريخ الحالة</th>
+                                                                            <th class="text-center fit">ملاحظات</th>
+                                                                            <th class="text-center fit">ملاحظات اخرى</th>
+                                                                            <th class="text-center fit">الاجراءات</th>	
+                                                                        </tr>
+                                                                    </thead>
+                                                                        {% set counter = 1 %}
+                                                                        <ol>
+                                                                            
+                                                                            {% for invoice in items %}
+                                                                            
+                                                                            {% set invoice_status = invoice.invoice_status  %}							
+                                                                            {% set vehicle_id = invoice.vehicle_id  %}							
+                                                                            {% set invoice_type = invoice.invoice_type  %}
+                                                                            {% set invoice_date = invoice.invoice_date  %}
+                                                                            {% set invoice_no = invoice.invoice_no  %}				
+                                                                            {% set invoice_value = invoice.invoice_value  %}
+                                                                            {% set invoice_date_paid = invoice.invoice_date_paid  %}
+                                                                            {% set invoice_note = invoice.invoice_note  %}
+                                                                            {% set invoice_note_status = invoice.invoice_note_status  %}
+                                                                                
+                                                                        <tr>
+                                                                            <td class="text-center fit" >{{counter}}</td>
+                                                                            <td class="text-center fit"  x-text="invoice_status">{{ lookups.invoice_status[invoice.invoice_status] }}</td>
+                                                                            <td class="text-center fit"  x-text="vehicle_id">{{vehicle_id}}</td>
+                                                                            <td class="text-center fit"  x-text="invoice_type">{{ lookups.invoice_type[invoice.invoice_type] }}</td>
+                                                                            <td class="text-center fit"  x-text="invoice_date">{{invoice_date}}</td>
+                                                                            <td class="text-center fit"  x-text="invoice_no">{{invoice_no}}</td>
+                                                                            <td class="text-center fit"  x-text="invoice_value">{{invoice_value}}</td>
+                                                                            <td class="text-center fit"  x-text="invoice_date_paid">{{invoice_date_paid}}</td>
+
+                                                                            <td class="text-center fit"  x-text="invoice_note">{{invoice_note}}</td>
+                                                                            <td class="text-center fit"  x-text="invoice_note_status">{{invoice_note_status}}</td>
+                                                                            <td class="text-center fit">
+                                                                                <button  type="button" class="btn btn-outline-dark btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="تعديل الفاتورة">
+                                                                                    <a href="/invoice/edit/{{invoice.id}}" >
+                                                                                    <i class="bi bi-pencil-fill fs-5"></i></a>
+                                                                                </button> 
+                                                                                {% if invoice.invoice_status == 1 %}
+                                                                                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#endInvoice{{invoice.id}}" >
+                                                                                    <i class="bi bi-toggles fs-5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="تحديث الحالة"></i>
+                                                                                </button>
+                                                                                <!-- Modal -->
+                                                                                <div class="modal fade" id="endInvoice{{invoice.id}}" tabindex="-1" aria-labelledby="editInvoiceabel" aria-hidden="true">
+                                                                                    <div class="modal-dialog modal-dialog-centered">
+                                                                                        <div class="modal-content">
+                                                                                            <div class="modal-header bg-primary  text-white">
+                                                                                            
+                                                                                                <h1 class="modal-title  fs-5 " id="editInvoiceabel">تحديث الحالة</h1>
+                                                                                                <div class="d-flex flex-row-reverse mb-3 ">
+                                                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="modal-body" id="editInvoiceBody">
+                                                                                            <form action="/invoice/update_end/{{invoice.id}}" method="post">
+                                                                                            {{ csrf.fields | raw }}
+                                                                                                <div class="mb-3">
+                                                                                                    <select name="invoice_status" id="invoice_status" value="{{old.invoice_status }}"  class="form-select form-select-sm {{ errors.invoice_status ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+                                                                                                        <option  disabled selected hidden >-- الحالة--</option>
+                                                                                                        {% for key, value in lookups.invoice_status %}
+                                                                                                        <option value="{{ key }}" {{ invoice.invoice_status == key ? 'selected' : '' }}>{{ value }}</option>
+                                                                                                        {% endfor %}
+                                                                                                    </select>
+                                                                                                    <div class="invalid-feedback">
+                                                                                                        {{ errors.invoice_status | first }}
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                    <div class="form-floating mb-3">
+                                                                                                    <input type="date" name="invoice_date_paid" id="invoice_date_paid" value="{{  old.invoice_date_paid }}" class="form-control {{ errors.invoice_date_paid ? 'is-invalid' : '' }}" placeholder="تاريخ الدفع" aria-label="تاريخ الدفع">
+                                                                                                    <label for="floatingInput">تاريخ الدفع</label>
+                                                                                                    <div class="invalid-feedback">
+                                                                                                        {{ errors.invoice_date_paid | first }}
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="mb-3">
+                                                                                                    <input type="text" name="invoice_note_status" value="{{ old.invoice_note_status }}" class="form-control {{ errors.invoice_note_status ? 'is-invalid' : '' }}" placeholder="ملاحظات" aria-label="ملاحظات">
+                                                                                                    <div class="invalid-feedback">
+                                                                                                        {{ errors.invoice_note_status | first }}
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="modal-footer ">   
+                                                                                            <button type="submit" class="btn btn-success btn-sm">تحديث الحالة</button>                                     
+                                                                                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">اغلاق</button>
+                                                                                            </div>
+                                                                                            </form>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                {% endif %}
+                                                                            </td>
+                                                                        </tr>
+                                                                        
+                                                                        {% set counter = counter + 1 %}
+                                                                    {% endfor %}
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                {% endfor %}
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+{% endblock %}

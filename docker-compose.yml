@@ -1,0 +1,60 @@
+version: '3.7'
+
+volumes:
+    logs:
+        driver: local
+
+services:
+    slim:
+        build: .
+        working_dir: /var/www
+        command: php -S 0.0.0.0:8080 -t public
+        environment:
+            docker: "true"
+        ports:
+            - "8080:8080"
+        volumes:
+            - .:/var/www
+            - logs:/var/www/logs
+        networks:
+            app_net:
+                ipv4_address: 192.168.0.4 
+    db:
+        container_name: pg_container
+        image: postgres
+        restart: always
+        environment:
+            POSTGRES_DB: hr
+            POSTGRES_USER: root
+            POSTGRES_PASSWORD: root
+        ports:
+            - 5432:5432
+        expose:
+            - 5432
+        volumes:
+           - ./data/db:/var/lib/postgresql/data
+        networks:
+            app_net:
+                ipv4_address: 192.168.0.2 
+    pgadmin:
+        container_name: pgadmin4_container
+        image: dpage/pgadmin4
+        restart: always
+        environment:
+            PGADMIN_DEFAULT_EMAIL: ayamak@mtit.gov.ps
+            PGADMIN_DEFAULT_PASSWORD: root
+        ports:
+            - "5050:80"
+        volumes:
+             - ./data/pgadmin-data:/var/lib/pgadmin
+        networks:
+            app_net:
+                ipv4_address: 192.168.0.3 
+
+networks:
+  app_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: "192.168.0.0/24"
+          gateway: 192.168.0.1

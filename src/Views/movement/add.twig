@@ -1,0 +1,132 @@
+{% extends "master.twig" %}
+
+{% block main
+
+ %}
+
+	<form action="/movement/store" method="post">
+		{{ csrf.fields | raw }}
+		<div class="row mb-3 g-3 ">
+			<div class="col-12 col-md-12 col-xxl-12 d-flex">
+				<div class="card flex-fill ">
+					<div class="position-relative mb-5">
+						<img src="/img/cover/cover1.png" class="img-thumbnail border border-0 p-0" alt="..." style="max-height: 15rem; min-width: 100%;">
+					</div>
+					<div class="card-body mt-1" style="min-height: 15rem;">
+						<div class="row  g-3 mt-1">
+							<div class="col-12 col-md-8 col-xxl-8 ">
+								<div class="card-body mt-4 me-1 me-md-5" style="min-height: 7rem;">
+									<div class="d-flex justify-content-center">
+										<h3>
+											اضافة حركة 
+										</h3>
+									</div>
+									<div class="mb-3">
+										<select name="vehicle_id" id="vehicle_id" value="{{ old.vehicle_id }}"  class="form-select form-select-sm {{ errors.vehicle_id ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+											<option  disabled selected hidden >-- اختر المركبة --</option>
+											{% for vehicle in allVehicle %}
+                                            	<option value="{{ vehicle.id }}">{{ vehicle.vehicle_name }}</option>
+                                        	{% endfor %}
+										</select>
+										<div class="invalid-feedback">
+											{{ errors.vehicle_id | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<input type="text" name="itinerary" value="{{ old.itinerary }}" class="form-control {{ errors.itinerary ? 'is-invalid' : '' }}" placeholder="خط السير" aria-label="خط السير">
+										<div class="invalid-feedback">
+											{{ errors.itinerary | first }}
+										</div>
+									</div>
+									<div class="form-floating mb-3">
+										<input type="date" name="movement_date" id="movement_date" value="{{  old.movement_date }}" class="form-control {{ errors.movement_date ? 'is-invalid' : '' }}" placeholder="تاريخ المغادره" aria-label="تاريخ المغادره" onblur="date_check()">
+										<label for="floatingInput">تاريخ الحركة</label>
+											<div class="invalid-feedback">
+												{{ errors.movement_date | first }}
+											</div>
+									</div>
+									<div class="mb-3">
+										<select name="driver" id="driver" value="{{ old.driver }}"  class="form-select form-select-sm {{ errors.driver ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+											<option  disabled selected hidden >-- اختر السائق --</option>
+											{% for driver in allEmploy %}
+                                            	<option value="{{ driver.employee_id }}">{{ driver.f_name ~ ' ' ~ driver.l_name }}</option>
+                                        	{% endfor %}
+										</select>
+										<div class="invalid-feedback">
+											{{ errors.driver | first }}
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-2">
+											<label>من </label>
+										</div>
+										<div class="col">
+											<input type="time" class="form-control" name="starting_hour" id="starting_hour" value="" class="time-date-ghost" >
+										</div>
+										<div class="col-sm-2">
+											<label>الى</label>
+										</div>
+										<div class="col">
+											<input type="time" name="end_hour" id="end_hour" value="" class="form-control "  onblur="time_check()">
+										</div>
+									</div>	
+									<br>
+									<div class="mb-3">
+										<input type="text" name="star_counter_no" value="{{ old.star_counter_no }}" class="form-control {{ errors.star_counter_no ? 'is-invalid' : '' }}" placeholder="العداد عند البداية" aria-label="العداد عند البداية">
+										<div class="invalid-feedback">
+											{{ errors.star_counter_no | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<input type="text" name="end_counter_no" value="{{ old.end_counter_no }}" class="form-control {{ errors.end_counter_no ? 'is-invalid' : '' }}" placeholder="العداد عند النهاية" aria-label="العداد عند النهاية">
+										<div class="invalid-feedback">
+											{{ errors.end_counter_no | first }}
+										</div>
+									</div>
+									<div class="row mb-5 g-3 ">
+										<div class="col-12 col-md-12 col-xxl-12 d-flex">
+											<div class="card flex-fill ">
+												<div class="card-body me-3 mt-1">
+													<div class="d-flex justify-content-center">
+														<button type="submit" class="btn btn-primary">حفظ الحركة</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>	
+		</div>
+
+		
+	</form>
+<script>
+
+  
+function date_check(){
+getdate = document.getElementById("movement_date").value;
+let date = new Date().toJSON().slice(0, 10);
+console.log(Date);
+if (getdate < date){
+	
+alert('تاريخ الحركة اقل من التاريخ الحالي ');
+document.getElementById("movement_date").select ;
+}
+
+	}
+	function time_check(){
+		start = document.getElementById("starting_hour").value;
+		end = document.getElementById("end_hour").value;
+		if(end <= start){
+alert('نهاية الحركة اقل من بدايتها ')
+document.getElementById("end_hour").select ;
+		}
+	}
+</script>
+
+{% endblock %}

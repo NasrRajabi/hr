@@ -1,0 +1,378 @@
+{% extends "master.twig" %}
+
+
+{% block style %}
+
+
+	<link rel="stylesheet" href="/css/ol.css">
+	<style>
+		.map {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+{% endblock %}
+
+
+{% block main %}
+
+
+
+
+
+			<main class="col ms-1">
+
+				<!-- Modal -->
+				<div class="modal fade" id="officeModal" tabindex="-1" aria-labelledby="officeModalLabel"
+					aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h1 class="modal-title fs-5" id="officeModalLabel"></h1>
+								<button type="button" class="btn-close ms-0" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<div id="popup-content"></div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">اغلاق</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="row mb-3 g-3 ">
+					<div class="col-12 col-md-12 col-xxl-12 d-flex">
+						<div class="card flex-fill ">
+							<div class="card-header">
+
+								<h6 class="card-title">مراقبة دوام لموظف</h6>
+							</div>
+							<div class="card-body">
+								<form class="d-flex" role="search" action="employee_profile.html" method="get">
+									<input class="form-control ms-2" type="search"
+										placeholder="اسم الموظف او الرقم الوظيفي" aria-label="Search">
+									<button class="btn btn-success" type="submit">بحث</button>
+								</form>
+
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+				<div class="row mb-3 g-3 ">
+					<div class="col-12  col-md-10 col-xxl-10 d-flex">
+						<div class="card flex-fill " style="min-height: 50rem;">
+							<div class="card-header">
+
+								<h6 class="card-title">خارطة دوام المكاتب</h6>
+							</div>
+							<div class="card-body">
+								<div id="map" class="map" style="min-height: 50rem;"></div>
+
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-md-2 col-xl-2 col-xxl-2">
+						<div class="card flex-fill w-100" style="min-height: 50rem;">
+							<div class="card-header ">
+								<h6 class="card-title  mt-1"> دوام الموظفين خلال هذا اليوم</h6>
+							</div>
+							<div class="card-body py-5">
+								<div class="chart " style="height:50rem;">
+									<canvas id="chartjs-dashboard-line2"></canvas>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+			</main>
+
+{% endblock %}
+
+
+
+
+
+{% block script %}
+
+
+	<script src="/js/ol.js"></script>
+
+	<script>
+		mapThemFun();
+		window.addEventListener('DOMContentLoaded', () => {
+
+			document.querySelectorAll('[data-bs-theme-value]')
+				.forEach(toggle => {
+					toggle.addEventListener('click', () => {
+						mapThemFun();
+					})
+				})
+		})
+		
+		function mapThemFun() {
+			var html = document.querySelector('html');
+			if (html.getAttribute('data-bs-theme') == 'dark') {
+
+				document.getElementById('map').style.filter = "invert(100%)";
+				document.getElementById('map').style.filter += "hue-rotate(180deg)";
+			} else {
+				document.getElementById('map').style.filter = "none";
+			}
+
+		}
+
+
+
+		var p1 = new ol.Feature({
+			type: 'Point',
+			geometry: new ol.geom.Point(ol.proj.fromLonLat([35.2057, 31.8822])),
+			name: 'مكتب بريد رام الله ',
+			desc: ' <br /> عدد الموظفين الحاضرين = 15 <br />عدد الموظفين الغائبين =  3 <br /> عدد الموظفين المغادرين = 1' ,
+
+		});
+
+		var p2 = new ol.Feature({
+			type: 'Point',
+			geometry: new ol.geom.Point(ol.proj.fromLonLat([35.2798, 32.2058])),
+			name: 'مكتب بريد نابلس',
+			desc: ' <br /> عدد الموظفين الحاضرين = 13 <br />عدد الموظفين الغائبين =  2 <br /> عدد الموظفين المغادرين = 4' ,
+		});
+
+		var iconStyle = new ol.style.Style({
+			image: new ol.style.Icon({
+				anchor: [0.5, 46],
+				anchorXUnits: 'fraction',
+				anchorYUnits: 'pixels',
+				src: '/img/icons/office.png',
+				scale: 0.1
+			})
+
+		});
+
+		var labelStyle = new ol.style.Style({
+			text: new ol.style.Text({
+				font: '16px Cairo, sans-serif',
+				overflow: true,
+				fill: new ol.style.Fill({
+					color: '#2196f3',
+					width: 2
+				}),
+				stroke: new ol.style.Stroke({
+					color: '#f9fbe7',
+					width: 3
+				}),
+				offsetY: -12
+			})
+		});
+
+		var style = [iconStyle, labelStyle];
+
+
+
+		/**
+		 * Elements that make up the popup.
+		 */
+		const content = document.getElementById('popup-content');
+		const officeModalLabel = document.getElementById('officeModalLabel');
+
+
+
+
+
+		/**
+		 * Create the map.
+		 */
+		var map = new ol.Map({
+			target: 'map',
+			layers: [
+				new ol.layer.Tile({
+					source: new ol.source.OSM()
+				}),
+
+				new ol.layer.Vector({
+					source: new ol.source.Vector({
+						features: [p1, p2]
+					}),
+					style: function (feature) {
+						labelStyle.getText().setText(feature.get('name'));
+						return style;
+					}
+				})
+			],
+
+			view: new ol.View({
+				center: ol.proj.fromLonLat([35.2057, 31.7822]),
+
+				zoom: 9,
+			})
+		});
+
+
+		map.on('click', function (evt) {
+			let feature = map.forEachFeatureAtPixel(evt.pixel, function (feat, layer) {
+				return feat;
+			});
+			if (feature && feature.get('type') == 'Point') {
+
+				content.innerHTML = feature.get('desc');
+
+				officeModalLabel.innerHTML = feature.get('name');
+				var officeModal = new bootstrap.Modal('#officeModal', {
+					keyboard: false
+				})
+				officeModal.show();
+
+			} else
+
+
+				var officeModal = new bootstrap.Modal('#officeModal', {
+					keyboard: false
+				})
+			officeModal.hide();
+		});
+
+
+
+	</script>
+
+
+
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			var ctx = document.getElementById("chartjs-dashboard-line2").getContext("2d");
+			var gradient = ctx.createLinearGradient(0, 0, 0, 225);
+			gradient.addColorStop(0, "rgba(215, 227, 244, 1)");
+			// Line chart
+			new Chart(document.getElementById("chartjs-dashboard-line2"), {
+				type: "bar",
+				data: {
+					labels: ["اليوم"],
+					datasets: [
+						{
+							label: "عدد الموظفين الحاضرين",
+							fill: true,
+							data: [
+								500
+							],
+
+							backgroundColor: [
+								'rgba(75, 192, 192, 0.4)',
+
+
+							],
+							borderColor: [
+								'rgb(75, 192, 192)',
+
+
+							],
+							stack: 'Stack 0',
+							borderWidth: 1,
+							barPercentage: 1,
+							categoryPercentage: .5
+
+						},
+						{
+							label: "عدد الموظفين المغادريـن",
+							fill: true,
+							data: [
+								20
+							],
+
+							backgroundColor: [
+								'rgba(75, 192, 192, 0.4)',
+
+
+							],
+							borderColor: [
+								'rgb(75, 192, 192)',
+
+
+							],
+							stack: 'Stack 0',
+							borderWidth: 1,
+							barPercentage: 1,
+							categoryPercentage: .5
+
+						},
+						{
+							label: "عدد الموظفين الغـائـبـيـن",
+							fill: true,
+							data: [
+								50
+							],
+
+							backgroundColor: [
+								'rgba(75, 192, 192, 0.4)',
+
+
+							],
+							borderColor: [
+								'rgb(75, 192, 192)',
+
+
+							],
+							stack: 'Stack 0',
+							borderWidth: 1,
+							barPercentage: 1,
+							categoryPercentage: .5
+
+						},
+						
+
+					],
+
+				},
+				options: {
+					maintainAspectRatio: false,
+					legend: {
+						display: false
+					},
+					tooltips: {
+						intersect: false
+					},
+					hover: {
+						intersect: true
+					},
+					plugins: {
+						filler: {
+							propagate: false
+						},
+						colors: {
+							enabled: true,
+							forceOverride: true
+						}
+					},
+					scales: {
+						xAxes: [{
+							reverse: true,
+							gridLines: {
+								color: "rgba(0,0,0,0.0)"
+							}
+						}],
+						yAxes: [{
+							ticks: {
+								stepSize: 1000
+							},
+							display: true,
+							borderDash: [3, 3],
+							gridLines: {
+								color: "rgba(0,0,0,0.0)"
+							}
+						}]
+					}
+				}
+			});
+		});
+	</script>
+{% endblock %}
+
+
+
+

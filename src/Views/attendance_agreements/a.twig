@@ -1,0 +1,83 @@
+	<div class="accordion">
+					{% for name, items in data %}
+						<div class="accordion-item mb-3">
+							<h2 class="accordion-header">
+								<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}" aria-expanded="false" aria-controls="collapse{{ loop.index }}">
+
+									<div class="d-flex mb-3">
+										<div class="p-2">
+											{{ name }}</div>
+
+									</div>
+
+
+								</button>
+							</h2>
+							<div id="collapse{{ loop.index }}" class="accordion-collapse collapse" aria-labelledby="heading{{ loop.index }}" data-bs-parent=".accordion">
+
+
+								<div class="accordion-body">
+
+
+									<a href="/attendance_agreements/edit/{{items[0].id }}" class="btn btn-outline-primary float-start px-5 mb-3">
+										<i class="bi bi-pencil-square"></i>
+										تعديل
+									</a>
+
+
+									<table class="table table-bordered text-center  ">
+										<thead class="thead-dark">
+											<tr class="bg-dark-subtle">
+
+												<th>
+													اليوم</th>
+												<th>
+													بداية الدوام</th>
+												<th>
+													نهاية الدوام</th>
+												<th>آخر وقت لاحتساب بصمة الحضور
+												</th>
+												<th>فترة السماح للحضور (بالدقائق )</th>
+												<th>
+													فترة السماح للانصراف (بالدقائق)</th>
+												<th>الحد الأعلى لعدد ساعات المغادرات الخاصة</th>
+											</tr>
+										</thead>
+										<tbody>
+											{% for item in items %}
+												{% if item.att_status == 3 %}
+													<tr class="bg-success-subtle">
+
+
+														<td>{{ lookups.days[item.day] }}</td>
+														<td>{{ item.start_time }}</td>
+														<td>{{ item.end_time }}</td>
+														<td>{{ item.check_in_end }}</td>
+														<td>{{ item.allowed_time_check_in }}</td>
+														<td>{{ item.allowed_time_check_out }}</td>
+														<td>{{ item.allowed_p_leave_hours }}</td>
+													</tr>
+												{% else %}
+
+													<tr class="bg-danger-subtle">
+
+														<td>{{ lookups.days[item.day] }}</td>
+														<td colspan="6">
+															<span class="badge text-bg-danger fs-6">{{  lookups.att_status[item.att_status]  }}</span>
+														</td>
+
+
+													</tr>
+												{% endif %}
+
+											{% endfor %}
+										</tbody>
+									</table>
+
+
+								</div>
+
+							</div>
+						</div>
+					{% endfor %}
+				</div>

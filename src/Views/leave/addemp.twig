@@ -1,0 +1,152 @@
+{% extends "master.twig" %}
+
+{% block main %}
+
+	<form action="/leave/add" method="post">
+		{{ csrf.fields | raw }}
+		<div class="row mb-3 g-3 ">
+			<div class="col-12 col-md-12 col-xxl-12 d-flex">
+				<div class="card flex-fill ">
+					<div class="position-relative mb-5">
+						<img src="/img/cover/cover1.png" class="img-thumbnail border border-0 p-0" alt="..." style="max-height: 15rem; min-width: 100%;">
+						<div class="position-absolute top-100 start-5 translate-middle ">
+
+							<img src="/img/users/default.png" class="rounded-circle border border-5 border-light-subtle" alt="..." style="max-height: 12rem; max-width: 12rem;">
+
+						</div>
+					</div>
+					<div class="card-body mt-1" style="min-height: 15rem;">
+
+						<div class="row  g-3 mt-1">
+
+							<div class="col-12 col-md-8 col-xxl-8 ">
+					<div class="card-body mt-4 me-1 me-md-5" style="min-height: 7rem;">
+						<div class="d-flex justify-content-center">
+							<h3>
+						اضافة اذن مغادره لموظف
+							</h3>
+						</div>
+
+                      <div class="mb-3">
+                          
+                          <select name="employee_id" id="employee_id" class="form-select form-select-sm" aria-label=".form-select-sm example">
+                          <option value="null">-- اختر الموظف --</option>
+                            {% for role in data %}
+                                  <option value="{{ role.employee_id }}">{{ role.f_name ~ ' ' ~ role.l_name }}</option>
+                              {% endfor %}
+                          </select>
+
+                         
+                      </div>
+
+							<div class="mb-3">
+									<select name="leave_type" id="leave_type"class="form-select form-select-sm {{ errors.leave ? 'is-invalid' : '' }}" aria-label=".form-select-sm example" onchange="showDiv()">
+										<option value="null">-- اختر نوع اذن المغادره --</option>
+										{% for key, value in lookups.leave %}
+											<option value="{{ key }}" {{ old.leave == key ? 'selected' : '' }}>{{ value }}</option>
+										{% endfor %}
+									</select>
+									<div class="invalid-feedback">
+										{{ errors.leave | first }}
+									</div>
+						</div>
+						<div class="form-floating mb-3">
+									<input type="date" name="leave_date" id="leave_date" value="{{  "now"|date("m/d/Y") }}" class="form-control " placeholder="تاريخ المغادره" aria-label="تاريخ المغادره" onblur="date_check()">
+									<label for="floatingInput">تاريخ المغادره</label>
+									
+						</div>
+						<div class="container">
+							<div class="row">
+								<div class="col-sm-2">
+										<label class="col-sm-3">من </label>
+								</div>
+								<div class="col">
+									<input type="time" class="form-control" name="leave_start" id="leave_start" value="" class="time-date-ghost" ></div>
+								 
+								<div class="col-sm-2">
+									<label  >الى</label>
+								</div>
+									<div class="col">
+									
+										<input type="time" name="leave_end" id="leave_end" value="" class="form-control "  onblur="time_check()">
+										
+									</div>
+							</div>	
+						</div>
+						
+						<div class="row" id="hidden_div" >		
+									<div class="form-check">
+										<input class="form-check-input" type="checkbox" value="1" id="need_car" name="need_car" checked>
+										<label class="form-check-label" for="flexCheckChecked">
+											بحاجة لمركبة
+										</label>
+									</div>
+
+								<div class="row">
+										<div class="col-sm-2">
+										<label class="form-label" for="textAreaExample3">وجهة المغادره</label>
+										</div>
+										<div class="col">
+											<textarea class="form-control" id="leave_dir" name="leave_dir" rows="2"></textarea>
+											
+										
+										</div>
+								</div>
+
+						</div>
+						<div class="row mb-5 g-3 ">
+			<div class="col-12 col-md-12 col-xxl-12 d-flex">
+				<div class="card flex-fill ">
+					<div class="card-body me-3 mt-1">
+						<div class="d-flex justify-content-center">
+							<button type="submit" class="btn btn-primary">حفظ المغادره</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+							</div>
+							</div>
+						</div>
+						</div>
+			</div>
+
+		</div>	
+				</div>
+			</div>
+
+		</div>
+
+		
+	</form>
+
+<script>
+    function showDiv(){
+        getSelectValue = document.getElementById("leave_type").value;
+        if(getSelectValue == 2){
+            document.getElementById("hidden_div").style.display="block";
+        }else{
+            document.getElementById("hidden_div").style.display="none";
+        }
+    }
+	function date_check(){
+getdate = document.getElementById("leave_date").value;
+let date = new Date().toJSON().slice(0, 10);
+console.log(Date);
+if (getdate < date){
+	
+alert('تاريخ المغادره اقل من التاريخ الحالي ');
+document.getElementById("leave_date").select ;
+}
+
+	}
+	function time_check(){
+		start = document.getElementById("leave_start").value;
+		end = document.getElementById("leave_end").value;
+		if(end <= start){
+alert('نهاية المغادره اقل من بدايتها ')
+document.getElementById("leave_end").select ;
+		}
+	}
+</script>
+{% endblock %}

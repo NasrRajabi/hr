@@ -1,0 +1,131 @@
+{% extends "master.twig" %}
+
+{% block style %}{% endblock %}
+
+{% block main %}
+	<main class="col ms-1">
+		<div class="row">
+			<div class="card">
+				<div class="card-header row justify-content-between p-3 border-bottom">
+					<div class="col-md-6">
+						<h4 class="text-end me-3 mt-3">سجل أرقام الهواتف الداخلية لموظفي الوزارة</h4>
+					</div>
+				</div>
+
+				<div class="card-body">
+					<div x-data="dataTable()">
+						<div class="table-responsive">
+							<div class="mb-5">
+								<input type="text" id="search" x-model="searchTerm" class="form-control" placeholder="ابحث عن موظف"/>
+							</div>
+							<table class="table table-hover align-middle mt-3">
+								<thead>
+									<tr>
+										<th class="text-center fit">#</th>
+										<th class="text-center fit">الرقم الوظيفي</th>
+										<th class="text-center fit">اسم الموظف</th>
+										<th class="text-center fit">الرقم الداخلي </th>
+										<th class="text-center fit">الاجراءات</th>
+									</tr>
+								</thead>
+								<tbody class="table-group-divider">
+									<template x-for="(row, index) in filteredRows" :key="index">
+										<tr>
+											<td class="text-center fit" x-text="row.id"></td>
+											<td class="text-center fit" x-text="row.employeeNo"></td>
+											<td class="text-center fit" x-text="row.name"></td>
+											<td class="text-center fit" id="form">
+											
+													<input type="text" :disabled="row.editMode" x-model="row.tel" class="form-control" id="tel" name="tel">
+											
+											</td>
+											<td class="text-center fit">
+												<div class="d-flex">
+													<div class="row ms-1">
+														<div x-show="row.editMode">
+															<button x-on:click="row.editMode = !row.editMode" class="btn btn-primary">
+																<i class="bi bi-pencil-square"></i>
+															</button>
+														</div>
+														<div x-show="!row.editMode">
+															<button x-on:click="addTel($event.target, row)" type="button" class="btn btn-success">
+																<i class="bi bi-save"></i>
+																حفظ
+															</button>
+														</div>
+													</div>
+													<template x-if="!row.tel">
+														{% if not value.tel %}
+															<button class="btn btn-danger" type="button" disabled>
+																<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+																لم يتم تعيين رقم خليوي للموظف
+															</button>
+														{% endif %}
+													</template>
+												</div>
+											</td>
+										</tr>
+									</template>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+<div id="errorContainer"></div>
+
+		<script>
+			const dataTable = () => {
+return {
+table: null,
+options: {
+searching: true,
+ordering: true,
+paging: true,
+lengthChange: true,
+info: true,
+autoWidth: true
+},
+searchTerm: '',
+rows: [{% for value in data %}
+{
+id: {{ value.employee_id }},
+employeeNo: {{ value.employee_no }},
+name: '{{ value.f_name ~ ' ' ~ value.s_name ~ ' ' ~ value.t_name ~ ' ' ~ value.l_name }}',
+tel: '{{ value.g_telephone }}',
+editMode: true // Add the editMode property
+},{% endfor %}],
+
+filteredRows() {
+if (!this.searchTerm) {
+return this.rows;
+}
+return this.rows.filter((row) => {
+return row.name.toLowerCase().includes(this.searchTerm.toLowerCase()) || row.employeeNo.toLowerCase().includes(this.searchTerm.toLowerCase());
+});
+},
+
+addTel(button, row) {
+
+const addEmpModal = document.getElementById("form");
+post(`/official_reach/gov_tel/add`, {
+id: row.id,
+tel: row.tel
+}, button, addEmpModal).then((response) => {
+if (response.ok) {
+response.json().then((response) => {
+console.log(response);
+// Update the editMode after a successful save
+row.editMode = true;
+});
+}
+});
+}
+};
+};
+
+Alpine.data('dataTable', dataTable);
+		</script>
+	</main>
+{% endblock %}

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+	<head>
+
+       <style>
+      
+            body{
+                font-size: 14px;
+                text-align: right;
+            }
+
+        </style>
+
+
+	</head>
+
+	<body>
+
+
+        <div style="font-size:18px; text-align:center ">الادارة العامة للشؤون الادارية والمالية</div>
+        
+        <table>
+            <tr>
+                <td style="text-align:center;">رقم الموظف :</td>
+                <td style="width:60%; border-bottom: dotted; text-align:center;">{{vacationInfo.employee_no}}</td>
+            </tr>
+            <tr>
+                <td style="text-align:center;">التاريـــــــــخ :</td>
+                <td style="width:60%; border-bottom: dotted; text-align:center;">{{vacationInfo.create_date|date("d/m/Y")}}</td>
+            </tr>            
+        </table>
+        <br>
+        <div style="vertical-align: middle; border:double; font-size:20px; text-align:center;">طلب إجازة داخلية (عادية/ عارضة) خارجية</div>
+        
+        <table style="width:100%;">
+            <tr style="width:100%;">
+                <td style="width:25%; text-align:right;">الإســم : </td>
+                <td style="width:25%; border-bottom: dotted; text-align:center;">{{vacationInfo.employee_name}}</td>
+
+                <td style="width:25%; text-align:left;">الوظيفــة :</td>
+                <td style="width:25%; border-bottom: dotted; text-align:center;">{{vacationInfo.employee_job}}</td>
+            </tr>
+            
+            <tr style="width:100%;">
+                <td style="width:25%; text-align:right;">التاريخ المحدد للقيام بالاجازة : </td>
+                <td style="width:25%; border-bottom: dotted; text-align:center;">{{vacationInfo.start_date|date("d/m/Y")}}</td>
+
+                <td style="width:25%; text-align:left;">مدة الاجازة المطلوبة :</td>
+                <td style="width:25%; border-bottom: dotted; text-align:center;">{{vacationInfo.day_count }}  يوم </td>
+            </tr>
+
+            <tr style="width:100%;">
+                <td style="font-size:14px; width:25%; text-align:right;">سبب القيام بالأجازة : </td>
+                <td style="font-size:14px; width:25%; border-bottom: dotted; text-align:center;">{{vacationInfo.vacation_name}}</td>
+
+                <td style="width:25%; text-align:left;">تاريخ تقديم الطلب : </td>
+                <td style="width:25%; border-bottom: dotted; text-align:center;">{{vacationInfo.create_date|date("d/m/Y") }}</td>
+            </tr>
+
+            <tr style="width:100%;">
+                <td style="width:25%;"></td>
+                <td style="width:25%;"></td>
+
+                <td style="width:25%; text-align:left;">توقيع الموظف : </td>
+                <td style="width:25%; border-bottom: dotted;"></td>
+            </tr>
+        </table>
+        
+        <br>
+        
+        <div style="text-align:center; font-size:18px; border-top:1px solid; border-bottom:1px solid;">لاستعمال وحدة شؤون الموظفين بالوزارة</div>
+
+        <table style="width:100%;">
+            <tr>
+                <td style="text-align:center;">مقدار الأجازة المستحقة</td>
+                <td style="width:10%;"></td>                   
+                <td style="text-align:center;">استنفذ منها</th>
+                <td style="width:10%;"></td> 
+                <td style="text-align:center;">الرصيد المتبقي</td>                                                         
+            </tr>
+
+            <tr>
+                <td style="width:20%; border-bottom: dotted; text-align:center;">{{vacationInfo.start_balance}}</td>
+                <td style="width:10%;"></td> 
+                <td style="width:20%; border-bottom: dotted; text-align:center;">{{vacationInfo.spent_balance}}</td>                        
+                <td style="width:10%;"></td> 
+                <td style="width:20%; border-bottom: dotted; text-align:center;">{{vacationInfo.current_balance}}</td>
+            </tr>
+        </table>
+
+        <table  style="width:100%; border-bottom:1px solid; padding-bottom:10px">
+            <tr>
+                <td style="width:15%;">الرصيد السابق / </td>
+                <td style="width:20%; border-bottom: dotted;text-align:right"></td>
+                <td style="width:10%;"></td>
+                <td style="text-align:left">التوقيع: </td>
+                <td style="width:20%; border-bottom: dotted; text-align:left;"></td>                                       
+            </tr>                
+        </table>
+
+        <table style="width:100%; padding-top:20px;">
+            <tr>
+                <th colspan="2" style="border-bottom:1px solid; width:40%">لاستعمال المسؤول المباشر</th>
+                <th style="width:10%"></th>
+                <th colspan="2" style="border-bottom:1px solid; width:40%">لاستعمال الوزارة</th>
+            </tr>
+
+            <tr>
+                <td style="width:20%">أوافق/ لا أوافق: </td>
+                <td style="width:20%; border-bottom:dotted; "></td>
+                <td style="width:10%"></td>
+                <td style="width:20%">أوافق/ لا أوافق: </td>
+                <td style="width:20%; border-bottom:dotted; "></td>                
+            </tr>
+
+            <tr>
+                <td style="width:20%">مدة الاجازة المصادق عليها: </td>
+                <td style="width:20%; border-bottom:dotted; "></td>
+                <td colspan="3" style="width:50%"></td>                
+            </tr>
+
+            <tr>
+                <td style="text-align:right; width:20%">يقوم بالعمل مكانه السيد/ة: </td>
+                <td style="text-align:right; width:20%; border-bottom:dotted; "></td>
+                <td style="width:10%"></td>
+                <td colspan="2" style="text-align:center; width:40%">توقيع الوزير/ الوكيل/الادارة العامة</td>                  
+            </tr>
+
+            <tr>
+                <td style="width:20%">توقيع المسؤول المباشر: </td>
+                <td style="width:20%; border-bottom:dotted; "></td>
+                <td style="width:10%"></td>
+                <td colspan="2" style="width:40%; border-bottom:dotted; text-align:center; "></td>                
+            </tr>
+        </table>
+
+        <br>
+        
+        <div style="text-align:center; font-size:18px;border-bottom:1px solid;">إقرار القيام بالاجازة</div>
+
+        <table  style="width:100%;">
+            <tr>
+                <td style="width:35%;">يوم وتاريخ القيام بالاجازة: &nbsp;&nbsp;اليوم </td>
+                <td style="width:15%; border-bottom: dotted; text-align:right;"></td>
+                
+                <td style="width:10%;  text-align:left;">التاريخ</td>
+                <td style="width:20%; border-bottom: dotted; text-align:right;"></td>
+                <td width="20%"></td>                                       
+            </tr> 
+
+            <tr>
+                <td style="width:35%;">يوم وتاريخ العودة من الاجازة: &nbsp;&nbsp;اليوم </td>
+                <td style="width:15%; border-bottom: dotted; text-align:right;"></td>
+                
+                <td style="width:10%;  text-align:left;">التاريخ</td>
+                <td style="width:20%; border-bottom: dotted; text-align:right;"></td>
+                <td width="20%"></td>                                       
+            </tr> 
+        </table>
+
+        <table  style="width:100%; font-size:13px; border-bottom:1px solid; padding-bottom:10px">
+            <tr>
+                <td style="width:13%;">توقيع الموظف</td>
+                <td style="width:10%; border-bottom: dotted; text-align:right;"></td>
+
+                <td style="width:25%; text-align:left;">توقيع المسؤول المباشر</td>
+                <td style="width:11%; border-bottom: dotted; text-align:right;"></td>
+
+                <td style="width:30%;  text-align:left;">توقيع الوزير/ الوكيل/ الادارة العامة</td>
+                <td style="width:11%; border-bottom: dotted; text-align:right;"></td>
+                                   
+            </tr> 
+
+        </table>
+
+        <br>
+
+        <div style="text-align:center; font-size:18px;border-bottom:1px solid;">إقرار العودة من الاجازة</div>
+
+        <table  style="width:100%;">
+            <tr>
+                <td style="width:40%;">يوم وتاريخ العودة الفعلي من الاجازة : &nbsp;&nbsp;اليوم </td>
+                <td style="width:20%; border-bottom: dotted; text-align:right;"></td>
+                
+                <td style="width:10%;  text-align:left;">التاريخ</td>
+                <td style="width:20%; border-bottom: dotted; text-align:right;"></td>
+                <td width="10%"></td>                                       
+            </tr> 
+        </table>
+
+        <table  style="width:100%; font-size:13px;">
+            <tr>
+                <td style="width:13%;">توقيع الموظف</td>
+                <td style="width:10%; border-bottom: dotted; text-align:right;"></td>
+
+                <td style="width:25%; text-align:left;">توقيع المسؤول المباشر</td>
+                <td style="width:11%; border-bottom: dotted; text-align:right;"></td>
+
+                <td style="width:30%;  text-align:left;">توقيع الوزير/ الوكيل/ الادارة العامة</td>
+                <td style="width:11%; border-bottom: dotted; text-align:right;"></td>
+                                   
+            </tr> 
+
+        </table>
+
+	</body>
+
+</html>

@@ -1,0 +1,141 @@
+{% extends "master.twig" %}
+
+
+{% block style %}
+
+{% endblock %}
+
+{% block main %}
+
+		    <div class="row">
+			    <div class="col-12 col-md-12 col-xxl-12 d-flex">
+				    <div class="card flex-fill ">
+					    <div class="card-body">	
+							<h5 class="card-title">قائمة الحركات</h5>
+							<br>
+						    <div class="table-responsive">
+                                <div class="m-4">
+                                    <div class="accordion" id="myAccordion">
+                                        <div class="accordion-item">
+                                            <div class="card-body">
+                                                <table class="table table-striped table-bordered  table-hover table-sm  align-middle" x-ref="dataTable">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="text-center fit">#</th>
+                                                                    <th class="text-center fit">حالة الحركة</th>
+                                                                    <th class="text-center fit">المركبة</th>
+                                                                    <th class="text-center fit"> خط السير </th>
+                                                                    <th class="text-center fit">تاريخ بداية الحركة </th>
+                                                                    <th class="text-center fit">السائق</th>
+                                                                    <th class="text-center fit">ساعة البداية</th>
+                                                                    <th class="text-center fit">عداد البداية</th>
+                                                                     <th class="text-center fit">تاريخ انتهاء الحركة </th>	
+                                                                    <th class="text-center fit">ساعة النهاية</th>
+                                                                    <th class="text-center fit"> عداد النهاية</th>
+                                                                    <th class="text-center fit">الاجراءات</th>	
+                                                                </tr>
+                                                            </thead>
+                                                            {% set counter = 1 %}
+                                                            <ol>
+                                                                
+                                                                {% for movement in data %}
+                                                                
+                                                                {% set movement_status = movement.movement_status  %}							
+                                                                {% set vehicle_id = movement.vehicle_id  %}							
+                                                                {% set itinerary = movement.itinerary  %}
+                                                                {% set movement_date = movement.movement_date  %}
+                                                                {% set driver = movement.driver  %}				
+                                                                {% set starting_hour = movement.starting_hour  %}				
+                                                                {% set star_counter_no = movement.star_counter_no  %}
+                                                                {% set end_movement_date = movement.end_movement_date  %}
+                                                                {% set end_hour = movement.end_hour  %}	
+                                                                {% set end_counter_no = movement.end_counter_no  %}				
+                                                            <tr>
+                                                                <td class="text-center fit" >{{counter}}</td>
+                                                                <td class="text-center fit"  x-text="movement_status">{{movement_status}}</td>
+                                                                <td class="text-center fit"  x-text="vehicle_id">{{vehicle_id}}</td>
+                                                                <td class="text-center fit"  x-text="itinerary">{{itinerary}}</td>
+                                                                <td class="text-center fit"  x-text="movement_date">{{movement_date}}</td>
+                                                                <td class="text-center fit"  x-text="driver">{{driver}}</td>
+                                                                <td class="text-center fit"  x-text="starting_hour">{{starting_hour}}</td>
+                                                                <td class="text-center fit"  x-text="star_counter_no">{{star_counter_no}}</td>
+                                                                <td class="text-center fit"  x-text="end_movement_date">{{end_movement_date}}</td>
+                                                                <td class="text-center fit"  x-text="end_hour">{{end_hour}}</td>
+                                                                <td class="text-center fit"  x-text="end_counter_no">{{end_counter_no}}</td>
+                                                                <td class="text-center fit">
+                                                                    <button  type="button" class="btn btn-outline-dark btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="تعديل الحركة">
+                                                                        <a href="/movement/edit/{{movement.id}}" >
+                                                                        <i class="bi bi-pencil-fill fs-5"></i></a>
+                                                                    </button> 
+
+                                                                     <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#endMovement{{movement.id}}" >
+                                                                        <i class="bi bi-toggles fs-5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="انهاء الحركة"></i>
+                                                                    </button>
+
+                                                                    <!-- Modal -->
+                                                                   <div class="modal fade" id="endMovement{{movement.id}}" tabindex="-1" aria-labelledby="editLeaveLabel" aria-hidden="true">
+                                                                    <div class="modal-dialog modal-dialog-centered">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header bg-primary  text-white">
+                                                                            
+                                                                                <h1 class="modal-title  fs-5 " id="editLeaveLabel">انهاء الحركة</h1>
+                                                                                <div class="d-flex flex-row-reverse mb-3 ">
+                                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="modal-body" id="editLeaveBody">
+                                                                            <form action="/movement/update_end/{{movement.id}}" method="post">
+                                                                            {{ csrf.fields | raw }}
+                                                                                <div class="form-floating mb-3">
+                                                                                    <input type="date" name="end_movement_date" id="end_movement_date" value="{{  old.end_movement_date }}" class="form-control {{ errors.end_movement_date ? 'is-invalid' : '' }}" placeholder="تاريخ المغادره" aria-label="تاريخ المغادره" onblur="date_check()">
+                                                                                    <label for="floatingInput">تاريخ انتهاء الحركة</label>
+                                                                                    <div class="invalid-feedback">
+                                                                                        {{ errors.end_movement_date | first }}
+                                                                                    </div>
+                                                                                </div>
+                                                                                    <div class="row">
+                                                                                    <div class="col-sm-12">
+                                                                                        <label>ساعة الانتهاء</label>
+                                                                                    </div>
+                                                                                    <div class="mb-3">
+                                                                                        <input type="time" name="end_hour" id="end_hour" value="" class="form-control"  onblur="time_check()">
+                                                                                        <input type="hidden" name="movement_status" value="3" class="form-control">
+                                                                                    </div>
+                                                                                </div>	
+                                                                                <br>
+                                                                                <div class="mb-3">
+                                                                                    <input type="text" name="end_counter_no" value="{{ old.end_counter_no }}" class="form-control {{ errors.end_counter_no ? 'is-invalid' : '' }}" placeholder="العداد عند النهاية" aria-label="العداد عند النهاية">
+                                                                                    <div class="invalid-feedback">
+                                                                                        {{ errors.end_counter_no | first }}
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="modal-footer ">   
+                                                                            <button type="submit" class="btn btn-success btn-sm">انهاء الحركة</button>                                     
+                                                                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">اغلاق</button>
+                                                                            </div>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                </td>
+                                                              
+                                                                   
+                                                            </tr>
+                                                            
+                                                            {% set counter = counter + 1 %}
+									                    {% endfor %}
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                
+                                    
+                                </div>
+                            </div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+{% endblock %}

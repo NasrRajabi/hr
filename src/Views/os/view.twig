@@ -1,0 +1,275 @@
+{% extends "master.twig" %}
+{% import "forms_helpers.twig" as forms %}
+{% block style %}
+	<link rel="stylesheet" href="/css/tree.css"/>
+	{{ parent() }}
+{% endblock %}
+
+{% block main %}
+	<div class="card os_card ">
+		<h5 class="mt-4 mb-1 me-3">
+			الهيكلية
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-left" viewbox="0 0 16 16">
+				<path fill-rule="evenodd" d="M12.5 15a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5ZM10 8a.5.5 0 0 1-.5.5H3.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L3.707 7.5H9.5a.5.5 0 0 1 .5.5Z"/>
+			</svg>
+		</h5>
+		<div class="card-body">
+			<div id="tree" class="tree overflow-x-auto">
+				<div class="container">
+					{% if tree is not empty %}
+						{% macro renderTree(tree) %}
+							<ul class="ul-tree">
+								{% for element in tree %}
+									<li class="li">
+										<div class="dropdown ">
+											{% if element.name  %}
+												<a id="elementName_{{element.id}}" class="btn-tree shadow" href="#" data-bs-toggle="dropdown">
+													{{ element.name }}
+												</a>
+												{% if element.dept_type != 9 %}
+													<ul class="dropdown-menu">
+														<li>
+															{% if permissions['add_os']  %}
+																<button class="dropdown-item text-end" data-bs-toggle="modal" data-bs-target="#addModal_{{element.id}}" type="button">
+																	<i class="bi bi-plus-circle"></i>
+																	اضافة عنصر
+																</button>
+															{% endif %}
+															<button class="dropdown-item text-end" type="button">
+																<i class="bi bi-pen"></i>
+																تعديل
+															</button>
+														</li>
+														<li><hr class="dropdown-divider"></li>
+														<li>
+															<button class="dropdown-item text-end" type="button">عرض الموضفين</button>
+														</li>
+														{% if permissions['assigne_end_os']  %}
+															<li>
+																<button class="dropdown-item text-end" type="button" data-bs-toggle="modal" data-bs-target="#assignOS" value="{{element.id}}">تكليف</button>
+															</li>
+														{% endif  %}
+													</ul>
+												{% endif %}
+											</div>
+										{% endif %}
+
+										{% if element.children %}
+											{{ _self.renderTree(element.children) }}
+										{% endif %}
+									</li>
+								{% endfor %}
+							</ul>
+						{% endmacro %}
+						{{ _self.renderTree(tree) }}
+					{% else %}
+						<h1 class="display-6 d-flex justify-content-center">لا يوجد بيانات في الهيكلية</h1>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{% macro renderTreeModal(tree) %}
+		{% for element in tree %}
+			{% if element.name  %}
+				<div class="modal fade position-absolute" id="addModal_{{element.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="exampleModalLabel">أضف عنصر على الهيكلية</h5>
+								<button type="button" class="btn-close ms-0" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<div id="addDepartmentPopup">
+									<form id="addDepartmentForm" action="/os/add" method="post">
+										{{ csrf.fields | raw }}
+										{% if element.dept_type == 1 %}
+											<div class="mb-3">
+												<select class="form-select" name="dept_type" aria-label="Default select example">
+													<option selected>اختر نوع العنصر المضاف للهيكلية</option>
+													<option value="2">
+														مستشار
+													</option>
+													<option value="3">
+														وكيل
+													</option>
+													<option value="4">
+														وحدة
+													</option>
+													<option value="5">
+														ادارة عامة
+													</option>
+												</select>
+											</div>
+										{% endif %}
+
+										{% if element.dept_type == 3  %}
+											<div class="mb-3">
+												<select class="form-select" name="dept_type" aria-label="Default select example">
+													<option selected>اختر نوع العنصر المضاف للهيكلية</option>
+													<option value="6">مساعد وكيل
+													</option>
+													<option value="5">
+														ادارة عامة
+													</option>
+												</select>
+											</div>
+										{% endif %}
+
+										{% if element.dept_type == 5 or element.dept_type == 4 %}
+											<div class="mb-3">
+												<select class="form-select" name="dept_type" aria-label="Default select example">
+													<option selected>اختر نوع العنصر المضاف للهيكلية</option>
+													<option value="7">
+														دائرة
+													</option>
+												</select>
+											</div>
+										{% endif %}
+
+										{% if element.dept_type == 7 %}
+											<div class="mb-3">
+												<select class="form-select" name="dept_type" aria-label="Default select example">
+													<option selected>اختر نوع العنصر المضاف للهيكلية</option>
+													<option value="8">
+														قسم
+													</option>
+												</select>
+											</div>
+										{% endif %}
+										{% if element.dept_type == 8 %}
+											<div class="mb-3">
+												<select class="form-select" name="dept_type" aria-label="Default select example">
+													<option selected>اختر نوع العنصر المضاف للهيكلية</option>
+													<option value="9">
+														شعبة
+													</option>
+												</select>
+											</div>
+										{% endif %}
+										<div class="mb-3">
+											<input type="text" class="form-control" name="name" placeholder="أضف الاسم">
+										</div>
+										<div class="mb-3 invisible">
+											<input type="text" class="form-control" value={{element.id}} name="parent_id">
+											<input type="text" class="form-control" value={{element.node_level + 1}} name="node_level">
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+											<button type="submit" class="btn btn-primary">حفظ</button>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			{% endif %}
+			{% if element.children %}
+				{{ _self.renderTreeModal(element.children) }}
+			{% endif %}
+		{% endfor %}
+	{% endmacro %}
+
+	{{ _self.renderTreeModal(tree) }}
+
+
+	<div class="modal fade position-absolute" id="assignOS" tabindex="-1" aria-labelledby="assignOSLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="assignOSModalLabel">تعيين الموظف على الهيكلية</h5>
+					<button type="button" class="btn-close ms-0" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					{# <form id="assignOSForm" action="/os/assign_os" method="post"> #}
+						{{ csrf.fields | raw }}
+						<div class="mb-3">
+							{# TODO_AYA: auto-complete #}
+							<input type="text" class="form-control" id="employee_no" placeholder="ادخل رقم الموظف">
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+							<button type="button" class="btn btn-primary" onclick="getEmp()" data-bs-dismiss="modal">أرسل</button>
+						</div>
+					{# </form> #}
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade position-absolute" id="confirmAssignOS" tabindex="-1" aria-labelledby="confirmAssignOSLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="confirmAssignOSModalLabel">تعيين الموظف على الهيكلية</h5>
+					<button type="button" class="btn-close ms-0" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form id="assignOSForm" action="/os/assign_os" method="post" onsubmit="return setDataListValues()"> 
+						{{ csrf.fields | raw }}
+						<input type="hidden" class="form-control" id="c_os_id" name="c_os_id" >
+						<input type="hidden" class="form-control" id="c_employee_id" name="c_employee_id" >
+						<input type="hidden" class="form-control" name="assignOsView" value="0" >
+						<input type="hidden" class="form-control" name="is_delegate" value="false" >
+						<div class="mb-3">
+							<label for="c_employee_name" class="form-label">اسم الموظف</label>
+							<input type="text" class="form-control" id="c_employee_name" disabled>
+						</div>
+						<div class="mb-3">
+                            <label for="c_employee_no" class="form-label">الرقم الوظيفي</label>
+                            <input type="text" class="form-control" name="c_employee_no" id="c_employee_no" disabled>
+                        </div>
+						<div class="mb-3">
+                            <label class="form-label">الوظائف الحالية</label>
+							<div id="emp_current_os">
+							</div>
+                        </div>
+						<div class="mb-3">
+                            <label for="c_os" class="form-label">الشاغر</label>
+                            <input type="text" class="form-control" name="c_os" id="c_os" disabled>
+                        </div>
+						<div class="mb-3">
+							<label for="role_dl" class="form-label">الدور</label>
+							<input type="hidden" class="form-control" name="c_role_id" value="" >
+							{{ forms.arrayDataList("role_dl", "role_dlx", null, roles, 'role_name', 'id', 'اختر الدور')  }}
+						</div>
+						<div class="mb-3">
+							<label for="c_job" class="form-label">المسمى الوظيفي</label>
+							<input type="hidden" class="form-control" name="c_job_id" value="" >
+							{{ forms.arrayDataList("job_dl", "job_dlx", null, job_list, 'job_title', 'id', 'اختر الوظيفة')  }}
+						</div>
+						<div class="mb-3">
+                            <label for="start_date" class="form-label">تاريخ التكليف</label>
+							<input type="date" class="form-control" name="start_date" placeholder="تاريخ التكليف" aria-label="تاريخ التكليف">
+                        </div>
+						<div class="mb-3">
+                            <label for="end_date" class="form-label">تاريخ انتهاء التكليف</label>
+							<input type="date" class="form-control" name="end_date" placeholder="تاريخ انتهاء التكليف" aria-label="تاريخ انتهاء التكليف">
+                        </div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+							<button type="submit" class="btn btn-primary" data-bs-dismiss="modal">حفظ</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block script %}
+	<script src='/js/panzoom.min.js'></script>
+	<script src='/app/js/os.js'></script>
+	<script>
+		const element = document.getElementById("tree");
+		element.scrollLeft -= element.offsetWidth / 2;
+		// just grab a DOM element
+		var ele = document.querySelector('.container')
+		// And pass it to panzoom
+		let instance = panzoom(ele, {
+			maxZoom: 2,
+			minZoom: 0.2
+		});	
+	</script>
+{% endblock %}

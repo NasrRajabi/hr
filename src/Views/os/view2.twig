@@ -1,0 +1,170 @@
+{% extends "master.twig" %}
+
+
+{% block style %}
+
+	<link rel="stylesheet" href="/css/tree.css"/>
+
+	{{ parent() }}
+{% endblock %}
+
+
+{% block main %}
+
+<div class="card">
+<h5 class="mt-4 mb-1 me-3"> الهيكلية  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-left" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M12.5 15a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5ZM10 8a.5.5 0 0 1-.5.5H3.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L3.707 7.5H9.5a.5.5 0 0 1 .5.5Z"/>
+</svg></h5>
+  <div  class="card-body">
+    <div id="tree" class="tree overflow-x-auto">
+      <div class="container" >
+
+
+      <ul>
+        <li class="li">
+          <a class="btn-tree shadow"  href="#">الوزير</a>
+          <ul>
+            <li class="li">
+              
+              <div class="dropdown-center">
+              
+                  <a class="btn-tree shadow" href="#" data-bs-toggle="dropdown">الادارة العامة للمعلوماتية</a>
+                
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">اضافة دائرة</a></li>
+                  <li><a class="dropdown-item" href="#">تعديل اسم الادارة</a></li>
+                </ul>
+              </div>
+              <ul>
+                <li class="li">
+                  <a class="btn-tree shadow" href="#">دائرة تطوير الانظمة والبرمجيات القياسية</a>
+                </li>
+                <li class="li">
+                  <a class="btn-tree shadow" href="#">دائرة ادارة المشاريع والتطوير التقني
+                  </a>
+                  <ul>
+                    <li class="li">
+                      <a class="btn-tree shadow" href="#">قسم التطوير التقني</a>
+                      <ul>
+                        <li class="li">
+                          <a class="btn-tree shadow" href="#">شعبة التطوير التقني</a>
+                        </li>
+                      </ul>
+                    </li>
+                    <li class="li">
+                      <a class="btn-tree shadow" href="#">قسم ادارة المشاريع</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li class="li">
+              <a class="btn-tree shadow" href="#">الادارة العامة للتصالات</a>
+              <ul>
+                <li class="li">
+                  <a class="btn-tree shadow" href="#">Grand Child</a>
+                  <ul>
+                    <li class="li">
+                      <a class="btn-tree shadow" href="#">Grand Grand Child</a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="li">
+                  <a class="btn-tree shadow" href="#">Grand Child</a>
+                </li>
+              </ul>
+            </li>
+            <li class="li">
+              <a class="btn-tree shadow" href="#">الادارة العامة للمعلوماتية</a>
+              <ul>
+                <li class="li">
+                  <a class="btn-tree shadow" href="#">دائرة تطوير الانظمة والبرمجيات القياسية</a>
+                </li>
+                <li class="li">
+                  <a class="btn-tree shadow" href="#">دائرة
+                  </a>
+                  <ul>
+                    <li class="li">
+                      <a class="btn-tree shadow" href="#">Grand Child</a>
+                    </li>
+                    <li class="li">
+                      <a class="btn-tree shadow" href="#">Grand Child</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li class="li">
+              <a class="btn-tree shadow" href="#">الادارة العامة للمعلوماتية</a>
+              <ul>
+                <li class="li">
+                  <a class="btn-tree shadow" href="#">دائرة تطوير الانظمة والبرمجيات القياسية</a>
+                </li>
+                <li class="li">
+                  <a class="btn-tree shadow" href="#">دائرة
+                  </a>
+                  <ul>
+                    <li class="li">
+                      <a class="btn-tree shadow" href="#">Grand Child</a>
+                    </li>
+                    <li class="li">
+                      <a class="btn-tree shadow" href="#">Grand Child</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li class="li">
+              <a class="btn-tree shadow" href="#">الادارة العامة للمعلوماتية</a>
+              <ul>
+                <li class="li">
+                  <a class="btn-tree shadow" href="#">دائرة تطوير الانظمة والبرمجيات القياسية</a>
+                </li>
+                <li class="li">
+                  <a class="btn-tree shadow" href="#">دائرة
+                  </a>
+                  <ul>
+                    <li class="li">
+                      <a class="btn-tree shadow" href="#">Grand Child</a>
+                    </li>
+                    <li class="li">
+                      <a class="btn-tree shadow" href="#">Grand Child</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+</div>
+<div id="demo">
+
+</div>
+
+
+
+{% endblock %}
+
+{% block script %}
+  <script src='/js/panzoom.min.js'></script>
+<script>
+
+const element = document.getElementById("tree");
+  element.scrollLeft -= element.offsetWidth/2; 
+
+
+  // just grab a DOM element
+  var ele = document.querySelector('.container')
+  // And pass it to panzoom
+
+  let instance = panzoom(ele, {
+  maxZoom: 2,
+  minZoom: 0.2,
+  });
+
+</script>
+{% endblock %}

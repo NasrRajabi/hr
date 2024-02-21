@@ -1,0 +1,8 @@
+.custom-error-popover {
+    --bs-popover-max-width: 200px;
+    --bs-popover-border-color: var(--bs-secondary);
+    --bs-popover-header-bg: var(--bs-danger-bg-subtle);
+    --bs-popover-header-color: var(--bs-black);
+    --bs-popover-body-padding-x: 1rem;
+    --bs-popover-body-padding-y: .5rem;
+  }

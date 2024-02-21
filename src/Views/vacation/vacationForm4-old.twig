@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+	<head>
+
+        <style>
+            @font-face {
+                font-family: "Cairo";
+                src: url({{fontPath}}) format("truetype");
+            }
+            body{
+                font-family: "Cairo", sans-serif;
+                font-size: 14px;
+                text-align: right;
+            }
+            header {
+                position: fixed;
+                border-bottom: solid;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 140px;
+            }
+            main {
+                font-family: "Cairo", sans-serif;            
+                position: fixed;
+                top: 100;
+                left: 0;
+                right: 0;
+            }
+
+            th{
+                font-family: "Cairo", sans-serif;   
+            }
+
+            footer {
+                position: fixed;
+                border-top: solid;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 2px;
+            }
+        </style>
+
+        <link href={{stylePath}} rel="stylesheet">
+
+	</head>
+
+	<body>
+    
+        <header>
+            <img src="{{imgPath}}" width="100%"/>
+        </header>
+
+        <main>
+            <div class="text-center" style="font-size:18px;">الادارة العامة للشؤون الادارية والمالية</div>
+
+            <div class="w-100">
+                <div class="d-inline p-2" style="border-bottom: dotted; font-size:14px;" >{{vacationInfo.employee_no}}</div>
+                <div  class="d-inline p-2" style="font-size:14px;" >رقم الموظف :</div>                
+            </div>
+
+            <div class="w-100">
+                <div class="d-inline p-2" style="border-bottom: dotted; font-size:14px;">{{vacationInfo.create_date|date("d/m/Y")}}</div>
+                <div class="d-inline p-2" style="font-size:14px;">التاريـــــــــخ :</div>
+            </div>
+            <br>
+            <div class="text-center" style="vertical-align: middle; border:double; font-size:20px">طلب إجازة داخلية (عادية/ عارضة) خارجية</div>
+
+            <div class="w-100">        
+                <div class="d-inline p-2" >{{vacationInfo.employee_job}}</div>
+                <div class="d-inline p-2" style="margin-right:150px">الوظيفـــــــــــــــة :</div>
+
+                <div class="d-inline p-2" >{{vacationInfo.employee_name}}</div>
+                <div  class="d-inline p-2" >الإســم : </div>                        
+            </div>
+
+            <div class="w-100">        
+                <div class="d-inline p-2">{{vacationInfo.day_count }}  يوم </div>
+                <div class="d-inline p-2" style="margin-right:150px">مدة الاجازة المطلوبة :</div>
+
+                <div class="d-inline p-2"  >{{vacationInfo.start_date|date("d/m/Y")}}</div>
+                <div  class="d-inline p-2" >التاريخ المحدد للقيام بالاجازة : </div>                        
+            </div>
+
+            <div class="w-100">        
+                <div class="d-inline p-2" >{{vacationInfo.create_date|date("d/m/Y") }}</div>
+                <div class="d-inline p-2" style="margin-right:150px">تاريخ تقديم الطلب : </div>
+
+                <div class="d-inline p-2">{{vacationInfo.vac_type_name}}</div>
+                <div  class="d-inline p-2">سبب القيام بالأجازة : </div>                        
+            </div>
+
+            <div style="padding-right:420px">توقيع الموظف : </div>
+
+            <div class="text-center" style="font-size:18px; border-bottom:solid light;">لاستعمال وحدة شؤون الموظفين بالوزارة</div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>الرصيد المتبقي</th>                    
+                        <th>استنفذ منها</th>
+                        <th>مقدار الأجازة المستحقة</th>                    
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>{{vacationInfo.current_balance}}</td>
+                        <td>{{vacationInfo.spent_balance}}</td>                        
+                        <td>{{vacationInfo.start_balance}}</td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </main>      
+      
+        <footer>
+            نموذج رقم (4) ديوان الموظفين العام (إجازة داخلية)
+        </footer>
+    
+	</body>
+
+</html>

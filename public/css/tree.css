@@ -1,0 +1,100 @@
+.os_card {min-height: 500px;}
+#tree {min-height: 500px;}
+.tree { cursor: grab; }
+.tree :active { cursor: grabbing; }
+.tree .ul-tree {
+  position: relative;
+  padding: 2em 0;
+  white-space: nowrap;
+  margin: 0 auto;
+  text-align: center;
+}
+.tree .ul-tree::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.tree .li {
+  display: inline-block;
+  vertical-align: top;
+  text-align: center;
+  list-style-type: none;
+  position: relative;
+  padding: 2em 0.5em 0 0.5em;
+}
+.tree .li::before, .tree .li::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  border-top: 2px solid #d3d6d6;
+  width: 52%;
+  height: 2em;
+}
+.tree .li::after {
+  left: auto;
+  right: 50%;
+  border-right: 2px solid #dfe2e2;
+}
+.tree .li:only-child::after, .tree .li:only-child::before {
+  display: none;
+}
+.tree .li:only-child {
+  padding-top: 0;
+}
+.tree .li:first-child::before, .tree .li:last-child::after {
+  border: 0 none;
+}
+.tree .li:last-child::before {
+  border-left: 2px solid #d3d6d6;
+  border-radius: 0 5px 0 0;
+}
+.tree .li:first-child::after {
+  border-radius: 5px 0 0 0;
+}
+
+.tree .ul-tree .ul-tree::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 50%;
+  border-right: 2px solid #d3d6d6;
+  width: 0;
+  height: 2em;
+}
+
+.tree .li a {
+  /* border: 2px solid #d3d6d6; */
+  padding: .6em 2.75em;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 5px;
+  color: #212529;
+  font-weight: bold;
+  position: relative;
+  top: 0px;
+
+}
+
+.tree .li a:hover,
+.tree .li a:hover + .ul-tree .li a {
+  background-image: linear-gradient(to top, lightgrey 0%, lightgrey 1%, #e0e0e0 26%, #efefef 48%, #d9d9d9 75%, #bcbcbc 100%);
+  color: #0c0c0c;
+  cursor: pointer;
+}
+
+
+
+.tree .li a:hover + .ul-tree .li::after,
+.tree .li a:hover + .ul-tree .li::before,
+.tree .li a:hover + .ul-tree::before,
+.tree .li a:hover + .ul-tree .ul-tree::before {
+  border-color: #3fdee9;
+}
+
+.btn-tree {
+  background-image: linear-gradient(to right, #74ebd5 0%, #9face6 100%);
+  background-size: 200% auto;
+  transition: .5s;
+}

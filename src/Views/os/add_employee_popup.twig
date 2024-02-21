@@ -1,0 +1,24 @@
+	<div id="addDepartmentPopup">
+  <h2> أضف عنصر جدير علىى الهيكلية</h2>
+  <form id="addDepartmentForm" action="/users/add" method="post">
+  	{{ csrf.fields | raw }}
+   <div class="mb-3">
+  <select class="form-select" aria-label="Default select example">
+  <option selected>اختر نوع العنصر المضاف للهيكلية</option>
+  <option value="1">ادارة عامة</option>
+  <option value="2">وحدة</option>
+  <option value="3">وكيل</option>
+</select>
+</div>
+  <div class="mb-3">
+  <label for="name" class="form-label"> الاسم</label>
+  <input type="text" class="form-control" name="name">
+</div>
+  <div class="mb-3 invisible">
+  <input type="text" class="form-control" name="parent_id">
+</div>
+
+ <button type="submit" class="btn btn-primary">حفظ</button>
+
+  </form>
+</div>

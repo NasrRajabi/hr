@@ -1,0 +1,32 @@
+{% extends "master.twig" %}
+{% block main %}
+    <div class="row justify-content-md-center">
+        <div class="col-lg-8 col-md-8 col-sm-12 ">
+            <div class="card">
+                <div class="card-body">
+                    <form action="/permissions/add" method="post">
+                        {{ csrf.fields | raw }}
+                        <div class="mb-3">
+                            <label for="key" class="form-label">المفتاح</label>
+                            <input type="text" class="form-control" name="key" id="key" value="">
+                        </div>
+                        <div class="mb-3">
+                            <label for="group_name" class="form-label">اسم الجدول</label>
+                            <input type="text" class="form-control" name="group_name" id="group_name" value="">
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">الوصف</label>
+                            <input type="text" class="form-control" name="description" id="description" value="">
+                        </div>
+                        <br>
+
+                        <br>
+                        <div class="col text-center">
+                            <button type="submit" class="btn btn-dark btn-lg"> <i class='align-middle ' data-feather='save'></i> حفظ</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

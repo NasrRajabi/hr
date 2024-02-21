@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
+		<meta name="author" content="AdminKit">
+		<meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+
+		<link rel="preconnect" href="https://fonts.gstatic.com">
+		<link rel="shortcut icon" href="img/logo/HR_LOGO.svg"/>
+
+		<title>تسجيل الدخول | HR System</title>
+
+		<link href="css/app.css" rel="stylesheet">
+
+		<style>
+			body {
+				background: url('img/photos/16.jpg') no-repeat center center fixed;
+				-webkit-background-size: cover;
+				-moz-background-size: cover;
+				-o-background-size: cover;
+				background-size: cover;
+			}
+			body {
+				font-family: 'Cairo', sans-serif;
+			}
+			.card {
+				border: none;
+			}
+			.form-floating:not(.form-control:disabled):before {
+				background-color: #ffffff00;
+			}
+			button {
+				box-shadow: 0 8px 15px #00000063;
+			}
+
+			/* Chrome, Safari, Edge, Opera */
+			input::-webkit-outer-spin-button,
+			input::-webkit-inner-spin-button {
+				-webkit-appearance: none;
+				margin: 0;
+			}
+
+			/* Firefox */
+			input[type=number] {
+				-moz-appearance: textfield;
+			}
+		</style>
+
+
+	</head>
+
+	<body>
+		<div class="container-fluid">
+
+			<main class="d-flex w-100">
+
+				<div class="container d-flex flex-column">
+
+					<div class="row vh-100">
+
+						<div class="col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100">
+
+							<div class="d-table-cell align-middle">
+								<div class="card" style="background-color: rgba(255, 255, 255, .15); backdrop-filter: blur(20px);">
+									<div class="card-body">
+										<div class="text-center">
+											<img src="img/logo/HR_LOGO.svg" class="img-fluid" width="200" height="200" alt="HR"/>
+										</div>
+									</div>
+								</div>
+								<br>
+								<div class="card" style=" background-color: rgba(255, 255, 255, .15);backdrop-filter: blur(5px);">
+									<div class="card-body">
+										<div class="text-danger fs-4 fw-bold bg-light p-1 rounded-top rounded-bottom px-2">
+											يجب تغيير كلمة المرور الخاصة بك !
+										</div>
+
+										<div class="m-sm-5">
+											<form id="login_first" action="login_first" method="post">
+												{{ csrf.fields | raw }}
+
+
+												<div class="text-warning fs-5  bg-light p-2 rounded-pill mx-3 text-center mb-4" id="passwordMatchError" style="display:none;">
+													كلمة المرور غير متطابقة!
+												</div>
+
+												<div class="form-floating mb-4">
+													<input id="floatingInput" type="password" name="new_password" value="{{ old.new_password }}" class="form-control {{ errors.new_password ? 'is-invalid' : '' }}" placeholder="كلمة المرور الجديدة" style=" background-color: rgba(255, 255, 255, .15); backdrop-filter: blur(5px);" autocomplete="off">
+													<label for="floatingInput">كلمة المرور الجديدة</label>
+													<div class="invalid-feedback">
+														{{ errors.new_password | first }}
+													</div>
+												</div>
+												<div class="form-floating mb-4">
+													<input id="floatingPassword" type="password" name="confirm_new_password" value="" class="form-control {{ errors.confirm_new_password ? 'is-invalid' : '' }}" placeholder="تأكيد كلمة المرور الجديدة" style=" background-color: rgba(255, 255, 255, .15); backdrop-filter: blur(5px);" autocomplete="off">
+													<label for="floatingPassword">تأكيد كلمة المرور الجديدة</label>
+													<div class="invalid-feedback">
+														{{ errors.confirm_new_password | first }}
+													</div>
+												</div>
+
+
+												<div id="password-strength-text"></div>
+
+
+												<div class="text-center mt-4">
+													<div class="d-grid gap-1 col-4 mx-auto">
+														<button type="submit" id="submitButton" class="btn btn-grad text-light fw-bold" disabled>
+															<i class="align-middle me-1" data-feather="log-in"></i>
+															تأكيد ودخول</button>
+													</div>
+												</div>
+												<div class="text-muted mt-4 bg-light p-4 rounded-top rounded-bottom">
+													<small>
+														يجب أن تتوافر كل من الشروط التالية لكلمة المرور:
+														<ul>
+															<li>طول كلمة المرور <span class="fw-bold">على الأقل 8 أحرف.</span></li>
+															<li>استخدام أحرف كبيرة وأحرف صغيرة <span class="fw-bold">(أحرف كبيرة وصغيرة).</span></li>
+															<li>استخدام أرقام <span class="fw-bold">(0-9).</span></li>
+															<li>استخدام رموز خاصة مثل <span class="fw-bold">!@#$%^&*()_+{}\[\]:;<>,.?~\\-.</span></li>
+															</li>
+														</ul>
+													</small>
+												</div>
+
+											</form>
+										</div>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</main>
+		</div>
+
+		<script>
+			const newPasswordInput = document.getElementById("floatingInput");
+const confirmPasswordInput = document.getElementById("floatingPassword");
+const passwordMatchError = document.getElementById("passwordMatchError");
+const submitButton = document.getElementById("submitButton");
+const passwordStrengthText = document.getElementById("password-strength-text");
+
+newPasswordInput.addEventListener("input", validatePasswordMatch);
+confirmPasswordInput.addEventListener("input", validatePasswordMatch);
+newPasswordInput.addEventListener("input", checkPasswordStrength);
+
+function validatePasswordMatch() {
+const newPassword = newPasswordInput.value;
+const confirmPassword = confirmPasswordInput.value;
+
+if (newPassword !== confirmPassword) {
+passwordMatchError.style.display = "block";
+submitButton.disabled = true;
+} else {
+passwordMatchError.style.display = "none";
+submitButton.disabled = false;
+}
+}
+
+function checkPasswordStrength() {
+const newPassword = newPasswordInput.value;
+const strength = calculatePasswordStrength(newPassword);
+displayPasswordStrength(strength);
+}
+
+function calculatePasswordStrength(password) { // Define criteria and weights
+const criteria = [
+{
+regex: /[A-Z]/,
+weight: 1
+}, { // Uppercase letters
+regex: /[a-z]/,
+weight: 1
+}, { // Lowercase letters
+regex: /\d/,
+weight: 1
+}, { // Digits
+regex: /[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]/,
+weight: 1
+} // Special characters
+];
+
+// Calculate the score based on criteria
+let score = 0;
+for (const criterion of criteria) {
+if (criterion.regex.test(password)) {
+score += criterion.weight;
+}
+}
+
+// Check if the password length is less than 8 characters
+if (password.length < 8) {
+score = 0; // Reset the score to 0
+}
+
+// Return the total score
+return score;
+}
+
+function displayPasswordStrength(strength) { // Update the password strength text based on the strength value
+
+let strengthText = `<div class="d-inline-flex mb-3 px-2 py-1 fw-semibold text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-2">
+														كلمة المرور ضعيفة
+													</div>`;
+
+if (strength >= 2) {
+strengthText = `<div class="d-inline-flex mb-3 px-2 py-1 fw-semibold text-warning-emphasis bg-warning-subtle border border-warning-subtle rounded-2">
+														كلمة المرور متوسطة
+													</div>`;
+}
+if (strength >= 4) {
+strengthText = `<div class="d-inline-flex mb-3 px-2 py-1 fw-semibold text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-2">
+														كلمة المرور قوية
+													</div>`;
+}
+
+passwordStrengthText.innerHTML = strengthText;
+}
+		</script>
+	</body>
+
+</html>

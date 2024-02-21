@@ -1,0 +1,185 @@
+{% extends "master.twig" %}
+
+{% block main
+
+ %}
+
+	<form action="/invoice/store" method="post">
+		{{ csrf.fields | raw }}
+		<div class="row mb-3 g-3 ">
+			<div class="col-12 col-md-12 col-xxl-12 d-flex">
+				<div class="card flex-fill ">
+					<div class="position-relative mb-5">
+						<img src="/img/cover/cover1.png" class="img-thumbnail border border-0 p-0" alt="..." style="max-height: 15rem; min-width: 100%;">
+					</div>
+					<div class="card-body mt-1" style="min-height: 15rem;">
+						<div class="row  g-3 mt-1">
+							<div class="col-12 col-md-8 col-xxl-8 ">
+								<div class="card-body mt-4 me-1 me-md-5" style="min-height: 7rem;">
+									<div class="d-flex justify-content-center">
+										<h3>
+											اضافة فاتورة 
+										</h3>
+									</div>
+									<div class="mb-3">
+										<select name="vehicle_id" id="vehicle_id" value="{{ old.vehicle_id }}"  class="form-select form-select-sm {{ errors.vehicle_id ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+											<option  disabled selected hidden >-- اختر المركبة --</option>
+											{% for vehicle in allVehicle %}
+                                            	<option value="{{ vehicle.id }}">{{ vehicle.vehicle_name }}</option>
+                                        	{% endfor %}
+										</select>
+										<div class="invalid-feedback">
+											{{ errors.vehicle_id | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<select name="invoice_type" id="invoice_type" value="{{ old.invoice_type }}"  class="form-select form-select-sm {{ errors.invoice_type ? 'is-invalid' : '' }}" aria-label=".form-select-sm example" onchange="showDiv()">
+											<option  disabled selected hidden >-- نوع الفاتورة --</option>
+											{% for key, value in lookups.invoice_type %}
+											<option value="{{ key }}" {{ old.invoice_type == key ? 'selected' : '' }}>{{ value }}</option>
+											{% endfor %}
+										</select>
+										<div class="invalid-feedback">
+											{{ errors.invoice_type | first }}
+										</div>
+									</div>
+									<div class="row mb-3" id="hidden_div" style="display: none">                                    
+										<div class="mb-3">
+											<input type="text" name="invoice_no" value="{{ old.invoice_no }}" class="form-control {{ errors.invoice_no ? 'is-invalid' : '' }}" placeholder="نوع الوقود" aria-label="نوع الوقود">
+											<div class="invalid-feedback">
+												{{ errors.invoice_no | first }}
+											</div>
+										</div>
+										<div class="mb-3">
+											<input type="text" name="invoice_value" value="{{ old.invoice_value }}" class="form-control {{ errors.invoice_value ? 'is-invalid' : '' }}" placeholder="سعر الوقود" aria-label="سعر الوقود">
+											<div class="invalid-feedback">
+												{{ errors.invoice_value | first }}
+											</div>
+										</div>
+                                	</div>
+
+									<div class="row mb-3" id="hidden_div_3" style="display: none">    
+										<div class="mb-3">
+											<input type="text" name="invoice_value" value="{{ old.invoice_value }}" class="form-control {{ errors.invoice_value ? 'is-invalid' : '' }}" placeholder="بداية التامين" aria-label="بداية التامين">
+											<div class="invalid-feedback">
+												{{ errors.invoice_value | first }}
+											</div>
+										</div>                                
+										<div class="mb-3">
+											<input type="text" name="invoice_no" value="{{ old.invoice_no }}" class="form-control {{ errors.invoice_no ? 'is-invalid' : '' }}" placeholder="نهاية التامين" aria-label="نهاية التامين">
+											<div class="invalid-feedback">
+												{{ errors.invoice_no | first }}
+											</div>
+										</div>
+                                	</div>
+
+									<div class="row mb-3" id="hidden_div_4" style="display: none">                                    
+										<div class="mb-3">
+											<input type="text" name="invoice_no" value="{{ old.invoice_no }}" class="form-control {{ errors.invoice_no ? 'is-invalid' : '' }}" placeholder="نوع الوقود" aria-label="نوع الوقود">
+											<div class="invalid-feedback">
+												{{ errors.invoice_no | first }}
+											</div>
+										</div>
+
+										<div class="mb-3">
+											<input type="text" name="invoice_value" value="{{ old.invoice_value }}" class="form-control {{ errors.invoice_value ? 'is-invalid' : '' }}" placeholder="سعر الوقود" aria-label="سعر الوقود">
+											<div class="invalid-feedback">
+												{{ errors.invoice_value | first }}
+											</div>
+										</div>
+                                	</div>
+
+
+
+
+
+									<div class="form-floating mb-3">
+										<input type="date" name="invoice_date" id="invoice_date" value="{{  old.invoice_date }}" class="form-control {{ errors.invoice_date ? 'is-invalid' : '' }}" placeholder="تاريخ الفاتورة" aria-label="تاريخ الفاتورة">
+										<label for="floatingInput">تاريخ الفتورة</label>
+											<div class="invalid-feedback">
+												{{ errors.invoice_date | first }}
+											</div>
+									</div>
+									<div class="mb-3">
+										<input type="text" name="invoice_no" value="{{ old.invoice_no }}" class="form-control {{ errors.invoice_no ? 'is-invalid' : '' }}" placeholder="رقم الفاتورة" aria-label="رقم الفاتورة">
+										<div class="invalid-feedback">
+											{{ errors.invoice_no | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<input type="text" name="invoice_value" value="{{ old.invoice_value }}" class="form-control {{ errors.invoice_value ? 'is-invalid' : '' }}" placeholder="قيمة الفاتورة" aria-label="قيمة الفاتورة">
+										<div class="invalid-feedback">
+											{{ errors.invoice_value | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<input type="text" name="invoice_value" value="{{ old.invoice_value }}" class="form-control {{ errors.invoice_value ? 'is-invalid' : '' }}" placeholder="مكان اصدار الفاتورة" aria-label="مكان اصدار الفاتورة">
+										<div class="invalid-feedback">
+											{{ errors.invoice_value | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<input type="text" name="invoice_note" value="{{ old.invoice_note }}" class="form-control {{ errors.invoice_note ? 'is-invalid' : '' }}" placeholder="ملاحظات" aria-label="ملاحظات">
+										<div class="invalid-feedback">
+											{{ errors.invoice_note | first }}
+										</div>
+									</div>
+									<div class="row mb-5 g-3 ">
+										<div class="col-12 col-md-12 col-xxl-12 d-flex">
+											<div class="card flex-fill ">
+												<div class="card-body me-3 mt-1">
+													<div class="d-flex justify-content-center">
+														<button type="submit" class="btn btn-primary">حفظ الفاتورة</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>	
+		</div>
+
+		
+	</form>
+<script>
+    function showDiv(){
+        getSelectValue = document.getElementById("invoice_type").value;
+        if(getSelectValue == 1){
+            document.getElementById("hidden_div").style.display="block";
+        }else{
+            document.getElementById("hidden_div").style.display="none";
+        }
+		 if(getSelectValue == 3){
+            document.getElementById("hidden_div_3").style.display="block";
+        }else{
+            document.getElementById("hidden_div_3").style.display="none";
+        }
+    }
+  
+function date_check(){
+getdate = document.getElementById("movement_date").value;
+let date = new Date().toJSON().slice(0, 10);
+console.log(Date);
+if (getdate < date){
+	
+alert('تاريخ الحركة اقل من التاريخ الحالي ');
+document.getElementById("movement_date").select ;
+}
+
+	}
+	function time_check(){
+		start = document.getElementById("starting_hour").value;
+		end = document.getElementById("end_hour").value;
+		if(end <= start){
+alert('نهاية الحركة اقل من بدايتها ')
+document.getElementById("end_hour").select ;
+		}
+	}
+</script>
+
+{% endblock %}

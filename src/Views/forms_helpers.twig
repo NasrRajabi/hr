@@ -1,0 +1,77 @@
+{# DropDown element #}
+{# 
+    name: control name
+    id: control id
+    bound_value: the currently selected value. 
+    options_array: the associative array that provides the options. e.g. a list of inventory items from a database
+    text_field: the field name in the collection that will provide the option text
+    value_field: the field name in the collection that will provide the option value 
+    default_text: the defult option text. ex: select... 
+#}
+{% macro arrayDropDown(name, id, bound_value, options_array, text_field, value_field, default_text, x_model = null) %}
+   <select class="form-control" id="{{id}}" name="{{name}}" x-model ="{{ x_model }}">
+       <option value="null">{{default_text}}</option>
+        {% for a in options_array %}
+            <option {% if (attribute(a, value_field) == bound_value) %} selected="selected" {% endif %} value="{{ attribute(a, value_field) }}">{{ attribute(a, text_field) }}</option>
+        {% endfor %}
+    </select>
+{% endmacro %}
+
+{# DataList element #}
+{# 
+    name: control name
+    id: control id
+    bound_value: the currently selected value. 
+    options_array: the associative array that provides the options. e.g. a list of inventory items from a database
+    text_field: the field name in the collection that will provide the option text
+    value_field: the field name in the collection that will provide the option value 
+    default_text: the defult option text. ex: select... 
+#}
+{% macro arrayDataList(name, id, bound_value, options_array, text_field, value_field, default_text) %}
+    <input list="{{name}}"class="form-control" id="{{id}}" name="{{name}}" value="{{bound_value}}" placeholder="{{default_text}}">
+    <datalist id="{{name}}" > 
+        {% for a in options_array %}
+            <option data-value="{{ attribute(a, value_field) }}">{{ attribute(a, text_field) }}</option>
+        {% endfor %}
+    </datalist>
+{% endmacro %}
+
+{#}
+{% macro arbicText(text) %}
+{% set p = text|ar_identify %}
+
+{% for i in range(p|length - 1, 0, -2) %}
+    {% set utf8ar = text|utf8_glyphs(p[i - 1], p[i] - p[i - 1]) %}
+    {% set text = text|replace_range(p[i - 1], p[i], utf8ar) %}
+{% endfor %}
+
+{% endmacro %}
+#}
+
+{# Switche list element #}
+{# 
+    namePref: the prefix of the switch input name, which will be combined with the switch id. ex: key_
+    options_array: the associative array that provides the options. e.g. a list of inventory items from a database
+    text_field: the field name in the collection that will provide the option text. 
+    style: style provided to the list element. 
+    selected_list: the selected items from the associative array. 
+#}
+{% macro arraySwitches(namePref, options_array, text_field, selected_list, style) %}
+   <ul class="list-group">
+        {% set have = '' %}
+        {% for a in options_array %}
+            {% if a.id in selected_list %}
+                {% set have = 'checked' %}
+            {% endif %}
+            <li class="list-group-item " style="{{style}}">
+                <div class="form-check form-switch p-0">
+                    <input {{have}} name='{{namePref ~ a.id}}' value="{{a.id}}" class="form-check-input m-0" type="checkbox">
+                    <div class="ms-2 me-auto float-start">
+                        <div class="fw-bold">{{ attribute(a, text_field) }}</div>
+                    </div>
+                </div>
+            </li>
+            {% set have = '' %}
+        {% endfor %}
+    </ul>
+{% endmacro %}

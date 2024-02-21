@@ -1,0 +1,395 @@
+{% extends "master.twig" %}
+
+{% block style %}
+
+	<style>
+
+
+		.scrollable-div {
+			height: 700px; /* Set the desired height */
+			overflow: auto; /* Enable scrolling */
+		}
+
+		.employee-card {
+
+			position: relative;
+		}
+
+
+		.social-link {
+			width: 30px;
+			height: 30px;
+			border: 1px solid #ddd;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #666;
+			border-radius: 50%;
+			transition: all 0.3s;
+			font-size: 0.9rem;
+		}
+
+		.social-link:hover,
+		.social-link:focus {
+			background: #ddd;
+			text-decoration: none;
+			color: #555;
+		}
+
+		.vertical-text {
+			writing-mode: vertical-rl;
+			transform: rotate(180deg);
+		}
+
+		.blue {
+			background-color: blue;
+			color: white;
+		}
+
+		.red {
+			background-color: red;
+			color: white;
+		}
+	</style>
+
+	{{ parent() }}
+{% endblock %}
+
+{% block main %}
+	<div class="container-fluid">
+		<div class="card">
+			<div class="card-header d-flex justify-content-between p-3">
+				<div>لائحة دوام الموظفين
+				</div>
+				<div>{{ comment.created|date('d-M-Y') }}
+				</div>
+			</div>
+
+
+			<div id="tableData" class=" d-block mt-5 mb-5 px-2">
+				<div class="row">
+					<div class="col-md-12">
+
+
+						<div x-data="dataTable()">
+							<div
+								class="d-flex justify-content-end my-4">
+
+								{# <input type="search" class="form-control" > #}
+
+								<button class="btn btn-light me-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+									<i class="bi bi-funnel-fill"></i>
+
+								</button>
+								{% if permissions['get_users_attendance_report']  %}
+									<button  x-on:click="print($event.target)" class="btn btn-primary mx-2 ms-3">
+										<i class="bi bi-file-earmark-text-fill"></i>
+										اصدار تقرير
+									</button>
+									<button  x-on:click="print($event.target)" class="btn btn-primary mx-2 ms-3">
+										<i class="bi bi-file-earmark-text-fill"></i>
+										الكشف المحوسب
+									</button>
+								{% endif  %}
+	
+							</div>
+
+							<div class="scrollable-div">
+								<table id="employeeTable" class="table table-striped  table-hover align-middle mt-5 ">
+									<thead>
+										<tr>
+											<th></th>
+
+											<th class="cursor-pointer select-none">
+												الموظف
+											</th>
+
+											<th class="cursor-pointer select-none col-3 text-center">
+												الحضور</th>
+
+											<th class="cursor-pointer select-none col-3 text-center">
+												الانصراف
+											</th>
+											<th class="">
+												اجراءات</th>
+
+
+										</tr>
+
+										<tr class="collapse mt-0" id="collapseFilter">
+											<td></td>
+											<td class="d-flex">
+												<input type="text" x-model="filterName" class="form-control ms-1" placeholder="اسم الموظف"/>
+												<input type="text" x-model="filterNo" class="form-control" placeholder="رقم الموظف"/></td>
+											<td>
+
+												<select class="form-select " id="floatingSelect" aria-label="Floating label select example" x-model="filterPosition">
+													<option value="">
+														الكل</option>
+
+													{% set uniquePositions = [] %}
+													{% for item in data %}
+														{% set public_administration = item.public_administration | replace({'{': '', '}': '', '"': ''}) | trim %}
+
+														{% if public_administration not in uniquePositions %}
+															<option value="{{ public_administration }}">{{public_administration }}</option>
+															{% set uniquePositions = uniquePositions|merge([public_administration]) %}
+														{% endif %}
+													{% endfor %}
+												</select>
+
+
+											</td>
+											<td class="d-flex">
+												<div x-data="{ buttonClicked: false }">
+													<button type="button" class="btn ms-2" :class="buttonClicked ? 'btn-primary' : 'btn-outline-primary'" @click="filterLate; buttonClicked = !buttonClicked">
+														<i class="bi bi-funnel-fill"></i>
+														التأخير الصباحي
+													</button>
+												</div>
+												<div x-data="{ buttonClicked: false }">
+													<button type="button" class="btn" :class="buttonClicked ? 'btn-info' : 'btn-outline-info'" @click="filterEarly; buttonClicked = !buttonClicked">
+														<i class="bi bi-funnel-fill"></i>
+														الانصراف المبكر
+													</button>
+												</div>
+											</td>
+
+										</tr>
+									</thead>
+									<tbody class="table-group-divider">
+										<template x-for="(row, index) in filteredRows" :key="index">
+
+											<tr>
+												<td class="align-middle">
+													<i class="bi bi-three-dots-vertical " id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"></i>
+													<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+														<a class="dropdown-item" href="">مشاهدة الملف</a>
+														<a class="dropdown-item" href="#">تعديل</a>
+													</div>
+												</td>
+												<td x-html="row.employee"></td>
+												<td class="text-center align-middle fw-bold" x-html="row.checkIn"></td>
+												<td class="text-center align-middle fw-bold" hidden x-text="row.checkInStatus"></td>
+
+												<td class="text-center align-middle fw-bold" x-html="row.checkOut"></td>
+												<td class="text-center align-middle fw-bold" hidden x-text="row.checkOutStatus"></td>
+
+												<td class=" align-middle">
+													{% if permissions['view_user_attendance']  %}
+														<button type="button" x-on:click="calender($event.target, row)" class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="  عرض دوام الموظفي الشهر الحالي ">
+																<i class="bi bi-calendar3 fs-5"></i>
+														</button>
+													{% endif %}
+													<button type="button" x-on:click="edit($event.target, row)" class="btn btn-outline-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="معالجة الدوام">
+															<i class="bi bi-pencil-square fs-5"></i>
+													</button>
+												</td>
+
+											</tr>
+										</template>
+										<!-- Add more employee data rows here -->
+									</tbody>
+								</tbody>
+							</table>
+						</div>
+						<div x-show="filteredRows.length === 0" class="alert alert-warning mt-3 fw-2">
+							لا يوجد نتائج
+						</div>
+					</div>
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.js"></script></div><script>
+const dataTable = () => {
+return {
+table: null,
+options: {
+searching: false,
+ordering: true,
+paging: true,
+lengthChange: true,
+info: true,
+autoWidth: true
+},
+employee: '',
+employee_id: '',
+employeeNo: '',
+administration: '',
+status: '',
+checkIn: '',
+checkOut: '',
+position: '',
+checkInStatus: '',
+checkOutStatus: '',
+filterNo: '',
+filterName: '',
+filterPosition: '',
+filterLate: '',
+filterEarly: '',
+filterLateStatus: false,
+filterEarlyStatus: false,
+rows: [{% for item in data %}{
+employee_id: '{{item.id}}', 
+employee: `<div class="d-flex flex-row float-end align-items-center">
+<div>
+  <div class="ms-3 position-relative">
+    <img src="{{ item.avatar }}" alt="" width="55" class="rounded-circle">
+	<div class="rounded-circle p-2 bg-success position-absolute bottom-0 start-0"> </div>
+  </div>
+	<div class="fw-bold mt-1 text-center">{{ item.employee_no }} </div> </div> 
+  <div class="p-2 d-flex flex-column justify-content-center">
+    <p class="mb-2 text-primary fw-bold fs-6">{{ item.f_name ~ ' ' ~ item.s_name ~ ' ' ~ item.t_name ~ ' ' ~ item.l_name }}</p>
+    <span class="">
+      {# <span class="badge bg-success-subtle rounded-0 text-success p-1">{{ item.job_title }}</span> #}
+       <span class="badge bg-secondary-subtle rounded-0 text-secondary p-1">{% set public_administration = item.public_administration | replace({'{': '', '}': '', '"': ''}) | trim %}
+{{ public_administration}}</span>
+    </span>
+    <div class="">
+      <span class="badge text-bg-light rounded-0 mt-1 text-body-primary">{{ lookups.contract_type[item.contract_type] }}</span>
+    </div>
+  </div>
+</div>
+`,
+employeeNo: '{{ item.employee_no }}',
+checkIn: `{% if item.check_in!= null and item.check_in <= item.ag.check_in_end %}
+		 {% if item.diff >= 0 %}
+
+			<div class="text-right align-middle text-center border bg-success bg-opacity-25 p-2">
+			{{item.check_in}} 
+		</div>
+		  {% elseif item.diff < 0 and item.diff *-1 < (item.ag.allowed_time_check_in  )%}
+		  	<div class="text-right align-middle text-center border bg-warning bg-opacity-25 p-2">
+			{{item.check_in}} 
+			</div>
+			{% elseif item.diff < 0 and item.diff *-1 >= (item.ag.allowed_time_check_in ) %}
+			<div class="d-flex">
+			<div class="text-right align-middle text-center border border-danger p-2  flex-fill">
+			{{item.check_in}}  
+			</div>
+
+			<button class="btn btn-danger rounded-0" type="button" disabled>
+			<span class="spinner-grow spinner-grow-sm" aria-hidden="true"></span>
+			<span role="status">{{item.diff *-1 }} دقيقة </span> 
+			</button>  
+		</div>
+	
+		{% endif %}
+		{% elseif  item.check_in < item.ag.check_in_end %}
+		<div class="d-flex">
+			<div class="text-right align-middle text-center border border-info p-2  flex-fill">
+			{{item.check_in}}  
+			</div>
+
+			<button class="btn btn-info rounded-0" type="button" disabled>
+			<span class="spinner-grow spinner-grow-sm" aria-hidden="true"></span>
+			<span role="status">غير مطابق للاتفاقية</span> 
+			</button>  
+		</div> 
+		{% else %}
+		<button class="btn btn-warning rounded-0" type="button" disabled>
+			<span class="spinner-grow spinner-grow-sm" aria-hidden="true"></span>
+			<span role="status">  لم يتم اثبات الحضور</span> 
+			</button> 
+		{% endif %}
+`,
+checkInStatus: `
+{% if item.check_in != null and item.check_in <= item.ag.check_in_end %}\
+            {% if item.diff < (item.ag.allowed_time_check_in * -1) %} \
+               {{3}} \
+            {% endif %}\
+{% elseif  item.check_in > item.ag.check_in_end %} \
+{{3}}
+        {% endif %}
+`,
+checkOut: `
+	{% if item.check_out!= null and item.att_hours >= item.min_att_hours %}
+{% if item.diff_out >= 0  %}
+		<div class="text-right align-middle text-center border bg-success bg-opacity-25 p-2">
+			{{item.check_out}} 
+		</div>
+		{%elseif item.diff_out < 0 and item.diff_out > (item.ag.allowed_time_check_out * -1 )%}
+		<div class="text-right align-middle text-center border bg-warning bg-opacity-25 p-2">
+			{{item.check_out}} 
+		</div>
+		{% elseif item.diff_out < (item.ag.allowed_time_check_out * -1 ) %}
+			<div class="d-flex">
+			<div class="text-right align-middle text-center border border-danger p-2  flex-fill">
+			{{item.check_out}}  
+			</div>
+
+			<button class="btn btn-danger rounded-0" type="button" disabled>
+			<span class="spinner-grow spinner-grow-sm" aria-hidden="true"></span>
+			<span role="status">{{item.diff_out *-1 }} دقيقة </span> 
+			</button>  
+		</div>
+	
+		
+		{% endif %}
+		{% elseif item.check_out!= null and item.att_hours < item.min_att_hours %} 
+		<button class="btn btn-danger rounded-0" type="button" disabled>
+			<span class="spinner-grow spinner-grow-sm" aria-hidden="true"></span>
+			<span role="status">لم يتم استيفاء الحد الأدنى لساعات الدوام      </span> 
+			</button> 
+		
+		{% else %}
+			<button class="btn btn-warning rounded-0" type="button" disabled>
+			<span class="spinner-grow spinner-grow-sm" aria-hidden="true"></span>
+			<span role="status">لم يتم اثبات الانصراف  </span> 
+			</button> 
+		{% endif %}`,
+checkOutStatus: `
+{% if  item.check_out!= null and item.att_hours >= item.min_att_hours  %}\
+            {% if item.diff_out < (item.ag.allowed_time_check_out * -1 ) %}\
+               {{3}} \
+            {% endif %}\
+        {% endif %}
+`,
+position: '{{ item.os_name }}'
+},{% endfor %}],
+filterLate() {
+this.filterLateStatus = !this.filterLateStatus;
+},
+filterEarly() {
+this.filterEarlyStatus = !this.filterEarlyStatus;
+},
+get filteredRows() {
+if (!this.filterName && !this.filterNo && !this.filterPosition && !this.filterLateStatus && // Add the filterLateStatus check
+!this.filterEarlyStatus) {
+return this.rows;
+}
+
+return this.rows.filter((row) => {
+const nameMatch = row.employee.toLowerCase().includes(this.filterName.toLowerCase());
+const noMatch = row.employeeNo.toLowerCase().includes(this.filterNo.toLowerCase());
+const positionMatch = row.position.toLowerCase().includes(this.filterPosition.toLowerCase());
+
+// Check if the employee has a checkInStatus of '3' if filterLateStatus is true
+const lateMatch = this.filterLateStatus ? row.checkInStatus == 3 : true;
+
+const EarlyMatch = this.filterEarlyStatus ? row.checkOutStatus == 3 : true;
+// Combine all filter conditions using logical AND
+return nameMatch && noMatch && positionMatch && EarlyMatch && lateMatch;
+});
+}
+};
+};</script><script>
+<script>
+	$(document).ready(function () {
+$('.selectpicker').selectpicker();
+});
+</script></script>
+
+{% endblock %}{% block script %}
+<script src="/app/js/durationAction.js"></script>
+
+
+{# <script>
+				console.log("Employee ID:", "{{ row.employee_id }}"); // Check the console
+			</script> #}{% endblock %}

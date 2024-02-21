@@ -1,0 +1,134 @@
+{% extends "master.twig" %}
+
+{% block style %}{% endblock %}
+
+{% block main %}
+
+	<form action="/vehicle/update/{{data[0].id}}" method="post">
+		{{ csrf.fields | raw }}
+		<div class="row" >
+			<div class="col-12 col-md-12 col-xxl-12 d-flex">
+				<div class="card flex-fill ">
+	<div class="card-header row justify-content-between  p-3 border-bottom">
+				<div class="col-md-6">
+					<h4 class="text-end me-3 mt-3"> تعديل مركبة
+					</h4>
+				</div>
+				<div class="col-md-6">
+					<nav class="nav justify-content-end p-3">
+						<a href="/vehicle/list" type="button" class="btn btn-primary">
+							<i class="bi bi-plus-circle-dotted"></i>
+							جميع المركبات
+						</a>
+					</nav>
+				</div>
+			</div>
+					
+					<div class="card-body mt-1" style="min-height: 15rem;">
+						<div class="row  g-3 mt-1">
+							<div class="col-12 col-md-8 col-xxl-8 ">
+								<div class="card-body mt-4 me-1 me-md-5" style="min-height: 7rem;">
+									<div class="d-flex justify-content-center">
+										<h3>
+											تعديل مركبة 
+										</h3>
+									</div>
+									<div class="mb-3">
+										<input type="text" name="vehicle_no" value="{{ data[0].vehicle_no }}" class="form-control {{ errors.vehicle_no ? 'is-invalid' : '' }}" placeholder="رقم المركبة" aria-label="رقم المركبة">
+										<div class="invalid-feedback">
+											{{ errors.vehicle_no | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<input type="text" name="vehicle_name" value="{{ data[0].vehicle_name }}" class="form-control {{ errors.vehicle_name ? 'is-invalid' : '' }}" placeholder="اسم المركبة" aria-label="اسم المركبة">
+										<div class="invalid-feedback">
+											{{ errors.vehicle_name | first }}
+										</div>
+									</div>
+									
+									<div class="mb-3">
+										<select name="vehicle_type" id="vehicle_type" value="{{ data[0].vehicle_type }}"  class="form-select form-select-sm {{ errors.vehicle_type ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+											<option  disabled selected hidden >-- اختر نوع المركبة --</option>
+												<option value="خصوصي" {{ data[0].vehicle_type == "خصوصي" ? 'selected' : '' }} >خصوصي</option>
+												<option value="عمومي" {{ data[0].vehicle_type == "عمومي" ? 'selected' : '' }} >عمومي</option>
+										</select>
+										<div class="invalid-feedback">
+											{{ errors.vehicle_type | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<input type="text" name="chassis_no" value="{{ data[0].chassis_no }}" class="form-control {{ errors.chassis_no ? 'is-invalid' : '' }}" placeholder="رقم الشاصي" aria-label="رقم الشاصي">
+										<div class="invalid-feedback">
+											{{ errors.chassis_no | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<input type="text" name="engine_no" value="{{ data[0].engine_no }}" class="form-control {{ errors.engine_no ? 'is-invalid' : '' }}" placeholder="رقم المحرك" aria-label="رقم المحرك">
+										<div class="invalid-feedback">
+											{{ errors.engine_no | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<input type="text" name="engine_capacity" value="{{ data[0].engine_capacity }}" class="form-control {{ errors.engine_capacity ? 'is-invalid' : '' }}" placeholder="سعة المحرك" aria-label="سعة المحرك">
+										<div class="invalid-feedback">
+											{{ errors.engine_capacity | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<input type="text" name="vehicle_model" value="{{ data[0].vehicle_model }}" class="form-control {{ errors.vehicle_model ? 'is-invalid' : '' }}" placeholder="موديل المركبة" aria-label="موديل المركبة">
+										<div class="invalid-feedback">
+											{{ errors.vehicle_model | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<select name="fuel_type" id="fuel_type" value="{{ data[0].fuel_type }}"  class="form-select form-select-sm {{ errors.fuel_type ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+											<option  disabled selected hidden >-- اختر نوع الوقود --</option>
+                                                <option value="بنزين" {{ data[0].fuel_type == "بنزين" ? 'selected' : '' }} >بنزين</option>
+                                                <option value="سولار" {{ data[0].fuel_type == "سولار" ? 'selected' : '' }} >سولار</option>
+										</select>
+										<div class="invalid-feedback">
+											{{ errors.fuel_type | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<select name="lime_type" id="lime_type" value="{{ data[0].lime_type }}"  class="form-select form-select-sm {{ errors.lime_type ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+											<option  disabled selected hidden >-- اختر نوع الجير --</option>
+                                                <option value="عادي" {{ data[0].lime_type == "عادي" ? 'selected' : '' }} >عادي</option>
+                                                <option value="اتوماتيك" {{ data[0].lime_type == "اتوماتيك" ? 'selected' : '' }} >اتوماتيك</option>
+										</select>
+										<div class="invalid-feedback">
+											{{ errors.lime_type | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<input type="text" name="vehicle_color" value="{{ data[0].vehicle_color }}" class="form-control {{ errors.vehicle_color ? 'is-invalid' : '' }}" placeholder="لون المركبة المركبة" aria-label="لون المركبة المركبة">
+										<div class="invalid-feedback">
+											{{ errors.vehicle_color | first }}
+										</div>
+									</div>
+									<div class="row mb-5 g-3 ">
+										<div class="col-12 col-md-12 col-xxl-12 d-flex">
+											<div class="card flex-fill ">
+												<div class="card-body me-3 mt-1">
+													<div class="d-flex justify-content-center">
+														<button type="submit" class="btn btn-outline-primary">حفظ العديل</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+
+	</form>
+
+
+
+
+{% endblock %}

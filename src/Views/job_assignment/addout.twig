@@ -1,0 +1,264 @@
+{% extends "master.twig" %}
+
+{% block style %}{% endblock %}
+
+{% block main %}
+
+	<form action="/job_assignment/store" method="post">
+		{{ csrf.fields | raw }}
+
+		<div class="row">
+			<div class="col-12 col-md-12 col-xxl-12 d-flex">
+				<div class="card flex-fill ">
+	<div class="card-header row justify-content-between  p-3 border-bottom">
+				<div class="col-md-6">
+					<h4 class="text-end me-3 mt-3"> اضافة مهمة عمل
+					</h4>
+				</div>
+				<div class="col-md-6">
+					<nav class="nav justify-content-end p-3">
+						<a href="/job_assignment/list" type="button" class="btn btn-primary">
+							<i class="bi bi-plus-circle-dotted"></i>
+							جميع المهمات
+						</a>
+					</nav>
+				</div>
+			</div>
+					
+					<div class="card-body">	
+
+						<div class="row justify-content-md-center">
+
+							<div class="col-12 col-md-6 col-xxl-6">
+                                
+                                
+                                   <div class="row mb-2">                                    
+                                 <div class="col-6">  
+                                     <div class="form-floating mb-2">   
+                                    <input type="text" value="{{lookups.job_assignment_type[2] }}" id="mission_type" name="mission_type" class="form-control {{ errors.mission_type ? 'is-invalid' : '' }}" placeholder=" مهمة عمل خارجية" aria-label=".form-select-sm example" readonly>                                                                  
+                                           
+                                      <div class="invalid-feedback">
+										{{ errors.mission_type | first }}
+									  </div>
+                                    </div>
+                                </div>
+                                 <div class="col-6">  
+                                    <div class="form-floating mb-2">                                                                     
+                                             <select id="mission_status" name="mission_status" value="{{ old.mission_status }}" class="form-select  {{ errors.mission_status ? 'is-invalid' : '' }}" aria-label=".form-select-sm example" >
+										<option value="null">-- حالة المهمه --</option>
+                                        {% for key, value in lookups.vacation_status %}
+											<option value="{{ key }}" {{ old.mission_status == key ? 'selected' : '' }}>{{ value }}</option>
+										{% endfor %}
+									</select>
+                                      <div class="invalid-feedback">
+										{{ errors.mission_status | first }}
+									  </div>
+                                    </div>
+                                </div>    
+                            </div> 
+                                
+                        
+                                
+                           
+                                <div class="row mb-2">                                    
+                                    <div class="col-4">
+                                        <div class="form-floating mb-4">
+                                            <input type="date" value="{{ old.mission_start_date }}" id="mission_start_date" name="mission_start_date" class="form-control {{ errors.mission_start_date ? 'is-invalid' : '' }}" placeholder="من تاريخ" aria-label=".form-select-sm example" onblur ="days()">                                            
+
+                                            <div class="invalid-feedback">
+                                                {{ errors.mission_start_date | first }}
+                                            </div>
+
+                                            <div id="invalid-dates" class="invalid-feedback" ></div>   
+                                            
+                                            <label for="mission_start_date">من تاريخ</label>
+                                        </div>                                            
+                                    </div>
+
+                                    <div class="col-4">
+                                        <div class="form-floating mb-4">
+                                            <input type="date" value="{{ old.mission_end_date }}" id="mission_end_date" name="mission_end_date" class="form-control {{ errors.mission_end_date ? 'is-invalid' : '' }}" placeholder="إلى تاريخ" aria-label="إلى تاريخ"  onblur ="days()">
+                                            
+                                            <div class="invalid-feedback">
+                                                {{ errors.mission_end_date | first }}
+                                            </div>
+                                            
+                                            <label for="mission_end_date">إلى تاريخ<label>
+                                        </div>
+                                    </div>                                
+                                   
+
+                                
+                                <div class="col-4">
+                                    <div class="form-floating mb-4">                                                                     
+                                        <input type="text" style="background-color:#edf2f9" value="{{ old.day_count }}" id="day_count" name="day_count" class="form-control" placeholder="عدد الايام" aria-label="عدد الايام" readonly>
+                                        <label for="floatingInput">عدد الأيام<label>
+                                    </div>
+                                </div>                               
+                           
+                            </div>    
+
+                            <div class="row mb-2">                                    
+                                 <div class="col-4">  
+                                    <div class="form-floating mb-2">                                                                     
+                                       <select id="mission_supject" name="mission_supject" value="{{ old.mission_supject }}" class="form-select  {{ errors.mission_supject ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+                                            <option value="null">--  موضوع المهمه --</option>                                               
+                                            {% for key, value in lookups.job_assignment_supject %}
+                                                <option value="{{ key }}" {{ old.mission_supject == key ? 'selected' : '' }}>{{ value }}</option>
+                                            {% endfor %}
+                                        </select>
+
+                                      <div class="invalid-feedback">
+										{{ errors.mission_supject | first }}
+									  </div>
+                                    </div>
+                                </div>
+                                 <div class="col-4">  
+                                    <div class="form-floating mb-2">                                                                     
+                                            <select id="mission_country" name="mission_country" value="{{ old.mission_country }}" class="form-select  {{ errors.mission_country ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+                                                <option value="null">--   الدوله --</option>                                               
+                                                {% for key, value in lookups.country %}
+                                                    <option value="{{ key }}" {{ old.country == key ? 'selected' : '' }}>{{ value }}</option>
+                                                {% endfor %}
+                                            </select>
+
+                                            <div class="invalid-feedback">
+                                                {{ errors.mission_country | first }}
+                                            </div>
+                                    </div>
+                                </div>  
+
+                                    <div class="col-4">
+                                        <div class="form-floating mb-4">
+                                            <input type="date" value="{{ old.last_date }}" id="last_date" name="last_date" class="form-control {{ errors.last_date ? 'is-invalid' : '' }}" placeholder=" تاريخ نهائي لتقديم" aria-label="تاريخ نهائي لتقديم" >
+                                            
+                                            <div class="invalid-feedback">
+                                                {{ errors.last_date | first }}
+                                            </div>
+                                            
+                                            <label for="last_date"> تاريخ نهائي لتقديم<label>
+                                        </div>
+                                    </div>      
+
+                            </div>          
+                            
+                                <div class="row mb-2">                                    
+                                    <div class="col-6">
+                                        <div class="form-floating mb-4">
+                                            <select id="hosted_type" name="hosted_type" value="{{ old.hosted_type }}" class="form-select  {{ errors.hosted_type ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+                                                <option value="null">--نوع الاستضافه--</option>                                               
+                                                {% for key, value in lookups.hosting_type %}
+                                                    <option value="{{ key }}" {{ old.hosted_type == key ? 'selected' : '' }}>{{ value }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                {{ errors.hosted_type | first }}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                       <div class="col-6">
+                                    <div class="form-floating mb-4">                                                                     
+                                        <input type="text" style="background-color:#edf2f9" value="{{ old.mission_funded }}" id="mission_funded" name="mission_funded" class="form-control" placeholder="الجهه المموله" aria-label="الجهه المموله " readonly>
+                                        <label for="floatingInput">الجهه المموله <label>
+                                    </div>
+                                </div>                       
+                              
+                                </div> 
+                                 <div  class="mb-3">
+                                    <div class="form-floating mb-4">                                                                     
+                                        <textarea  id="short_description" name="short_description"  style="height: 100px" class="form-control" placeholder="وصف مختصر" aria-label="وصف مختصر" onkeyup="countChar(this)">{{ old.short_description }}</textarea>
+                                        <label for="floatingInput">وصف مختصر<label>
+                                    </div>
+                                    <div id="charNum" class="invalid-feedback"></div>
+                                </div>  
+ 
+                                           
+                                 
+                                <div class="mb-3">
+                                    <div class="form-floating mb-4">                                                                     
+                                        <textarea  id="floatingInput" name="note"  style="height: 100px" class="form-control" placeholder="ملاحظات" aria-label="ملاحظات" onkeyup="countnot(this)">{{ old.note }}</textarea>
+                                        <label for="floatingInput">ملاحظات<label>
+                                    </div>
+                                      <div id="charnot" class="invalid-feedback"></div>
+                                </div>     
+
+							</div>                     
+
+						</div>
+                        <br>
+                        <div class="d-flex justify-content-center d-grid gap-2">
+							<button type="submit" class="btn btn-outline-primary">حفظ المهمه</button>
+                            <button type="submit" class="btn btn-outline-info">حفظ وطباعة</button>
+						</div> 
+
+					</div>
+				</div>
+			</div>
+		</div>
+	
+
+	</form>
+
+
+
+<script>
+function countChar(val) {
+  var len = val.value.length;
+ 
+  if (len >= 500) {
+    val.value = val.value.substring(0, 500);
+  } else {
+    document.getElementById("charNum").style.display = 'block';
+    document.getElementById("charNum").innerHTML=(500-len);
+    $('#charNum').text(500 - len);
+  }
+}
+function countnot(val) {
+  var len = val.value.length;
+ 
+  if (len >= 500) {
+    val.value = val.value.substring(0, 500);
+  } else {
+    document.getElementById("charnot").style.display = 'block';
+    document.getElementById("charnot").innerHTML=(500-len);
+    $('#charnot').text(500 - len);
+  }
+}
+  function days() {
+
+    let mission_start_date = document.getElementById("mission_start_date").value;
+    let mission_end_date = document.getElementById("mission_end_date").value;
+   
+    let day_count = 0;
+  //document.getElementById("day_count").value =(mission_start_date);
+        
+        let date1 = Date.parse (mission_start_date);
+        let date2 = new Date (mission_end_date);
+        let now = new Date();
+
+        document.getElementById("day_count").value = '';
+        document.getElementById("invalid-dates").style.display = 'none';
+      //  if(mission_start_date.length !== 0 && mission_end_date.length !== 0 ){
+
+
+            
+                document.getElementById("day_count").value = '';
+                day_count = (Math.round((date2 - date1) / (1000 * 60 * 60 * 24))) + 1 ;
+
+                        if (day_count > 0) {
+
+                            document.getElementById("day_count").value = day_count;
+                            }
+                
+                if (day_count <= 0){
+                    document.getElementById("invalid-dates").style.display = 'block';
+                    document.getElementById("invalid-dates").innerHTML = 'خطأ في ادخال التواريخ';
+
+                }
+            
+       // }
+  }
+  </script>
+
+{% endblock %}

@@ -1,0 +1,474 @@
+{% extends "master.twig" %}
+
+
+{% block style %}
+	<style>
+
+
+		.scrollable-div {
+			height: 700px; /* Set the desired height */
+			overflow: auto; /* Enable scrolling */
+		}
+
+		.badge {
+			border-radius: 0;
+		}
+
+		.li_position {
+			display: inline-block;
+			width: auto;
+			white-space: nowrap;
+		}
+
+		.head {
+			background-color: gold;
+		}
+	</style>
+{% endblock %}
+
+
+{% block main %}
+
+
+	<main class="col ms-1">
+		<div class="card">
+			<div class="card-header p-3">
+				<h5>اجازات الموظف</h5>
+			</div>
+
+
+
+			<div class="card-body ">
+
+
+				<div x-data="dataTable()">
+	
+					<div class="table-responsive scrollable-div" id="tableData">
+
+						<table id="employeeTable" class="table table-striped  table-hover align-middle">
+							<thead class="sticky-top bg-body-tertiary ">
+								
+								<tr>		
+									<td><input type="text" x-model="filterName" class="form-control" placeholder="نوع الاجازة"/></td>						
+									<td><input type="date" x-model="filterDate1" class="form-control" placeholder="تاريخ بداية الاجازة"/></td>
+									<td><input type="date" x-model="filterDate2" class="form-control" placeholder="تاريخ انتهاء الاجازة"/></td>
+									<td>
+
+										<select class="form-select" id="floatingSelect" aria-label="Floating label select example" x-model="filterStatus">
+											<option value='' selected>الكل</option>
+											{% for key, value in lookups.vacation_status %}
+												<option value="{{ value }}">{{ value }}</option>
+											{% endfor %}
+										</select>
+									</td>		
+								</tr>
+
+								<tr>
+									<th class="text-center fit">نوع الاجازة</th>
+									<th class="text-center fit">من تاريخ</th>
+									<th class="text-center fit">الى تاريخ</th>
+									<th class="text-center fit">عدد الأيام</th>
+									<th class="text-center fit">حالة الاجازة</th>
+									<th class="text-center fit">مدخل الاجازة</th>
+									<th class="text-center fit">تاريخ الادخال</th>
+									<th class="text-center fit">الاجراءات</th>
+								</tr>
+
+							</thead>
+
+							<tbody class="table-group-divider">
+
+								<template x-for="(row, index) in filteredRows" :key="index">
+									<tr>
+										
+										<td class="text-center fit  d-none" x-text="row.employee_id"></td>
+										<td class="text-center fit  d-none" x-text="row.vacation_id"></td>
+
+										<td class="text-center fit" x-text="row.vacation_name"></td>
+										<td  class="text-center fit" x-text="new Date(row.start_date).toLocaleDateString('es-CL')"></td>
+										<td  class="text-center fit" x-text="new Date(row.end_date).toLocaleDateString('es-CL')"></td>
+										<td  class="text-center fit" x-text="row.day_count"></td>
+										<td  class="text-center fit" x-html="row.vacation_status"></td>
+										<td  class="text-center fit" x-text="row.create_user"></td>
+										<td  class="text-center fit" x-text="row.create_date"></td>
+
+										<td class="text-center align-middle ">
+											
+											<button type="button" x-on:click="getVacationForView($event.target, row)" class="btn btn-outline-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-title="بيانات الاجازة">
+												<i class="bi bi-search fs-5"></i>
+											</button>
+
+											<!-- <button  type="button" x-on:click="getVacationForEdit($event.target, row)"
+												class="btn btn-outline-warning btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="تعديل الاجازة">
+												<i class="bi-pencil-square fs-5"></i>
+											</button>
+											-->
+											<button type="button" class="btn btn-outline-warning btn-sm" x-bind:data-bs-target="'#EmpEditVacModal'+ row.vacation_id" data-bs-toggle="modal" data-bs-target="#EmpEditVacModal" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="تعديل الاجازة">
+												<i class="bi bi-pencil-square fs-5"></i>
+											</button>
+											
+											<button  type="button" x-on:click="($event.target, row)"
+												class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="موافقة/رفض">
+												<i class="bi bi-toggles fs-5"></i>
+											</button>
+
+											<button type="button" class="btn btn-outline-danger btn-sm" x-on:click="($event.target, row)" data-bs-toggle="tooltip" data-bs-title="إالغاء الاجازة">
+												<i class="bi bi-trash fs-5"></i>
+											</button>
+
+											 <button type="button" class="btn btn-outline-success btn-sm" x-on:click="printVac($event.target, row)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="طباعة الاجازة" >
+                                                <i class=" bi bi-printer fs-5" ></i>
+                                            </button>   
+										</td>
+										
+										<td>
+										<!-- Modal Employee View Vacation -->
+											<div class="modal fade" id="EmpViewVacModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+												<div class="modal-dialog modal-dialog-scrollable modal-lg">
+													<div class="modal-content">
+														<div class="modal-header bg-info-subtle">
+															<h1 class="modal-title fs-5" id="staticBackdropLabel">
+																بيانات الاجازة</h1>
+															<div class="d-flex flex-row-reverse mb-3 ">
+																<button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
+															</div>
+														</div>
+														<div class="modal-body">
+															<div class="row justify-content-md-center"  id="viewModalBody">
+															</div>
+															<div class="modal-footer">
+																<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>				
+															</div>
+													</div>
+												</div>
+											</div>											
+
+										<!-- End Modal Employee View Vacation -->	
+										</td>
+
+										<td>
+										<!-- Modal Employee Edit Vacation -->
+											<div class="modal fade" id="EmpEditVacModal" x-bind:id="'EmpEditVacModal'+ row.vacation_id" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+												<div class="modal-dialog modal-dialog-scrollable modal-lg">
+													<div class="modal-content">
+														<div class="modal-header bg-warning-subtle">
+															<h1 class="modal-title fs-5" id="edit_modal">
+																تعديل الاجازة</h1>
+															<div class="d-flex flex-row-reverse mb-3 ">
+																<button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
+															</div>
+														</div>
+														<div class="modal-body">
+															<div class="container-fluid">
+																<div class="row mb-3">
+																	
+																	<label  class="col-sm-3 col-form-label" >نوع الاجازة</label>	
+																	<div class="col-sm-9">
+																		<select name="vacation_type" x-model="row.vacation_type" class="form-select" id="floatingInput" aria-label="Default select example">																		
+																			{% for vac_type in vacation_types %}																			
+																				<option value="{{vac_type.id }}" {{ row.vacation_type == vac_type.id ? 'selected' : '' }}>{{  vac_type.vacation_name }}</option>
+																			{% endfor %}
+																		</select>
+																	</div>
+																</div>
+
+																<div class="row mb-3">																																		
+																	<label  class="col-sm-3 col-form-label">سبب الاجازة السنوية</label>	
+																	<div class="col-sm-9">
+																		<select name="annual_vac_type" x-model="row.annual_vac_type" class="form-select" id="floatingInput" aria-label="Default select example">																		
+																			{% for key, value in lookups.annual_vacation_type %}
+																				<option value="{{ key }}" {{ row.annual_vac_type == key ? 'selected' : '' }}>{{ value }}</option>
+																			{% endfor %}
+																		</select>
+																	</div>																	
+																</div>
+
+																<div class="row mb-3">
+																	<label  class="col-sm-3 col-form-label">الرصيد الكلي</label>	
+																	<div class="col-sm-3">
+																		<input type="text" class="form-control" x-model="row.start_balance" name="start_balance" id="floatingInput" disabled>
+																	</div>
+																	<label  class="col-sm-3 col-form-label">الرصيد المستنفذ</label>	
+																	<div class="col-sm-3">
+																		<input type="text" class="form-control" x-model="row.spent_balance" name="spent_balance" id="floatingInput" disabled>
+																	</div>																	
+																</div>
+																<div class="row mb-3">
+																	<label  class="col-sm-3 col-form-label">الرصيد المتبقي</label>	
+																	<div class="col-sm-3">
+																		<input type="text" class="form-control" x-model="row.current_balance" name="current_balance" id="floatingInput" disabled>
+																	</div>
+																	<label  class="col-sm-3 col-form-label">عدد أيام الاجازة</label>	
+																	<div class="col-sm-3">
+																		<input type="text" class="form-control" x-model="row.day_count" name="day_count" id="floatingInput" disabled>
+																	</div>																	
+																</div>																
+																<div class="row mb-3">
+																	<label  class="col-sm-3 col-form-label">تاريخ بداية الاجازة</label>	
+																	<div class="col-sm-3">																	
+																		<input type="date" x-model="row.start_date" class="form-control" name="start_date" id="floatingInput">																		
+																	</div>
+
+																	<label  class="col-sm-3 col-form-label">تاريخ انتهاء الاجازة</label>	
+																	<div class="col-sm-3">																	
+																		<input type="date" x-model="row.end_date" class="form-control" name="end_date" id="floatingInput">																		
+																	</div>																	
+																</div>
+																<div class="row mb-3">
+																	<label  class="col-sm-3 col-form-label">الموظف البديل</label>	
+																	<div class="col-sm-9">
+																		<input type="text" class="form-control" x-model="row.substitute_employee" name="substitute_employee" id="floatingInput" >
+																	</div>
+																</div>
+																<div class="row mb-3">
+																	<label  class="col-sm-3 col-form-label">العنوان</label>	
+																	<div class="col-sm-9">
+																		<input type="text" class="form-control" x-model="row.address" name="address" id="floatingInput">
+																	</div>
+																</div>
+																<div class="row mb-3">
+																	<label  class="col-sm-3 col-form-label">الهاتف</label>	
+																	<div class="col-sm-3">
+																		<input type="text" class="form-control" x-model="row.phone" name="phone" id="floatingInput" >
+																	</div>
+																	<label  class="col-sm-3 col-form-label">المحمول</label>	
+																	<div class="col-sm-3">
+																		<input type="text" class="form-control" x-model="row.mobile" name="mobile" id="floatingInput" >
+																	</div>																	
+																</div>
+															<div class="modal-footer">																				
+																<button type="button" x-on:click="editDevice($event.target, row, name)" class="btn btn-warning"><i class="bi bi-pencil fs-5"></i>تعديل</button>
+																<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+															</div>
+													</div>
+												</div>
+											</div>
+										<!-- End Modal Employee Edit Vacation -->	
+
+										</td>
+
+									</tr>
+
+								</template>
+							</tbody>
+						</table>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+<script>
+/////////////////////////////// View Vacation ////////////////////////////////////////////////////////////////////////
+    function getVacationForView(button, row) {
+
+        post('/vacation/get_vacation', {id : row.vacation_id, employee_id : row.employee_id}, button)
+            .then(response => {console.log(response);
+                if (response.ok) {   
+					
+					const EmpViewVacModal = new bootstrap.Modal(document.getElementById("EmpViewVacModal"));
+                    response.json().then(response => openEmpViewVacModal(EmpViewVacModal, response))
+                }
+            })
+    }
+
+
+	function openEmpViewVacModal(modal, response) {
+		createEmpViewVac(response); 
+		modal.show();
+	}
+
+	//Function to create table rows
+	function createEmpViewVac(data) {
+		
+		var modal_body = document.getElementById("viewModalBody");
+		
+		modal_body.innerHTML = ' ';
+		
+		viewData = data['result'];
+
+		date1 = Date.parse (viewData.start_date);
+		date2 = new Date (viewData.end_date);
+		day_count = (Math.round((date2 - date1) / (1000 * 60 * 60 * 24))) + 1 ;
+
+		modal_body.innerHTML = 
+			'<div class="row mb-3"><label class="col-sm-3 col-form-label">نوع الاجازة</label><div class="col-sm-9"><input value="'+viewData.vac_type_name+'" class="form-control" readonly></div></div>'		
+			+'<div class="row mb-3">'
+				+'<label class="col-sm-3 col-form-label">الرصيد الحالي</label><div class="col-sm-3"><input value="'+viewData.current_balance+'"class="form-control" readonly></div>'
+				+'<label class="col-sm-3 col-form-label">عدد ايام الاجازة</label><div class="col-sm-3"><input value="'+day_count+'" class="form-control" readonly></div>'                                    
+			+'</div>'
+			+'<div class="row mb-3">'
+				+'<label class="col-sm-3 col-form-label">الرصيد الكلي</label><div class="col-sm-3"><input value="'+viewData.start_balance+'"class="form-control" readonly></div>'
+				+'<label class="col-sm-3 col-form-label">الرصيد المستنفذ</label><div class="col-sm-3"><input value="'+viewData.spent_balance+'"class="form-control" readonly></div>'                                    
+			+'</div>'		
+			+'<div class="row mb-3">'
+				+'<label class="col-sm-3 col-form-label">تاريخ ادخال الاجازة</label><div class="col-sm-3"><input value="'+viewData.start_date+'" class="form-control" readonly></div>'                                    
+				+'<label class="col-sm-3 col-form-label">تاريخ انتهاء الاجازة</label><div class="col-sm-3"><input value="'+viewData.end_date+'" class="form-control" readonly></div>'	
+			+'</div>'	
+			+'<div class="row mb-3"><label class="col-sm-3 col-form-label">الموظف البديل</label><div class="col-sm-9"><input value="'+viewData.substitute_employee+'" class="form-control" readonly></div></div>'
+       		+'<div class="row mb-3"><label class="col-sm-3 col-form-label">العنوان</label><div class="col-sm-9"><input value="'+viewData.address+'" class="form-control" readonly></div></div>'
+			+'<div class="row mb-3">'
+			    +'<label class="col-sm-3 col-form-label">الهاتف</label><div class="col-sm-3"><input value="'+viewData.phone+'" class="form-control" readonly></div>'                                    
+				+'<label class="col-sm-3 col-form-label">المحمول</label><div class="col-sm-3"><input value="'+viewData.mobile+'" class="form-control" readonly></div>'                                    
+            +'</div>'			
+			+'<div class="row mb-3"><label class="col-sm-3 col-form-label">ملاحظات</label><div class="col-sm-9"><input value="'+viewData.notes+'" class="form-control" readonly></div></div>'
+            +'<div class="row mb-3"><label class="col-sm-3 col-form-label">مدخل الاجازة</label><div class="col-sm-9"><input value="'+viewData.create_user_name+'" class="form-control" readonly></div></div>'
+            +'<div class="row mb-3"><label class="col-sm-3 col-form-label">تاريخ ادخال الاجازة</label><div class="col-sm-9"><input value="'+viewData.create_date+'" class="form-control" readonly></div></div>'
+            +'<div class="row mb-3"><label class="col-sm-3 col-form-label">حالة الاجازة</label><div class="col-sm-9"><input value="'+viewData.vac_sts+'" class="form-control" readonly></div></div>'
+            +'<div class="row mb-3"><label class="col-sm-3 col-form-label">تمت الموافقة من</label><div class="col-sm-9"><input value="'+viewData.approve_user_name+'" class="form-control" readonly></div></div>'
+		+'';
+	
+	}
+
+
+/////////////////////////////// Edit Vacation ////////////////////////////////////////////////////////////////////////
+
+    function getVacationForEdit(button, row) {
+
+		const EmpEditVacModal = new bootstrap.Modal(document.getElementById("EmpEditVacModal" + row.vacation_id));
+
+        post('/vacation/get_vacation', {id : row.vacation_id, employee_id : row.employee_id}, button ,EmpEditVacModal)
+            .then(response => {
+                if (response.ok) {   					
+                    response.json().then(response => openEmpEditVacModal(EmpEditVacModal, response))
+                }
+            })
+    }
+
+
+	function openEmpEditVacModal(modal, response) {		
+		modal.show();
+	}
+
+
+    function get_ann_vac_type(vac_type) {
+		if (vac_type == 1) {        
+            document.getElementById("annual_div").className = "d-block";
+        }else{
+            document.getElementById("annual_div").className = "d-none";
+           // document.getElementByName("annual_vac_type").value = "null";
+        }
+    }
+
+
+function addClassNameListener(elemId, callback) {
+    var elem = document.getElementById("annual_div");
+    var lastClassName = elem.className;
+     var className = elem.className;
+        if (className !== lastClassName) {
+            callback();   
+            lastClassName = className;
+        }
+   // get_ann_vac_type();
+}
+ 
+//addClassNameListener("annual_div", get_ann_vac_type());
+
+/////////////////////////////// Print Vacation ////////////////////////////////////////////////////////////////////////
+    function printVac(button, row){
+        
+        post('/vacation/getEmpVac', {id : row.vacation_id}, button)
+        .then(response => response.blob())
+            .then(blob => {
+                var file = window.URL.createObjectURL(blob);
+                window.open(file, "_blank");
+            })
+        .catch((error, response) => {
+
+            console.error('Error:', error);
+        });
+    }
+
+
+
+/////////////////////////////// List Vacations ////////////////////////////////////////////////////////////////////////
+
+  const dataTable = () => {
+    return {
+      table: null,
+      options: {
+        searching: false,
+        ordering: true,
+        paging: true,
+        lengthChange: true,
+        info: true,
+        autoWidth: true
+      },
+	  
+	  employee_id:'',
+	  vacation_name: '', 
+      start_date: '',
+	  end_date:'',
+	  day_count: '',
+	  vacation_status: '', 
+      create_user: '',
+	  create_date:'',
+	  filterName: '',
+  	  filterDate1: '',
+	  filterDate2: '',
+	  filterStatus: '',   
+
+    
+      rows: [{% for item in vacation_list %}{
+		vacation_id:  '{{ item.id }}',
+		employee_id: '{{ item.employee_id }}',
+		vacation_type:  '{{ item.vacation_type }}',
+		annual_vac_type:  '{{ item.annual_vac_type }}',
+		vac_name:  '{{ item.vacation_name }}',
+		vacation_name: '{{ item.vacation_name ~ item.separator ~ lookups.annual_vacation_type[item.annual_vac_type]}}',
+        start_date: '{{ item.start_date|date("Y-m-d")}}',
+		end_date: '{{ item.end_date|date("Y-m-d") }}',
+		day_count: '{{ (date(item.end_date).diff(date(item.start_date))).days + 1 }}',
+		vacation_status: '<i class = "{{ lookups.status_class[item.vacation_status] }}" ></i> {{ lookups.vacation_status[item.vacation_status] }}',
+        create_user: '{{ item.create_user_name}}',
+		create_date: '{{ item.create_date|date("H:i:s  d/m/Y") }}',
+		start_balance: '{{ item.start_balance}}',
+		current_balance: '{{ item.current_balance}}',
+		spent_balance: '{{ (item.start_balance - item.current_balance)}}',
+		
+              
+      },
+      {% endfor %}],
+
+				
+		get filteredRows() {
+			if (!this.filterName && !this.filterDate1 && !this.filterDate2 && !this.filterStatus ) {
+				return this.rows;
+			}
+
+
+			return this.rows.filter(row => {
+						
+			from_date = new Date(this.filterDate1).toLocaleDateString('sv-SE');
+			end_date = new Date(this.filterDate2).toLocaleDateString('sv-SE');
+
+			row_start_date = new Date(row.start_date).toLocaleDateString('sv-SE');
+
+			const nameMatch = row.vacation_name.toLowerCase().includes(this.filterName.toLowerCase());	
+			const statusMatch = this.filterStatus.toLowerCase() === '' || row.vacation_status.includes(this.filterStatus.toLowerCase());
+			
+
+			const dateMatch = (
+				(!this.filterDate1 || row_start_date >= from_date) && (!this.filterDate2 || row_start_date <= end_date)
+				);
+
+			return nameMatch && dateMatch && statusMatch ;
+			});
+		}
+	};
+};
+
+</script>
+
+
+
+</main>
+{% endblock %}
+{% block script %}
+
+{% endblock %}

@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+	<head>
+
+		{% block head %}{% endblock %}
+		{#  	{% include ("/includes/constants.php") %}	 #}
+		<meta charset="utf-8">
+		<meta id="csrfName" name="{{ csrf.keys.name }}" content="{{ csrf.name }}">
+		<meta id="csrfValue" name="{{ csrf.keys.value }}" content="{{ csrf.value }}">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="برنامج شؤون الموظفين &amp; ">
+		<meta name="author" content="MTIT">
+		<meta name="keywords" content="hr, شؤون الموظفين">
+
+		<link rel="shortcut icon" href="/img/logo/HR_LOGO.svg"/>
+
+
+		<title>
+			{% block title %}{% endblock %}
+			شؤون الموظفين</title>
+
+
+		<link href="/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"> 
+		<link href="/css/popover.css" rel="stylesheet">
+		<link href="/css/app.css" rel="stylesheet">
+		<style>
+			.spinner {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(0, 0, 0, 0.4);
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				z-index: 9999;
+			}
+
+			.spinner .spinner-border {
+				width: 3rem;
+				height: 3rem;
+			}
+
+
+
+
+			.demo1 {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			.ui-success,
+			.ui-error {
+				width: 100px;
+				height: 100px;
+			}
+			.ui-success-circle {
+				stroke-dasharray: 260.75219025px, 260.75219025px;
+				stroke-dashoffset: 260.75219025px;
+				transform: rotate(220deg);
+				transform-origin: center center;
+				stroke-linecap: round;
+				animation: ani-success-circle 1s ease-in both;
+			}
+			.ui-success-path {
+				stroke-dasharray: 60px 64px;
+				stroke-dashoffset: 62px;
+				stroke-linecap: round;
+				animation: ani-success-path 0.4s 1s ease-in both;
+			}
+			@keyframes ani-success-circle {
+				to {
+					stroke-dashoffset: 782.25657074px;
+				}
+			}
+			@keyframes ani-success-path {
+				0% {
+					stroke-dashoffset: 62px;
+				}
+				65% {
+					stroke-dashoffset: -5px;
+				}
+				84% {
+					stroke-dashoffset: 4px;
+				}
+				100% {
+					stroke-dashoffset: -2px;
+				}
+			}
+			.ui-error-circle {
+				stroke-dasharray: 260.75219025px, 260.75219025px;
+				stroke-dashoffset: 260.75219025px;
+				animation: ani-error-circle 1.2s linear;
+			}
+			.ui-error-line1 {
+				stroke-dasharray: 54px 55px;
+				stroke-dashoffset: 55px;
+				stroke-linecap: round;
+				animation: ani-error-line 0.15s 1.2s linear both;
+			}
+			.ui-error-line2 {
+				stroke-dasharray: 54px 55px;
+				stroke-dashoffset: 55px;
+				stroke-linecap: round;
+				animation: ani-error-line 0.2s 0.9s linear both;
+			}
+			@keyframes ani-error-line {
+				to {
+					stroke-dashoffset: 0;
+				}
+			}
+			@keyframes ani-error-circle {
+				0% {
+					stroke-dasharray: 0, 260.75219025px;
+					stroke-dashoffset: 0;
+				}
+				35% {
+					stroke-dasharray: 120px, 120px;
+					stroke-dashoffset: -120px;
+				}
+				70% {
+					stroke-dasharray: 0, 260.75219025px;
+					stroke-dashoffset: -260.75219025px;
+				}
+				100% {
+					stroke-dasharray: 260.75219025px, 0;
+					stroke-dashoffset: -260.75219025px;
+				}
+			}
+
+		</style>
+{% block style %}{% endblock %}
+	</head>
+
+	<body>
+
+
+		<nav class="navbar navbar-expand-lg "> {% block nav %}{% endblock %}
+			<div class="container-fluid">
+				<button class="btn navbar-toggler-icon" data-bs-target="#sidebar" data-bs-toggle="collapse" aria-controls="offcanvasScrolling">
+					<i class="hamburger align-self-center"></i>
+				</button>
+				<a class="navbar-brand" href="/" id="sidebarToggle" style="font-weight: 900;">
+					<img src="/img/logo/HR_LOGO.svg" alt="HR" style=" max-width: 43px; height: auto;" class="d-inline-block align-text-top">
+
+					شــؤون المـوظـفــين
+
+				</a>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+						<li class="nav-item dropdown pt-1">
+							<button class="btn btn-link nav-link py-2 px-0 px-lg-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" data-bs-display="static">
+								<svg class="bi my-1 theme-icon-active" width="20" height="20" fill="currentColor">
+									<use href="/bootstrap-icons/bootstrap-icons.svg#sun-fill"></use>
+								</svg>
+								<span class="d-lg-none ms-2">Theme</span>
+							</button>
+							<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="bd-theme" style="--bs-dropdown-min-width: 8rem;">
+								<li>
+									<button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="light">
+										<svg class="bi me-2 opacity-50 theme-icon ms-3" width="20" height="20" fill="currentColor">
+											<use href="/bootstrap-icons/bootstrap-icons.svg#sun-fill"></use>
+										</svg>
+										Light
+									</button>
+								</li>
+								<li>
+									<button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark">
+										<svg class="bi me-2 opacity-50 theme-icon ms-3" width="20" height="20" fill="currentColor">
+											<use href="/bootstrap-icons/bootstrap-icons.svg#moon-stars-fill"></use>
+										</svg>
+										Dark
+									</button>
+								</li>
+								<li>
+									<button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="auto">
+										<svg class="bi me-2 opacity-50 theme-icon ms-3" width="20" height="20" fill="currentColor">
+											<use href="/bootstrap-icons/bootstrap-icons.svg#circle-half"></use>
+										</svg>
+										Auto
+									</button>
+								</li>
+							</ul>
+						</li>
+
+
+						<li class="nav-item py-1 py-lg-1 col-12 col-lg-auto">
+							<div class="vr d-none d-lg-flex h-50 mx-lg-2 mt-2"></div>
+							<hr class="d-lg-none my-1 ">
+						</li>
+
+						<li class="nav-item dropdown pt-1">
+							<button class="btn btn-link nav-link py-2 px-0 px-lg-2 dropdown-toggle d-flex align-items-center" id="alertsDropdown" data-bs-toggle="dropdown">
+								<svg class="bi my-1 theme-icon-active" width="20" height="20" fill="currentColor">
+									<use href="/bootstrap-icons/bootstrap-icons.svg#bell-fill"></use>
+								</svg>
+								<span class="d-lg-none ms-2">Notification</span>
+								<span class="badge rounded-pill text-bg-danger">10</span>
+							</button>
+							<ul class="dropdown-menu">
+								<ul class="list-group list-group-flush align-items-start">
+									<li class="list-group-item">An item</li>
+									<li class="list-group-item">A second item</li>
+									<li class="list-group-item">A third item</li>
+									<li class="list-group-item">A fourth item</li>
+									<li class="list-group-item">And a fifth one</li>
+								</ul>
+							</ul>
+						</li>
+
+
+						<li class="nav-item py-1 py-lg-1 col-12 col-lg-auto">
+							<div class="vr d-none d-lg-flex h-50 mx-lg-2 mt-2"></div>
+							<hr class="d-lg-none my-1 ">
+						</li>
+
+
+						<li class="dropdown ">
+							<a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" data-bs-toggle="dropdown">
+								<i class="align-middle" data-feather="settings"></i>
+							</a>
+
+							<a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
+								<img src="{{ basicInfo.avatar }}" class="avatar img-fluid rounded ms-2" alt="Charles Hall"/>
+								<span>{{ basicInfo.f_name }} {{ basicInfo.l_name }} </span>
+							</a>
+							<div class="dropdown-menu ">
+								{% if permissions['view_profile']  %}
+									<a class="dropdown-item" href="/employee/profile/{{ basicInfo.user_id }}">
+										<i class="align-middle me-1" data-feather="user"></i>
+										Profile
+									</a>
+								{% endif %}
+								<a class="dropdown-item" href="#">
+									<i class="align-middle me-1" data-feather="pie-chart"></i>
+									Analytics
+								</a>
+								<div class="dropdown-divider"></div>
+								<a class="dropdown-item" href="index.html">
+									<i class="align-middle me-1" data-feather="settings"></i>
+									Settings & Privacy
+								</a>
+								<a class="dropdown-item" href="#">
+									<i class="align-middle me-1" data-feather="help-circle"></i>
+									Help Center
+								</a>
+								{% if basicInfo.has_multi_oS %}
+									<div class="dropdown-divider"></div>
+									<a class="dropdown-item" href="/switch_os">تبديل مستخدم</a>
+								{% endif %}	
+								<div class="dropdown-divider"></div>
+								<a class="dropdown-item" href="/logout">تسجيل الخروج</a>
+							</div>
+						</li>
+
+					</ul>
+
+				</div>
+			</div>
+		</nav>
+
+		<div class="container-fluid scrollarea ">
+			<div class="row flex-nowrap me-2">
+
+
+
+				<div class="col-auto px-0">
+					<div id="sidebar" class="collapse collapse-horizontal  ">
+
+						<div id="sidebar-nav" class="card min-vh-100 p-1 scrollarea">
+
+
+							<ul class="list-unstyled py-3">
+
+								<li class="mt-1">
+									<a href="/" class="btn btn-not-toggle d-inline-flex align-items-center rounded border-0 collapsed">
+										<i class="bi bi-house-door-fill ps-2"></i>الرئيسية
+									</a>
+								</li>
+
+								{% set menuSections = {} %}
+
+								{% for menu in menuItems %}
+									{% set menuName = menu.menu_name %}
+									{% set menuSection = menuSections[menuName] ?? [] %}
+									{% set menuSections = menuSections|merge({ (menuName): menuSection|merge([menu]) }) %}
+								{% endfor %}
+
+								{% for menuSectionName, menuSectionItems in menuSections %}
+									<div class="row navbar-vertical-label-wrapper">
+										<div class="col-auto navbar-vertical-label me-2">{{ menuSectionName }}</div>
+										<div class="col ps-0">
+											<hr class="navbar-vertical-divider">
+										</div>
+									</div>
+
+									{% for menu in menuSectionItems %}
+										{% set submenu = menuItems|filter(subItem => subItem.parent_id == menu.id and subItem.id != menu.id) %}
+										{% set hasSubmenu = submenu is not empty %}
+
+										{% if hasSubmenu %}
+											<li class="mt-1">
+												<button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#{{ menu.id }}-collapse" aria-expanded="true">
+													<i class="{{ menu.icon_class }} ps-2"></i>{{ menu.title }}
+												</button>
+												<div class="collapse" id="{{ menu.id }}-collapse">
+													<ul class="btn-toggle-nav list-unstyled fw-bolder fs-6 pb-1 small me-2">
+														{% for subItem in submenu %}
+															<li>
+																<a href="{{ subItem.url }}" class="d-inline-flex text-decoration-none rounded"><i class="{{ subItem.icon_class }} ps-2"></i> {{ subItem.title }}</a>
+															</li>
+														{% endfor %}
+													</ul>
+												</div>
+											</li>
+										{% elseif menu.parent_id == 0 %}
+											<li class="mt-1">
+												<a href="{{ menu.url }}" class="btn btn-not-toggle d-inline-flex align-items-center rounded border-0 collapsed">
+													<i class="{{ menu.icon_class }} ps-2"></i>{{ menu.title }}
+												</a>
+											</li>
+										{% endif %}
+									{% endfor %}
+								{% endfor %}
+							</ul>
+
+
+
+							{% block sidebar %}{% endblock %}
+
+						</div>
+					</div>
+				</div>
+
+				<div class="spinner" id="spinner" style="display:none">
+					<div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+						<span class="visually-hidden">Loading...</span>
+					</div>
+				</div>
+				<main class="flex-shrink-1 d-flex flex-column max-vh-100"> {% block main %}{% endblock %}
+
+
+					<!-- Modal Error -->
+					<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered">
+							<div class="modal-content">
+								<div class="modal-header bg-warning  ">
+									<h1 class="modal-title  fs-5 " id="errorModalLabel">خطأ</h1>
+									<div class="d-flex flex-row-reverse mb-3 ">
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+								</div>
+								<div class="modal-body" id="errorModalBody"></div>
+								<div class="modal-footer ">
+									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">اغلاق</button>
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Modal Success -->
+					<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered">
+							<div class="modal-content">
+								<div class="modal-header bg-success  text-white">
+									<h1 class="modal-title  fs-5 " id="successModalLabel">تم بنجاح</h1>
+									<div class="d-flex flex-row-reverse mb-3 ">
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+								</div>
+								<div class="modal-body" id="successModalBody"></div>
+								<div class="modal-footer ">
+									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">اغلاق</button>
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+
+					<div id="successMsgModal" class="modal fade" tabindex="-1" role="dialog">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="card">
+									<div class="modal-header border-0">
+										<h5 class="modal-title text-success">
+											<i class="bi bi-check-circle-fill"></i>
+											نجاح
+										</h5>
+										<div class="d-flex flex-row-reverse">
+											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="hideModal('successMsgModal')"></button>
+										</div>
+									</div>
+									<div class="modal-body text-center ">
+										<div class="card-body">
+											{% if success is defined %}
+												<div class="demo1">
+													<div class="ui-success">
+														<svg viewBox="0 0 87 87" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+															<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+																<g id="Group-3" transform="translate(2.000000, 2.000000)">
+																	<circle id="Oval-2" stroke="rgba(165, 220, 134, 0.2)" stroke-width="4" cx="41.5" cy="41.5" r="41.5"></circle>
+																	<circle  class="ui-success-circle" id="Oval-2" stroke="#A5DC86" stroke-width="4" cx="41.5" cy="41.5" r="41.5"></circle>
+																	<polyline class="ui-success-path" id="Path-2" stroke="#A5DC86" stroke-width="4" points="19 38.8036813 31.1020744 54.8046875 63.299221 28"></polyline>
+																</g>
+															</g>
+														</svg>
+													</div>
+												</div>
+												<div class="mt-3 fs-5">
+													{{ success }}
+												</div>
+											{% endif %}
+										</div>
+									</div>
+									<div class="d-flex justify-content-center">
+										<div class="modal-footer">
+											<button type="button" class="btn btn-light text-center" data-bs-dismiss="modal" onclick="hideModal('successMsgModal')">اغلاق</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<div id="errorMsgModal" class="modal fade" tabindex="-1" role="dialog">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="card">
+									<div class="modal-header border border-0">
+										<h5 class="modal-title text-danger">
+											<i class="bi bi-exclamation-octagon-fill"></i>
+											خطأ
+										</h5>
+										<div class="d-flex flex-row-reverse">
+											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="hideModal('errorMsgModal')"></button>
+										</div>
+									</div>
+									<div class="modal-body text-center">
+										<div class="card-body">
+											{% if error is defined %}
+											<div class="demo1">
+												<div class="ui-error">
+													<svg  viewBox="0 0 87 87" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+														<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+															<g id="Group-2" transform="translate(2.000000, 2.000000)">
+																<circle id="Oval-2" stroke="rgba(252, 191, 191, .5)" stroke-width="4" cx="41.5" cy="41.5" r="41.5"></circle>
+																<circle  class="ui-error-circle" stroke="#F74444" stroke-width="4" cx="41.5" cy="41.5" r="41.5"></circle>
+																<path class="ui-error-line1" d="M22.244224,22 L60.4279902,60.1837662" id="Line" stroke="#F74444" stroke-width="3" stroke-linecap="square"></path>
+																<path class="ui-error-line2" d="M60.755776,21 L23.244224,59.8443492" id="Line" stroke="#F74444" stroke-width="3" stroke-linecap="square"></path>
+															</g>
+														</g>
+													</svg>
+												</div>
+											</div>
+												<div  class="mt-3 fs-5">
+													{{ error }}
+												</div>
+											{% endif %}
+										</div>
+									</div>
+										<div class="d-flex justify-content-center">
+									<div class="modal-footer">
+											<button type="button" class="btn btn-light text-center" data-bs-dismiss="modal" onclick="hideModal('errorMsgModal')">اغلاق</button>
+										</div>
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div id="errorPermModal" class="modal fade" tabindex="-1" role="dialog">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="card">
+									<div class="modal-header border border-0">
+										<h5 class="modal-title text-danger">
+											<i class="bi bi-exclamation-octagon-fill"></i>
+											خطأ
+										</h5>
+										<div class="d-flex flex-row-reverse">
+											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="hideModal('errorPermModal')"></button>
+										</div>
+									</div>
+									<div class="modal-body text-center">
+										<div class="card-body">
+
+											<div class="demo1">
+												<div class="ui-error">
+													<svg  viewBox="0 0 87 87" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+														<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+															<g id="Group-2" transform="translate(2.000000, 2.000000)">
+																<circle id="Oval-2" stroke="rgba(252, 191, 191, .5)" stroke-width="4" cx="41.5" cy="41.5" r="41.5"></circle>
+																<circle  class="ui-error-circle" stroke="#F74444" stroke-width="4" cx="41.5" cy="41.5" r="41.5"></circle>
+																<path class="ui-error-line1" d="M22.244224,22 L60.4279902,60.1837662" id="Line" stroke="#F74444" stroke-width="3" stroke-linecap="square"></path>
+																<path class="ui-error-line2" d="M60.755776,21 L23.244224,59.8443492" id="Line" stroke="#F74444" stroke-width="3" stroke-linecap="square"></path>
+															</g>
+														</g>
+													</svg>
+												</div>
+											</div>
+												<div id="errorBody" class="mt-3 fs-5">
+
+												</div>
+
+										</div>
+									</div>
+										<div class="d-flex justify-content-center">
+									<div class="modal-footer">
+											<button type="button" class="btn btn-light text-center" data-bs-dismiss="modal" onclick="hideModal('errorPermModal')">اغلاق</button>
+										</div>
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+					<footer class=" py-3 mt-auto "> {% block footer %}{% endblock %}
+						<div class="container-fluid">
+							<div class="row text-muted">
+								<div class="col-xs-12 col-md-6  text-end">
+									<p class="mb-0">
+										<a class="link-offset-2 link-underline link-underline-opacity-0 text-muted " href="https://mtit.pna.ps/" target="_blank">
+											<strong>وزارة الاتصالات وتكنولوجيا المعلومات</strong>
+										</a>
+										<a class="link-offset-2 link-underline link-underline-opacity-0 text-muted" href="https://mtit.pna.ps/" target="_blank"></a>
+										&copy;
+									</p>
+								</div>
+								<div class="col-xs-12 col-md-6  text-start">
+									<ul class="list-inline">
+										<li class="list-inline-item fs-6">
+											<a class="text-muted link-offset-2 link-underline link-underline-opacity-0" href="https://mtit.pna.ps/" target="_blank">دائرة تطوير الانظمة والبرمجيات القياسية</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</footer>
+
+				</main>
+
+
+			</div>
+
+		</div>
+		<script src="/js/app.js"></script>
+		<script src="/app/js/ajax.js"></script>
+
+		<script>
+			var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+			var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+			return new bootstrap.Tooltip(tooltipTriggerEl)
+			})
+
+			const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+			const popoverList = [... popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+
+			const toastElList = document.querySelectorAll('.toast')
+			const toastList = [... toastElList].map(toastEl => new bootstrap.Toast(toastEl))
+
+			const toastTrigger = document.getElementById('liveToastBtn')
+			const toastLiveExample = document.getElementById('liveToast')
+
+			if (toastTrigger) {
+				const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+				toastTrigger.addEventListener('click', () => {
+					toastBootstrap.show()
+				})
+			}
+
+
+			// JavaScript code to trigger the error modal if the error Twig variable is not empty
+			{% if success is defined and success is not empty %}
+			var successModal = document.getElementById('successMsgModal');
+			if (successModal) {
+				successModal.classList.add('show');
+				successModal.style.display = 'block';
+				successModal.setAttribute('aria-hidden', 'false');
+				document.body.classList.add('modal-open');
+
+				var backdropElement = document.querySelector('.modal-backdrop');
+				if (!backdropElement) {
+					backdropElement = document.createElement('div');
+					backdropElement.classList.add('modal-backdrop', 'fade', 'show');
+					document.body.appendChild(backdropElement);
+				}
+			}
+			{% endif %}
+
+			// JavaScript code to trigger the error modal if the error Twig variable is not empty
+			{% if error is defined and error is not empty %}
+			var errorModal = document.getElementById('errorMsgModal');
+			if (errorModal) {
+				errorModal.classList.add('show');
+				errorModal.style.display = 'block';
+				errorModal.setAttribute('aria-hidden', 'false');
+				document.body.classList.add('modal-open');
+
+				var backdropElement = document.querySelector('.modal-backdrop');
+				if (!backdropElement) {
+					backdropElement = document.createElement('div');
+					backdropElement.classList.add('modal-backdrop', 'fade', 'show');
+					document.body.appendChild(backdropElement);
+				}
+			}
+			{% endif %}
+
+
+
+
+
+if (toastTrigger) {
+const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+toastTrigger.addEventListener('click', () => {
+toastBootstrap.show()
+})
+}
+		</script>
+
+
+		{% block script %}{% endblock %}
+
+
+	</body>
+
+</html>

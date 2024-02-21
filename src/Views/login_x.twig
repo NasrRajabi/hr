@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
+		<meta name="author" content="AdminKit">
+		<meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+
+		<link rel="preconnect" href="https://fonts.gstatic.com">
+		<link rel="shortcut icon" href="img/logo/HR_LOGO.svg"/>
+
+		<title>تسجيل الدخول | HR System</title>
+
+		<link href="css/app.css" rel="stylesheet">
+
+		<style>
+			body {
+				background: url('img/photos/11.png') no-repeat center center fixed;
+				-webkit-background-size: cover;
+				-moz-background-size: cover;
+				-o-background-size: cover;
+				background-size: cover;
+			}
+			body {
+				font-family: 'Cairo', sans-serif;
+			}
+			body {
+
+				overflow-y: visible;
+			}
+			.card {
+				border: none;
+			}
+			.form-floating:not(.form-control:disabled):before {
+				background-color: #ffffff00;
+			}
+			button {
+				box-shadow: 0 8px 15px #00000063;
+			}
+
+			/* Chrome, Safari, Edge, Opera */
+			input::-webkit-outer-spin-button,
+			input::-webkit-inner-spin-button {
+				-webkit-appearance: none;
+				margin: 0;
+			}
+
+			/* Firefox */
+			input[type=number] {
+				-moz-appearance: textfield;
+			}
+
+			.buttons {
+				margin: 10%;
+				text-align: center;
+			}
+
+			.btn-hover {
+				width: 200px;
+				font-size: 16px;
+				font-weight: 600;
+				color: #fff;
+				cursor: pointer;
+				margin: 20px;
+				height: 55px;
+				text-align: center;
+				border: none;
+				background-size: 300% 100%;
+
+				border-radius: 50px;
+				moz-transition: all 0.4s ease-in-out;
+				-o-transition: all 0.4s ease-in-out;
+				-webkit-transition: all 0.4s ease-in-out;
+				transition: all 0.4s ease-in-out;
+			}
+
+			.btn-hover:hover {
+				background-position: 100% 0;
+				moz-transition: all 0.4s ease-in-out;
+				-o-transition: all 0.4s ease-in-out;
+				-webkit-transition: all 0.4s ease-in-out;
+				transition: all 0.4s ease-in-out;
+			}
+
+			.btn-hover:focus {
+				outline: none;
+			}
+
+			.btn-hover.color-1 {
+				background-image: linear-gradient(to right, #25aae1, #40e495, #30dd8a, #2bb673);
+				box-shadow: 0 4px 15px 0 rgba(49, 196, 190, 0.75);
+			}
+			.btn-hover.color-2 {
+				background-image: linear-gradient(to right, #f5ce62, #e43603, #fa7199, #e85a19);
+				box-shadow: 0 4px 15px 0 rgba(229, 66, 10, 0.75);
+			}
+			.btn-hover.color-3 {
+				background-image: linear-gradient(to right, #667eea, #764ba2, #6B8DD6, #8E37D7);
+				box-shadow: 0 4px 15px 0 rgba(116, 79, 168, 0.75);
+			}
+			.btn-hover.color-4 {
+				background-image: linear-gradient(to right, #fc6076, #ff9a44, #ef9d43, #e75516);
+				box-shadow: 0 4px 15px 0 rgba(252, 104, 110, 0.75);
+			}
+			.btn-hover.color-5 {
+				background-image: linear-gradient(to right, #0ba360, #3cba92, #30dd8a, #2bb673);
+				box-shadow: 0 4px 15px 0 rgba(23, 168, 108, 0.75);
+			}
+			.btn-hover.color-6 {
+				background-image: linear-gradient(to right, #009245, #FCEE21, #00A8C5, #D9E021);
+				box-shadow: 0 4px 15px 0 rgba(83, 176, 57, 0.75);
+			}
+			.btn-hover.color-7 {
+				background-image: linear-gradient(to right, #6253e1, #852D91, #A3A1FF, #F24645);
+				box-shadow: 0 4px 15px 0 rgba(126, 52, 161, 0.75);
+			}
+			.btn-hover.color-8 {
+				background-image: linear-gradient(to right, #29323c, #485563, #2b5876, #4e4376);
+				box-shadow: 0 4px 15px 0 rgba(45, 54, 65, 0.75);
+			}
+			.btn-hover.color-9 {
+				background-image: linear-gradient(to right, #25aae1, #4481eb, #04befe, #3f86ed);
+				box-shadow: 0 4px 15px 0 rgba(65, 132, 234, 0.75);
+			}
+			.btn-hover.color-10 {
+				background-image: linear-gradient(to right, #ed6ea0, #ec8c69, #f7186a , #FBB03B);
+				box-shadow: 0 4px 15px 0 rgba(236, 116, 149, 0.75);
+			}
+			.btn-hover.color-11 {
+				background-image: linear-gradient(to right, #eb3941, #f15e64, #e14e53, #e2373f);
+				box-shadow: 0 5px 15px rgba(242, 97, 103, 0.4);
+			}
+
+
+			#scrollToTopBtn {
+				display: none;
+				position: fixed;
+				bottom: 20px;
+				left: 20px;
+				background-color: #007bff;
+				color: #fff;
+				border: none;
+				border-radius: 50%;
+				width: 60px;
+				height: 60px;
+				font-size: 24px;
+				cursor: pointer;
+			}
+			#scrollToTopBtn.show {
+				display: block;
+			}
+		</style>
+
+		<script src="https://www.google.com/recaptcha/api.js?render=6Lc3zPsgAAAAADvuUhjQ7f3w_byNQOxtkvmnMCfo"></script>
+
+	</head>
+
+	<body>
+		<div class="container-fluid">
+
+			<main class="d-flex w-100">
+
+				<div class="container d-flex flex-column">
+
+					<div class="row vh-100">
+
+						<div class="col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100">
+
+							<div class="d-table-cell align-middle">
+								<div class="card" style="background-color: rgba(255, 255, 255, .15); backdrop-filter: blur(20px);">
+									<div class="card-body">
+										<div class="text-center">
+											<img src="img/logo/MTIT_LOGIN.webp" class="img-fluid" width="250" height="300" alt="MTIT"/>
+										</div>
+									</div>
+								</div>
+								<br>
+								<div class="card" style=" background-color: rgba(255, 255, 255, .15);backdrop-filter: blur(5px);">
+									<div class="card-body">
+										<div class="text-center bg-white fs-5 mt-3 p-2 rounded-pill">
+											البحث عن الأجهزة الحاصلة على موافقات نوعية
+										</div>
+										<div class="ms-3 me-3 mb-3 mt-5">
+											<form id="login" action="login" method="post">
+												{{ csrf.fields | raw }}
+
+												<input type="hidden" name="Re_Token" id="Re_Token">
+
+												<select class="form-select form-select mb-3" aria-label="Large select example">
+													<option selected>التصنيف الاساسي</option>
+													<option value="1">One</option>
+													<option value="2">Two</option>
+													<option value="3">Three</option>
+												</select>
+												<select class="form-select form-select mb-3" aria-label="Large select example">
+													<option selected>التصنيف الفرعي</option>
+													<option value="1">One</option>
+													<option value="2">Two</option>
+													<option value="3">Three</option>
+												</select>
+												<select class="form-select form-select mb-3" aria-label="Large select example">
+													<option selected>
+														النوع</option>
+													<option value="1">One</option>
+													<option value="2">Two</option>
+													<option value="3">Three</option>
+												</select>
+												<select class="form-select form-select mb-3" aria-label="Large select example">
+													<option selected>الموديل</option>
+													<option value="1">One</option>
+													<option value="2">Two</option>
+													<option value="3">Three</option>
+												</select>
+
+												<div class="form-floating mb-4">
+													<input id="floatingInput" type="number" name="employee_no" value="{{ old.employee_no }}" class="form-control {{ errors.employee_no ? 'is-invalid' : '' }}" placeholder="الرقم الوظيفي" style=" background-color: rgba(255, 255, 255, .15); backdrop-filter: blur(5px);" autocomplete="off">
+													<label for="floatingInput">الاسم التجاري</label>
+													<div class="invalid-feedback">
+														{{ errors.employee_no | first }}
+													</div>
+												</div>
+												<div class="form-floating mb-4">
+													<input id="floatingPassword" type="password" name="password" value="{{ old.password }}" class="form-control {{ errors.password ? 'is-invalid' : '' }}" placeholder="كلمة المرور" style=" background-color: rgba(255, 255, 255, .15); backdrop-filter: blur(5px);" autocomplete="off">
+													<label for="floatingPassword">الطراز</label>
+													<div class="invalid-feedback">
+														{{ errors.password | first }}
+													</div>
+												</div>
+
+
+												<div class="text-center mt-4">
+
+
+													<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+														<div id="list-example" class="list-group">
+															<a href="#list-item-1">
+																<button class="btn-hover color-4" type="button" id="search-btn">
+
+																	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewbox="0 0 16 16">
+																		<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+																	</svg>
+																	بحث
+
+																</button>
+															</div>
+														</a>
+														<button class="btn-hover color-8" type="button">
+															<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eraser-fill" viewbox="0 0 16 16">
+																<path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828l6.879-6.879zm.66 11.34L3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293l.16-.16z"/>
+															</svg>
+
+															تفريغ الحقول
+														</button>
+													</div>
+												</div>
+
+											</form>
+
+
+										</div>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+			</main>
+			<div data-bs-spy="scroll" data-bs-target="#list-example" data-bs-smooth-scroll="true" class="scrollspy-example" tabindex="0" id="content">
+				<div class="card" style=" background-color: rgba(255, 255, 255, .15);backdrop-filter: blur(5px);" id="list-item-1">
+					<div class="card-body">
+						<div class="container">
+							<div class="bg-white fs-5 mt-3 p-3 rounded-top">
+								<div class="d-flex">
+									<div class="flex-grow-1">النتائج</div>
+									<div class="ms-5 px-5">
+										<img src="img/photos/approved.png" class="img-fluid position-absolute" width="100" height="150" alt="approved"/>
+
+									</div>
+								</div>
+
+
+							</div>
+							<table class="table table-light table-striped table-hover table-bordered rounded-bottom">
+								<thead>
+									<tr>
+										<th scope="col">#</th>
+										<th scope="col">First</th>
+										<th scope="col">Last</th>
+										<th scope="col">Handle</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<th scope="row">1</th>
+										<td>Mark</td>
+										<td>Otto</td>
+										<td>@mdo</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+										<td>Jacob</td>
+										<td>Thornton</td>
+										<td>@fat</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+										<td>Jacob</td>
+										<td>Thornton</td>
+										<td>@fat</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+										<td>Jacob</td>
+										<td>Thornton</td>
+										<td>@fat</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+										<td>Jacob</td>
+										<td>Thornton</td>
+										<td>@fat</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+										<td>Jacob</td>
+										<td>Thornton</td>
+										<td>@fat</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+										<td>Jacob</td>
+										<td>Thornton</td>
+										<td>@fat</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+										<td>Jacob</td>
+										<td>Thornton</td>
+										<td>@fat</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+										<td>Jacob</td>
+										<td>Thornton</td>
+										<td>@fat</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+										<td>Jacob</td>
+										<td>Thornton</td>
+										<td>@fat</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+										<td>Jacob</td>
+										<td>Thornton</td>
+										<td>@fat</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+										<td>Jacob</td>
+										<td>Thornton</td>
+										<td>@fat</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+										<td>Jacob</td>
+										<td>Thornton</td>
+										<td>@fat</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+										<td>Jacob</td>
+										<td>Thornton</td>
+										<td>@fat</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+										<td>Jacob</td>
+										<td>Thornton</td>
+										<td>@fat</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+										<td>Jacob</td>
+										<td>Thornton</td>
+										<td>@fat</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+										<td>Jacob</td>
+										<td>Thornton</td>
+										<td>@fat</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+										<td>Jacob</td>
+										<td>Thornton</td>
+										<td>@fat</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+										<td>Jacob</td>
+										<td>Thornton</td>
+										<td>@fat</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+										<td>Jacob</td>
+										<td>Thornton</td>
+										<td>@fat</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+										<td>Jacob</td>
+										<td>Thornton</td>
+										<td>@fat</td>
+									</tr>
+								</tbody>
+							</table>
+
+						</div>
+					</div>
+
+					<button class="btn-hover color-4 fw-bold" id="scrollToTopBtn">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewbox="0 0 16 16">
+							<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+						</svg>
+					</button>
+				</div>
+
+			</div>
+		</div>
+
+		<script>
+
+
+			// Get a reference to the button element
+const button = document.getElementById("search-btn");
+
+// Add a click event listener
+button.addEventListener("click", () => {
+const scrollSpy = new bootstrap.ScrollSpy(document.body, {target: '#list-example'})
+});
+
+
+const scrollToTopBtn = document.getElementById("scrollToTopBtn");
+const contentDiv = document.getElementById("content");
+
+// Show the button when the user scrolls below the contentDiv
+window.addEventListener("scroll", () => {
+if (window.scrollY > contentDiv.offsetTop) {
+scrollToTopBtn.classList.add("show");
+} else {
+scrollToTopBtn.classList.remove("show");
+}
+});
+
+// Scroll smoothly to the top when the button is clicked
+scrollToTopBtn.addEventListener("click", () => {
+window.scrollTo({top: 0, behavior: "smooth"});
+});
+
+
+grecaptcha.ready(function () {
+grecaptcha.execute('6Lc3zPsgAAAAADvuUhjQ7f3w_byNQOxtkvmnMCfo', {action: 'HR_login'}).then(function (token) {
+var Re_Token = document.getElementById('Re_Token');
+Re_Token.value = token;
+});
+});
+		</script>
+	</body>
+
+</html>

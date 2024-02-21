@@ -1,0 +1,372 @@
+{% extends "master.twig" %}
+
+
+{% block style %}
+	<style>
+
+
+		.scrollable-div {
+			height: 700px; /* Set the desired height */
+			overflow: auto; /* Enable scrolling */
+		}
+	</style>
+{% endblock %}
+
+
+{% block main %}
+
+
+	<main class="col ms-1">
+		<div class="card">
+			<div class="card-header p-3">
+				<h5>قائمة الموظفين</h5>
+			</div>
+
+
+			<div class="card-body ">
+
+
+				<div x-data="dataTable()">
+					<div class="table-responsive">
+						<div class="mb-3">
+							<input type="text" id="search" x-model="searchTerm" class="form-control" placeholder="ابحث ... "/>						
+						</div>
+
+						<table class="table table-striped  table-hover align-middle">
+							<thead>
+								<tr>
+									<th class="text-center fit">الرقم الوظيفي</th>
+									<th class="fit">اسم الموظف</th>
+									<th class="text-center fit">الاجراءات</th>
+								</tr>
+							
+							</thead>
+							<tbody class="table-group-divider">
+
+								<template x-for="(row, index) in filteredRows" :key="index">
+									<tr>
+										
+										<td class="text-center fit d-none" x-text="row.emp_id"></td>
+										<td class="text-center fit" x-text="row.employeeNo"></td>
+
+										<td x-html="row.employeeName"></td>
+
+										<td class="text-center align-middle ">
+											<button x-bind:data-bs-target="'#EmpAddVacModal'+ row.emp_id" data-bs-toggle="modal" data-bs-target="#EmpAddVacModal" type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="إضافة إجازة">
+												<i class="bi bi-plus-circle-dotted fs-5"></i>
+											</button>
+											
+											<a type="button" x-on:click="view_emp_vac(row.emp_id)"
+												class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="قائمة الاجازات">
+												<i class="bi bi-list-stars fs-5"></i>
+											</a>
+
+											<button  type="button" x-on:click="getEmpBalance($event.target, row, row.employeeName)"
+												class="btn btn-outline-success btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="أرصدة الاجازات">
+												<i class="bi bi-eye fs-5"></i>
+											</button>
+										</td>
+											
+											<!-- Balance Modal -->
+										<td>
+											<div class="modal fade" id="GetEmpBalanceModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+												<div class="modal-dialog modal-dialog-scrollable">
+													<div class="modal-content">
+														<div class="modal-header bg-success-subtle">
+															<h5 class="modal-title fs-5" id="empName"></h5>
+															<div class="d-flex flex-row-reverse mb-3 ">
+																<button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
+															</div>
+														</div>
+														<div class="modal-body">
+															<table class="table table-striped" id="empBalTable">
+																<thead>
+																	<tr>
+																		<th scope="col">نوع الاجازة</th>
+																		<th scope="col">رصيد بداية المدة</th>
+																		<th scope="col">الرصيد الحالي</th>
+																	</tr>
+																</thead>
+																<tbody></tbody>
+
+															</table>
+														</div>
+														<div class="modal-footer">
+															<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+														</div>
+													</div>
+												</div>
+											</div>
+										</td>
+									<!-- End Balance Modal -->
+
+
+										<td>
+
+										<!-- Modal Employee Add Vacation -->
+											<div class="modal fade" id="EmpAddVacModal" x-bind:id="'EmpAddVacModal'+ row.emp_id" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+												<div class="modal-dialog modal-dialog-scrollable modal-lg">
+													<div class="modal-content">
+														<div class="modal-header bg-info-subtle">
+															<h1 class="modal-title fs-5" id="edit_modal">
+																إضافة إجازة</h1>
+															<div class="d-flex flex-row-reverse mb-3 ">
+																<button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
+															</div>
+														</div>
+														<div class="modal-body">
+
+														<form id="add_form" name="add_form" action="/vacation/listManTOEmp" method="post">
+																{{ csrf.fields | raw }}														
+															<div class="container-fluid">
+																<div class="row mb-3">
+																	<input  class="d-none" id="employee_id" name="employee_id" x-model="row.emp_id">
+																	
+																	<div class="col-sm-12">
+																		<select name="vacation_type" id="vacation_type" class="form-select" onchange="getVacbalance()">																		
+																			<option value="null">-- نوع الاجازة --</option>
+																			{% for vac_type in vacation_types %}																			
+																				<option value="{{vac_type.id }}">{{  vac_type.vacation_name }}</option>
+																			{% endfor %}
+																		</select>
+																	</div>
+																</div>
+
+																<div class="row mb-3">				
+																	<div id="annual_div" class="d-none" onchange="get_ann_vac_type()">																														
+																			
+																		<div class="col-sm-12">
+																			<select name="annual_vac_type"  class="form-select" id="annual_vac_type">																		
+																				<option value="null">-- سبب الاجازة السنوية --</option>
+																				{% for key, value in lookups.annual_vacation_type %}
+																					<option value="{{ key }}">{{ value }}</option>
+																				{% endfor %}
+																			</select>
+																		</div>	
+																	</div>																
+																</div>
+
+																<div class="row mb-3">
+																	<label  class="col-sm-3 col-form-label">الرصيد الكلي</label>	
+																	<div class="col-sm-3">
+																		<input type="text" class="form-control" name="start_balance" id="start_balance" readonly>
+																	</div>
+																	<label  class="col-sm-3 col-form-label">الرصيد المستنفذ</label>	
+																	<div class="col-sm-3">
+																		<input type="text" class="form-control" name="spent_balance" id="spent_balance" readonly>
+																	</div>																	
+																</div>
+																<div class="row mb-3">
+																	<label  class="col-sm-3 col-form-label">الرصيد المتبقي</label>	
+																	<div class="col-sm-3">
+																		<input type="text" class="form-control"  name="current_balance" id="current_balance" readonly>
+																	</div>
+																	<label  class="col-sm-3 col-form-label">عدد أيام الاجازة</label>	
+																	<div class="col-sm-3">
+																		<input type="text" class="form-control" name="day_count" id="day_count" readonly>
+																	</div>																	
+																</div>																
+																<div class="row mb-3">
+																	<label  class="col-sm-3 col-form-label">تاريخ بداية الاجازة</label>	
+																	<div class="col-sm-3">																	
+																		<input type="date" class="form-control" name="start_date" id="start_date" onchange="cal_days()">																		
+																	
+																	<div id="invalid-dates" class="invalid-feedback" ></div>
+																	
+																	</div>
+
+																	<label  class="col-sm-3 col-form-label">تاريخ انتهاء الاجازة</label>	
+																	<div class="col-sm-3">																	
+																		<input type="date" class="form-control" name="end_date" id="end_date" onchange="cal_days()">																		
+																	</div>																	
+																</div>
+																<div class="row mb-3">
+																	<label  class="col-sm-3 col-form-label">الموظف البديل</label>	
+																	<div class="col-sm-9">
+																		<input type="text" class="form-control" name="substitute_employee" id="substitute_employee" >
+																	</div>
+																</div>
+																<div class="row mb-3">
+																	<label  class="col-sm-3 col-form-label">العنوان</label>	
+																	<div class="col-sm-9">
+																		<input type="text" class="form-control" name="address" id="address">
+																	</div>
+																</div>
+																<div class="row mb-3">
+																	<label  class="col-sm-3 col-form-label">الهاتف</label>	
+																	<div class="col-sm-3">
+																		<input type="text" class="form-control"  name="phone" id="phone" >
+																	</div>
+																	<label  class="col-sm-3 col-form-label">المحمول</label>	
+																	<div class="col-sm-3">
+																		<input type="text" class="form-control" name="mobile" id="mobile" >
+																	</div>																	
+																</div>
+
+																<div class="row mb-3">
+																	<div class="form-floating mb-4">                                                                     
+																		<textarea  id="notes" name="notes"  style="height: 100px" class="form-control" placeholder="ملاحظات" aria-label="ملاحظات">{{ old.notes }}</textarea>
+																		<label for="floatingInput">ملاحظات<label>
+																	</div>
+																</div>    
+
+															<div class="modal-footer">																				
+																<button type="submit" class="btn btn-primary">حفظ</button>
+																<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+															</div>
+														</form>
+													</div>
+												</div>
+											</div>
+										<!-- End Modal Employee Add Vacation -->	
+										</td>
+
+									</tr>
+
+								</template>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+
+
+<script>
+  const dataTable = () => {
+    return {
+      table: null,
+      options: {
+        searching: false,
+        ordering: true,
+        paging: true,
+        lengthChange: true,
+        info: true,
+        autoWidth: true
+      },
+	  
+	  employeeID:'',
+	  employeeNo: '', 
+      employeeName: '',
+
+  	  searchTerm: '',     
+    
+      rows: [{% for item in employee_list %}{
+		emp_id: '{{ item.emp_id }}',
+		employeeNo: '{{ item.employee_no }}',
+        employeeName: '{{ item.f_name ~ ' ' ~ item.s_name  ~ ' ' ~ item.t_name  ~ ' ' ~ item.l_name }}',
+		
+       
+      },
+      {% endfor %}],
+
+      get filteredRows() {
+        if (!this.searchTerm) {
+          return this.rows;
+        }
+		
+		const term = this.searchTerm.toLowerCase();
+
+        return this.rows.filter(row => {
+
+          return row.employeeNo.toLowerCase().includes(term) || row.employeeName.toLowerCase().includes(term) ;
+
+        });
+      }
+    };
+  };
+</script>
+
+
+<script>
+
+function getEmpBalance(button, row, empName) {
+
+  const getEmpBalanceModal = new bootstrap.Modal(
+    document.getElementById("GetEmpBalanceModal")	
+  );
+
+   post(
+    '/vacation/getEmpAllVacBal',
+    {
+      emp_id: row.emp_id,
+    },
+    button
+  ).then((response) => {
+   // if (response.ok) {
+      response
+        .json()
+        .then((response) => openGetEmpBalModal(getEmpBalanceModal, response, empName));
+  //  }
+  });
+}
+
+function openGetEmpBalModal(modal, response, empName) {
+
+  document.getElementById("empName").textContent = 'أرصدة إجازات الموظف : ' + empName;
+  createTableRows(response); // Call the function to create table rows
+  modal.show();
+}
+
+ //Function to create table rows
+function createTableRows(data) {
+
+	
+  var tbody = document.querySelector("#empBalTable tbody");
+  tbody.innerHTML = ' ';
+
+  delete data["employee_id"];
+
+  Object.values(data).forEach(function (rowData) {
+	
+    id = rowData.id;
+
+	var row = document.createElement("tr");
+
+    var vacTypeCell = document.createElement("td");
+    vacTypeCell.textContent = rowData.vacation_name;
+    row.appendChild(vacTypeCell);
+ 	
+	var startBalCell = document.createElement("td");
+    startBalCell.textContent = rowData.start_balance;
+    row.appendChild(startBalCell);
+
+	var curBalCell = document.createElement("td");
+    curBalCell.textContent = rowData.current_balance;
+    row.appendChild(curBalCell);
+
+/*
+    var roleCell = document.createElement("td");
+    roleCell.textContent = rowData.role;
+    row.appendChild(roleCell);
+
+    var roleCell = document.createElement("td");
+    roleCell.innerHTML = `	<button x-on:click="removeUser($event.target,${id}, '${device_ip}')" type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="حذف موظف">
+                                    <i class="bi bi-person-x fs-5"></i>
+                            </button>`;
+    row.appendChild(roleCell);
+*/
+    tbody.appendChild(row);
+  });
+}
+
+function view_emp_vac(emp_id) 
+{
+	window.location.href = "/vacation/listManTOEmpVacation/"+emp_id;
+}
+
+
+
+addClassNameListener("annual_div", get_ann_vac_type());
+
+</script>
+
+
+
+{% block script %}
+	<script src="/app/js/vacation.js"></script>
+{% endblock %}
+
+</main>
+{% endblock %}

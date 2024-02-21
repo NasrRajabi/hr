@@ -1,0 +1,146 @@
+{% extends "master.twig" %}
+
+
+{% block style %}
+	<style>
+		.form-switch {
+			padding-right: 2.5em;
+		}
+	</style>
+
+	{{ parent() }}
+{% endblock %}
+
+
+{% block main %}
+
+	<main class="col ms-1">
+		<div class="card">
+
+
+			<div class="card-header row justify-content-between  p-3 border-bottom">
+				<div class="col-md-6">
+					<h4 class="text-end me-3 mt-3">اتفاقيات الدوام
+					</h4>
+				</div>
+				<div class="col-md-6">
+					<nav class="nav justify-content-end p-3">
+						<a href="/attendance_agreements/agreement_list" type="button" class="btn btn-primary">
+							قائمة الاتفاقيات 
+						</a>
+					</nav>
+				</div>
+			</div>
+
+
+			<div class="card-body mt-5">
+				<div class="container">
+
+					<form class="ms-3 me-3" action="/attendance_agreements/create" method="post">
+						{{ csrf.fields | raw }}
+
+						<div class="mb-3 form-floating">
+							<input type="text" class="form-control {{ errors.name ? 'is-invalid' : '' }}" value="{{ old.name }}" name="name" id="name">
+							<label for="name">اسم الاتفاقية</label>
+							<div class="invalid-feedback">
+								{{ errors.name | first }}
+							</div>
+						</div>
+
+						<div class="mb-5 form-floating">
+							<input type="text" class="form-control {{ errors.description ? 'is-invalid' : '' }}" name="description" value="{{ old.description }}" id="description">
+							<label for="description">وصف الاتفاقية</label>
+							<div class="invalid-feedback">
+								{{ errors.description | first }}
+							</div>
+						</div>
+
+						<table class="table text-center">
+							<thead>
+								<tr>
+									<th>دوام/عطلة</th>
+									<th>اليوم</th>
+									<th>بداية الدوام</th>
+									<th>نهاية الدوام</th>
+									<th>آخر وقت لاحتساب بصمة الحضور</th>
+									<th>فترة السماح للحضور (بالدقائق )</th>
+									<th>فترة السماح للانصراف (بالدقائق)</th>
+									<th>الحد الأعلى لعدد ساعات المغادرات الخاصة</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for key, value in lookups.days %}
+
+									<tr x-data="{ isEnabled: {{ old[key ~ '_att_status'] == 5 ? 'false' : 'true' }} }">
+										<td>
+											<div class="form-check form-switch">
+												<input class="form-check-input form-control {{ errors[key ~ '_att_status'] ? 'is-invalid' : '' }}" type="checkbox" role="switch" id="flexSwitchCheckChecked" x-model="isEnabled">
+												<div class="invalid-feedback">
+													{{ errors[key ~ '_att_status'] | first }}
+												</div>
+												<input type="hidden" value="{{ old[key ~ '_att_status'] }}" name="{{ key }}_att_status" x-bind:value="!isEnabled ? 5 : 3">
+
+											</div>
+										</td>
+										<td>
+											{{ value }}
+											<input type="hidden" value="{{ key }}" name="{{ key }}_day" class="form-control">
+										</td>
+										<td>
+											<input x-bind:readonly="!isEnabled" value="{{ old[key ~ '_start_time'] }}" name="{{ key }}_start_time" type="time" class="form-control  {{ errors[key ~ '_start_time'] ? 'is-invalid' : '' }}">
+											<div class="invalid-feedback">
+												{{ errors[key ~ '_start_time'] | first }}
+											</div>
+										</td>
+										<td>
+											<input x-bind:readonly="!isEnabled" value="{{ old[key ~ '_end_time'] }}" name="{{ key }}_end_time" type="time" class="form-control {{ errors[key ~ '_end_time'] ? 'is-invalid' : '' }}">
+											<div class="invalid-feedback">
+												{{ errors[key ~ '_end_time'] | first }}
+											</div>
+										</td>
+										<td>
+											<input x-bind:readonly="!isEnabled" value="{{ old[key ~ '_check_in_end'] }}" name="{{ key }}_check_in_end" type="time" class="form-control {{ errors[key ~ '_check_in_end'] ? 'is-invalid' : '' }}">
+											<div class="invalid-feedback">
+												{{ errors[key ~ '_check_in_end'] | first }}
+											</div>
+										</td>
+										<td>
+											<input x-bind:readonly="!isEnabled" value="{{ old[key ~ '_allowed_time_check_in'] }}" name="{{ key }}_allowed_time_check_in" type="number" class="form-control {{errors[key ~ '_allowed_time_check_in'] ? 'is-invalid' : '' }}">
+											<div class="invalid-feedback">
+												{{ errors[key ~ '_allowed_time_check_in'] | first }}
+											</div>
+										</td>
+										<td>
+											<input x-bind:readonly="!isEnabled" value="{{ old[key ~ '_allowed_time_check_out'] }}" name="{{ key }}_allowed_time_check_out" type="number" class="form-control {{ errors[key ~ '_allowed_time_check_out'] ? 'is-invalid' : '' }}">
+											<div class="invalid-feedback">
+												{{ errors[key ~ '_allowed_time_check_out'] | first }}
+											</div>
+										</td>
+										<td>
+											<input x-bind:readonly="!isEnabled" value="{{ old[key ~ '_allowed_p_leave_hours'] }}" name="{{ key }}_allowed_p_leave_hours" type="number" class="form-control {{  errors[key ~ '_allowed_p_leave_hours'] ? 'is-invalid' : '' }}">
+											<div class="invalid-feedback">
+												{{ errors[key ~ '_allowed_p_leave_hours'] | first }}
+											</div>
+										</td>
+									</tr>
+
+
+								{% endfor %}
+							</tbody>
+						</table>
+
+						<div class="d-grid gap-2 col-6 mx-auto m-5">
+							<button class="btn btn-primary" type="submit">حفظ</button>
+						</div>
+
+
+					</form>
+				</div>
+			</div>
+		</div>
+	</main>
+
+
+{% endblock %}
+
+{% block script %}{% endblock %}

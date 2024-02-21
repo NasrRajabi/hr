@@ -1,0 +1,110 @@
+{% extends "master.twig" %}
+
+{% block style %}{% endblock %}
+
+{% block main %}
+
+	<form action="/invoice/update/{{data[0].id}}" method="post">
+		{{ csrf.fields | raw }}
+
+		<div class="row" >
+			<div class="col-12 col-md-12 col-xxl-12 d-flex">
+				<div class="card flex-fill ">
+	<div class="card-header row justify-content-between  p-3 border-bottom">
+				<div class="col-md-6">
+					<h4 class="text-end me-3 mt-3"> تعديل فاتورة
+					</h4>
+				</div>
+				<div class="col-md-6">
+					<nav class="nav justify-content-end p-3">
+						<a href="/invoice/list" type="button" class="btn btn-primary">
+							<i class="bi bi-plus-circle-dotted"></i>
+							جميع الفواتير
+						</a>
+					</nav>
+				</div>
+			</div>
+					{# <input type="text" name="id" value="{{ data[0].id }}"> #}
+					<div class="card-body mt-1" style="min-height: 15rem;">
+						<div class="row  g-3 mt-1">
+							<div class="col-12 col-md-8 col-xxl-8 ">
+								<div class="card-body mt-4 me-1 me-md-5" style="min-height: 7rem;">
+									<div class="d-flex justify-content-center">
+										<h3>
+											تعديل فاتورة 
+										</h3>
+									</div>
+									<div class="mb-3">
+										<select name="vehicle_id" id="vehicle_id" value="{{  data[0].vehicle_id }}"  class="form-select form-select-sm {{ errors.vehicle_id ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+											<option  disabled selected hidden >-- اختر المركبة --</option>
+											{% for vehicle in allVehicle %}
+                                            	<option value="{{ vehicle.id }}" {{ data[0].vehicle_id == vehicle.id ? 'selected' : '' }}>{{ vehicle.vehicle_name }}</option>
+                                        	{% endfor %}
+												
+										</select>
+										<div class="invalid-feedback">
+											{{ errors.vehicle_id | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<select name="invoice_type" id="invoice_type" value="{{ data[0].invoice_type }}"  class="form-select form-select-sm {{ errors.invoice_type ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+											<option  disabled selected hidden >-- نوع الفاتورة --</option>
+											{% for key, value in lookups.invoice_type %}
+											<option value="{{ key }}" {{ data[0].invoice_type == key ? 'selected' : '' }}>{{ value }}</option>
+											{% endfor %}
+										</select>
+										<div class="invalid-feedback">
+											{{ errors.invoice_type | first }}
+										</div>
+									</div>
+									<div class="form-floating mb-3">
+										<input type="date" name="invoice_date" id="invoice_date" value="{{ data[0].invoice_date }}" class="form-control {{ errors.invoice_date ? 'is-invalid' : '' }}" placeholder="تاريخ الفاتورة" aria-label="تاريخ الفاتورة">
+										<label for="floatingInput">تاريخ الفتورة</label>
+											<div class="invalid-feedback">
+												{{ errors.invoice_date | first }}
+											</div>
+									</div>
+									<div class="mb-3">
+										<input type="text" name="invoice_no" value="{{ data[0].invoice_no }}" class="form-control {{ errors.invoice_no ? 'is-invalid' : '' }}" placeholder="رقم الفاتورة" aria-label="رقم الفاتورة">
+										<div class="invalid-feedback">
+											{{ errors.invoice_no | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<input type="text" name="invoice_value" value="{{ data[0].invoice_value }}" class="form-control {{ errors.invoice_value ? 'is-invalid' : '' }}" placeholder="قيمة الفاتورة" aria-label="قيمة الفاتورة">
+										<div class="invalid-feedback">
+											{{ errors.invoice_value | first }}
+										</div>
+									</div>
+									<div class="mb-3">
+										<input type="text" name="invoice_note" value="{{ data[0].invoice_note }}" class="form-control {{ errors.invoice_note ? 'is-invalid' : '' }}" placeholder="ملاحظات" aria-label="ملاحظات">
+										<div class="invalid-feedback">
+											{{ errors.invoice_note | first }}
+										</div>
+									</div>
+									<div class="row mb-5 g-3 ">
+										<div class="col-12 col-md-12 col-xxl-12 d-flex">
+											<div class="card flex-fill ">
+												<div class="card-body me-3 mt-1">
+													<div class="d-flex justify-content-center">
+														<button type="submit" class="btn btn-outline-primary">حفظ التعديل</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+
+	</form>
+
+
+
+
+{% endblock %}

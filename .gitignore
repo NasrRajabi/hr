@@ -1,0 +1,11 @@
+.idea/
+.vscode/
+/coverage/
+/vendor/
+!/vendor/rate/
+/data/db/
+/data/pgadmin-data/
+/logs/*
+!/logs/README.md
+.phpunit.result.cache
+

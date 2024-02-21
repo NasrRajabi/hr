@@ -1,0 +1,774 @@
+{% extends "master.twig" %}
+
+
+{% block style %}
+
+{% endblock %}
+
+{% block main %}
+
+<div class="row">
+			<div class="col-12 col-md-12 col-xxl-12 d-flex">
+				<div class="card flex-fill ">
+
+					<div class="card-body">	
+							<h5 class="card-title">قائمة اجازات الموظف</h5>
+							<br>
+						<!--  <input type="text" id="search" x-model="searchTerm" class="form-control" placeholder="ابحث عن اجازة ... " >-->
+                            <div class="row"> 
+
+                                <div class="col-4">
+                                    <div class="form-floating mb-4">
+                                        <input type="date" id="date1" name="date1"  class="form-control">
+                                        <label  for="floatingInput">ابحث تاريخ بداية الاجازة</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-4">
+                                    <div class="form-floating mb-4">
+                                        <input type="date" id="date2" name="date2"  class="form-control">
+                                        <label  for="floatingInput">ابحث تاريخ نهاية الاجازة</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-3">
+                                    <div class="form-floating mb-4">
+                                        <select id="vac_sts" name="vac_sts" class="form-select" >
+										    <option value="null">-- ابحث حالة الاجازة --</option>
+										    {% for key, value in lookups.vacation_status %}
+											    <option value="{{ key }}" {{ old.vacation_status == key ? 'selected' : '' }}>{{ value }}</option>
+										    {% endfor %}
+									    </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-1 ">
+                                    <button class="form-control btn btn-outline-success btn-lg" onclick="searchVac()">بحث</button>
+                                </div>
+
+						    </div>
+                        
+                        <div class="table-responsive">
+							<table class="table table-striped table-bordered  table-hover table-sm  align-middle">
+								<thead>
+									<tr>
+										<th class="text-center fit">#</th>
+										<th class="text-center fit">نوع الاجازة</th>
+										<th class="text-center fit">من تاريخ</th>
+										<th class="text-center fit">إلى تاريخ</th>
+										<th class="text-center fit">عدد الأيام</th>
+										<th class="text-center fit">حالة الاجازة</th>
+										<th class="text-center fit">مدخل الاجازة</th>										
+										<th class="text-center fit">تاريخ تقديم الأجازة</th>
+                                        <th class="text-center fit">الاجراءات</th>
+                                        
+									</tr>
+								</thead>
+								<tbody class="table-group-divider">
+									{% set counter = 1 %}
+                                   
+                                    {% set approve_vac = 2 %}	
+                                    {% set reject_vac = 3 %}								                     
+                                    {% set delete_vac = 4 %}
+
+									{% for key, vac in list %}
+
+										{% set date_from = vac.start_date|date('d-m-Y') %}
+										{% set date_to = vac.end_date|date('d-m-Y') %}
+										{% set difference = date(date_to).diff(date(date_from)) %}
+										{% set day_count = difference.days  + 1 %} 
+										
+										{% set vacation_type = lookups.vacation_type[vac.vacation_type] %}
+
+										{% if (vac.vacation_type == 1 ) %}
+											{% set vacation_type = lookups.vacation_type[vac.vacation_type] ~ ' - ' ~ lookups.annual_vacation_type[vac.annual_vac_type] %}										
+										{% endif %}
+										
+										<tr>
+											<td class="text-center fit" >{{ counter }}</td>
+											<td class="text-center fit" x-text="vacation_type">{{ vacation_type }}</td>
+											<td class="text-center fit" x-text="start_date">{{ vac.start_date|date("d/m/Y") }}</td>
+											<td class="text-center fit" x-text="end_date">{{ vac.end_date|date("d/m/Y")  }}</td>
+											<td class="text-center fit" x-text="day_count">{{ day_count }}</td>
+											<td class="text-center fit" x-text="vacation_status"><i class = "{{ lookups.status_class[vac.vacation_status] }}" > </i> {{ lookups.vacation_status[vac.vacation_status] }}</td>
+											<td class="text-center fit" x-text="create_user_name">{{ vac.en_name }}</td>
+											<td class="text-center fit" x-text="create_date">{{ vac.create_date|date("H:i:s  d/m/Y") }}</td>
+
+						                    <td class="text-center fit" >
+                                                <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#viewVacation" onclick="getVacationForView({{vac.id}})">
+                                                    <i class="bi bi-search fs-5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="بيانات الاجازة"></i>
+                                                </button>
+
+                                            {% if (vac.vacation_status == 1) %}                                                
+                                                
+                                                <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editVacation" onclick="getVacationForEdit({{vac.id}})">
+                                                    <i class="bi-pencil-square fs-5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="تعديل الاجازة"></i>
+                                                </button> 
+
+                                                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#approveModal{{vac.id}}" >
+                                                    <i class="bi bi-toggles fs-5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="موافقة/رفض"></i>
+                                                </button>
+           
+                                                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{vac.id}}">
+                                                    <i class="bi bi-trash fs-5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="إالغاء الاجازة"></i>
+                                                </button>
+
+                                            {% elseif (vac.vacation_status != 1) %}		
+
+                                                <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="popover" data-bs-placement="left" tabindex="0" data-bs-trigger="focus"
+                                                    data-bs-custom-class="custom-error-popover" data-bs-title="الاجازة {{lookups.vacation_status[vac.vacation_status]}}" data-bs-content="لايمكن تعديل هذه الاجازة">
+                                                    <i class="bi-pencil-square fs-5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="تعديل الاجازة"></i>
+                                                </button>  
+
+                                                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="popover" data-bs-placement="left" tabindex="0" data-bs-trigger="focus"
+                                                    data-bs-custom-class="custom-error-popover" data-bs-title="الاجازة {{lookups.vacation_status[vac.vacation_status]}}" data-bs-content="لايمكن  رفض / الموافقة على هذه الاجازة">
+                                                    <i class="bi bi-toggles fs-5"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="موافقة/رفض"></i>
+                                                </button>
+
+                                                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="popover" data-bs-placement="left" tabindex="0" data-bs-trigger="focus"
+                                                    data-bs-custom-class="custom-error-popover" data-bs-title="الاجازة {{lookups.vacation_status[vac.vacation_status]}}" data-bs-content="لا يمكن الغاء هذه الاجازة">
+                                                    <i class="bi bi-trash fs-5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="إالغاء الاجازة"></i>
+                                                </button>
+
+											{% endif %} 
+                                 
+                                            <button type="button" class="btn btn-outline-success btn-sm" onclick="printVac({{vac.id}})" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="طباعة الاجازة" >
+                                                <i class=" bi bi-printer fs-5" ></i>
+                                            </button>                                 
+
+                                        </td>																											
+                                                                      
+                                    </tr> 
+
+
+                                        <!-- Modal Approve Vacation -->                                        
+                                        <div class="modal fade" id="approveModal{{vac.id}}" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-primary  text-white">
+                                                       
+                                                        <h1 class="modal-title  fs-5 " id="approveModalLabel">اعتماد اجازة</h1>
+                                                        <div class="d-flex flex-row-reverse mb-3 ">
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-body" id="approveModalBody">
+                                                     هل انت متاكد من الموافقة / رفض الاجازة
+                                                    </div>
+                                                    <div class="modal-footer ">                                        
+                                                        <a class="btn btn-success btn-sm" href="/vacation/approveEmpVacation/{{vac.id}}/{{approve_vac}}">موافقة</a>
+                                                        <a class="btn btn-danger btn-sm" href="/vacation/approveEmpVacation/{{vac.id}}/{{reject_vac}}">رفض</a>
+                                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">اغلاق</button>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- End Modal Approve Vacation -->
+
+
+
+                                        <!-- Modal Delete Vacation -->                                        
+                                        <div class="modal fade" id="deleteModal{{vac.id}}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-primary  text-white">
+                                                       
+                                                        <h1 class="modal-title  fs-5 " id="approveModalLabel">إالغاء اجازة</h1>
+                                                        <div class="d-flex flex-row-reverse mb-3 ">
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-body" id="approveModalBody">
+                                                     هل انت متاكد من حذف الاجازة
+                                                    </div>
+                                                    <div class="modal-footer ">                                        
+                                                        <a class="btn btn-success btn-sm" href="/vacation/approveEmpVacation/{{vac.id}}/{{delete_vac}}">موافقة</a>                              
+                                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">اغلاق</button>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- End Modal Delete Vacation -->
+
+                                    	{% set counter = counter + 1 %}   
+									{% endfor %}
+                          
+								</tbody>
+							</table>
+						</div>
+					</div>
+                </div>
+
+
+				</div>
+			</div>
+		</div>
+
+  
+    <!-- Toast for Approve Vacation -->
+        <div class="toast-container position-fixed top-0 start-50 translate-middle-x">
+            <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">             
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    <strong class="me-auto">اعتماد اجازة</strong>
+                </div>
+                <div class="toast-body">
+                    هل انت متاكد من الموافقة / رفض الاجازة
+                    <div class="mt-2 pt-2 border-top d-flex justify-content-center d-grid gap-4">
+                        <a class="btn btn-success btn-sm" href="/vacation/approveEmpVacation/{{vac.id}}/{{approve_vac}}">موافقة</a>
+                        <a class="btn btn-danger btn-sm" href="/vacation/approveEmpVacation/{{vac.id}}/{{del_vac}}">رفض</a>
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="toast">إغلاق</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- End Toast -->    
+
+<!-- Modal editVacation-->
+	<div class="modal fade" id="editVacation" name="editVacation" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" >
+		<div class="modal-dialog modal-dialog-scrollable modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="staticBackdropLabel">
+						 تعديل اجازة</h1>
+					<div class="d-flex flex-row-reverse mb-3 ">
+						<button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+				</div>
+				<div class="modal-body">
+					  
+
+					<form id="edit_form" name="edit_form" action="/vacation/listEmpVacation" method="post">
+							{{ csrf.fields | raw }}
+
+						<div class="row justify-content-md-center">
+
+							
+                                <input type="hidden" id="id" name="id" value="{{ id }}">
+                                <input type="hidden" id="employee_id" name="employee_id" value="{{ employee_id }}">
+                                
+                                <div class="mb-3">
+                                    <select id="vacation_type" name="vacation_type" value="{{ old.vacation_type }}" class="form-select  {{ errors.vacation_type ? 'is-invalid' : '' }}" aria-label=".form-select-sm example" onchange="getbalance()">
+										<option value="null">-- نوع الاجازة --</option>
+										{% for key, value in lookups.vacation_type %}
+											<option value="{{ key }}" {{ old.vacation_type == key ? 'selected' : '' }}>{{ value }}</option>
+										{% endfor %}
+									</select>
+                                      <div class="invalid-feedback">
+										{{ errors.vacation_type | first }}
+									  </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div id="annual_div" class="d-none" onchange="get_ann_vac_type()">
+
+                                        <select id="annual_vac_type" name="annual_vac_type" value="{{ old.annual_vac_type }}" class="form-select  {{ errors.annual_vac_type ? 'is-invalid' : '' }}" aria-label=".form-select-sm example">
+                                            <option value="null">-- سبب الاجازة --</option>                                               
+                                            {% for key, value in lookups.annual_vacation_type %}
+                                                <option value="{{ key }}" {{ old.annual_vac_type == key ? 'selected' : '' }}>{{ value }}</option>
+                                            {% endfor %}
+                                        </select>
+
+                                      <div class="invalid-feedback">
+										{{ errors.annual_vac_type | first }}
+									  </div>
+                                      
+                                    </div>
+                                </div>
+
+                                <div class="row mb-2">                                    
+                                    <div class="col-4">
+                                        <div class="form-floating mb-4" >
+                                            <input type="text" value="{{ old.start_balance }}" id="start_balance" name="start_balance" class="form-control" placeholder="الرصيد الكلي" aria-label="الرصيد الكلي" readonly>
+                                            <label for="floatingInput" >الرصيد الكلي</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4">
+                                        <div class="form-floating mb-4">
+                                            <input type="text" value="{{ old.spent_balance }}" id="spent_balance" name="spent_balance" class="form-control" placeholder="الرصيد المستنفذ" aria-label="الرصيد المستنفذ" readonly>
+                                            <label for="floatingInput">الرصيد المستنفذ<label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4">
+                                        <div class="form-floating mb-4">
+                                            <input type="text" value="{{ old.current_balance }}" id="current_balance" name="current_balance" class="form-control  {{ errors.current_balance ? 'is-invalid' : '' }}" placeholder="الرصيد المتبقي" aria-label="الرصيد المتبقي" readonly>
+                                            
+                                            <div class="invalid-feedback">
+                                                {{ errors.current_balance | first }}
+                                            </div>
+
+                                            <label for="floatingInput">الرصيد المتبقي<label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-2">                                    
+                                    <div class="col-4">
+                                        <div class="form-floating mb-4">
+                                            <input type="date" value="{{ old.start_date }}" id="start_date" name="start_date" class="form-control {{ errors.start_date ? 'is-invalid' : '' }}" placeholder="من تاريخ" aria-label=".form-select-sm example" onchange="cal_days()">                                            
+
+                                            <div class="invalid-feedback">
+                                                {{ errors.start_date | first }}
+                                            </div>
+
+                                            <div id="invalid-dates" class="invalid-feedback" ></div>   
+                                            
+                                            <label for="start_date">من تاريخ</label>
+                                        </div>                                            
+                                    </div>
+
+                                    <div class="col-4">
+                                        <div class="form-floating mb-4">
+                                            <input type="date" value="{{ old.end_date }}" id="end_date" name="end_date" class="form-control {{ errors.end_date ? 'is-invalid' : '' }}" placeholder="إلى تاريخ" aria-label="إلى تاريخ" onchange="cal_days()">
+                                            
+                                            <div class="invalid-feedback">
+                                                {{ errors.end_date | first }}
+                                            </div>
+                                            
+                                            <label for="end_date">إلى تاريخ<label>
+                                        </div>
+                                    </div>                                
+                                   
+
+                                
+                                <div class="col-4">
+                                    <div class="form-floating mb-4">                                                                     
+                                        <input type="text" style="background-color:#edf2f9" value="{{ old.day_count }}" id="day_count" name="day_count" class="form-control" placeholder="عدد الايام" aria-label="عدد الايام" readonly>
+                                        <label for="floatingInput">عدد الأيام<label>
+                                    </div>
+                                </div>                               
+                           
+                            </div>    
+
+                                <div class="mb-2">
+                                    <div class="form-floating mb-4">                                                                     
+                                        <input type="text" value="{{ old.address }}" id="address" name="address" class="form-control" placeholder="العنوان" aria-label="العنوان">
+                                        <label for="floatingInput">العنوان<label>
+                                    </div>
+                                </div>          
+                            
+                                <div class="row mb-2">                                    
+                                    <div class="col-6">
+                                        <div class="form-floating mb-4">
+                                            <input type="text" value="{{ old.phone }}" id="phone" name="phone" class="form-control" placeholder="الهاتف" aria-label="الهاتف">
+                                            <label for="floatingInput">الهاتف</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-floating mb-4">
+                                            <input type="text" value="{{ old.mobile }}" id="mobile" name="mobile" class="form-control {{ errors.mobile ? 'is-invalid' : '' }}" placeholder="المحمول" aria-label="المحمول">
+                                            
+                                            <div class="invalid-feedback">
+                                                {{ errors.mobile | first }}
+                                            </div>  
+                                            
+                                            <label for="floatingInput">المحمول<label>                                                                            
+                                        </div> 
+                                    </div> 
+                                                                            
+                              
+                                </div>   
+
+                                <div class="mb-3">
+                                    <div class="form-floating mb-4">                                                                     
+                                        <textarea  id="notes" name="notes"  style="height: 100px" class="form-control" placeholder="ملاحظات" aria-label="ملاحظات">{{ old.notes }}</textarea>
+                                        <label for="floatingInput">ملاحظات<label>
+                                    </div>
+                                </div>     
+
+							</div>                     
+
+						</div>
+                    
+                            <div class="d-flex justify-content-center d-grid gap-2">
+                         
+                                <button type="button" id="save_btn" name="save_btn" class="btn btn-outline-primary" data-bs-dismiss="modal" onclick="check_errors()">تعديل الاجازة</button>
+                            </div> 
+  
+						<br>
+				</form>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>				
+				</div>
+				
+			</div>
+		</div>	
+    </div>
+<!-- End Modal editVacation-->
+
+
+
+<!-- Modal viewVacation-->
+	<div class="modal fade" id="viewVacation" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-scrollable modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="staticBackdropLabel">
+						 بيانات الاجازة</h1>
+					<div class="d-flex flex-row-reverse mb-3 ">
+						<button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+				</div>
+				<div class="modal-body">
+						<div class="row justify-content-md-center">
+
+                                <div class="row mb-3">
+                                    <label for="view_vacation_type" class="col-sm-3 col-form-label">نوع الاجازة</label>
+                                    <div class="col-sm-9"><input id="view_vacation_type" name="view_vacation_type" class="form-control" readonly></div>                                    
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="view_current_balance" class="col-sm-3 col-form-label">الرصيد الحالي</label>
+                                    <div class="col-sm-3"><input id="view_current_balance" name="view_current_balance" class="form-control" readonly></div>                                    
+
+                                     <label for="view_day_count" class="col-sm-3 col-form-label">عدد ايام الاجازة</label>
+                                    <div class="col-sm-3"><input id="view_day_count" name="view_day_count" class="form-control" readonly></div>                                    
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="view_start_balance" class="col-sm-3 col-form-label">الرصيد الكلي</label>
+                                    <div class="col-sm-3"><input id="view_start_balance" name="view_start_balance" class="form-control" readonly></div>                                    
+
+                                     <label for="view_spent_balance" class="col-sm-3 col-form-label">الرصيد المستنفذ</label>
+                                    <div class="col-sm-3"><input id="view_spent_balance" name="view_spent_balance" class="form-control" readonly></div>                                    
+                                </div>
+
+
+                                <div class="row mb-3">
+                                    <label for="view_start_date" class="col-sm-3 col-form-label">تاريخ بداية الاجازة</label>
+                                    <div class="col-sm-3"><input id="view_start_date" name="view_start_date" class="form-control" readonly></div>                                    
+
+                                     <label for="view_end_date" class="col-sm-3 col-form-label">تاريخ انتهاء الاجازة</label>
+                                    <div class="col-sm-3"><input id="view_end_date" name="view_end_date" class="form-control" readonly></div>                                    
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="view_substitute_employee" class="col-sm-3 col-form-label">الموظف البديل</label>
+                                    <div class="col-sm-9"><input id="view_substitute_employee" name="view_substitute_employee" class="form-control" readonly></div>                                    
+                                </div>
+       
+                                <div class="row mb-3">
+                                    <label for="view_address" class="col-sm-3 col-form-label">العنوان</label>
+                                    <div class="col-sm-9"><input id="view_address" name="view_address" class="form-control" readonly></div>                                    
+                                </div>
+
+                                <div class="row mb-3">
+                                     <label for="view_phone" class="col-sm-3 col-form-label">الهاتف</label>
+                                    <div class="col-sm-3"><input id="view_phone" name="view_phone" class="form-control" readonly></div>                                    
+
+                                    <label for="view_mobile" class="col-sm-3 col-form-label">المحمول</label>
+                                    <div class="col-sm-3"><input id="view_mobile" name="view_mobile" class="form-control" readonly></div>                                    
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="view_notes" class="col-sm-3 col-form-label">ملاحظات</label>
+                                    <div class="col-sm-9"><input id="view_notes" name="view_notes" class="form-control" readonly></div>                                    
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="view_create_user" class="col-sm-3 col-form-label">مدخل الاجازة</label>
+                                    <div class="col-sm-9"><input id="view_create_user" name="view_create_user" class="form-control" readonly></div>                                    
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="view_create_date" class="col-sm-3 col-form-label">تاريخ ادخال الاجازة</label>
+                                    <div class="col-sm-9"><input id="view_create_date" name="view_create_date" class="form-control" readonly></div>                                    
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="view_vacation_status" class="col-sm-3 col-form-label">حالة الاجازة</label>
+                                    <div class="col-sm-9"><input id="view_vacation_status" name="view_vacation_status" class="form-control" readonly></div>                                    
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <label for="view_approve_user" class="col-sm-3 col-form-label">تمت الموافقة من</label>
+                                    <div class="col-sm-9"><input id="view_approve_user" name="view_approve_user" class="form-control" readonly></div>                                    
+                                </div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>				
+				</div>
+				
+			</div>
+		</div>
+	</div>
+<!-- End Modal viewVacation-->
+
+<script>
+
+
+   function check_errors(){
+        var myModal = document.getElementById('editVacation')
+        const start_date = document.getElementById('start_date');
+         errors = document.getElementById('errors');
+//
+        
+            myModal.addEventListener('hide.bs.modal', ()=> {     
+            if(errors.value == 1) {    
+                alert(errors.value)  ;
+           
+                return event.preventDefault() // stops modal from being shown           
+            }
+            })
+        
+   }
+
+function searchVac(){
+    
+    const d = new Date();
+    let year = d.getFullYear();
+
+    let vac_sts = document.getElementById("vac_sts");
+    let date_start = document.getElementById("date1");
+    let date_end = document.getElementById("date2");
+    let $url = '/vacation/listEmpVacation' ;
+
+    if (vac_sts) {
+        sts = vac_sts.value;     
+    }
+    
+    if (date_start && date_start.value) {
+        date1 = date_start.value; 
+    }else{
+        date1 = year + "-01-01";
+    }
+    
+    if (date_end && date_end.value) {
+        date2 = date_end.value; 
+    }else{
+        date2 = year + "-12-31";
+    }
+
+    $url = $url + '/' + sts  + '/' + date1 + '/' + date2;    
+
+    window.location=$url ;    
+}
+
+    function printVac(vac_id){
+        let id = vac_id;
+        post('/vacation/getEmpVac', {id:id})
+        .then(response => response.blob())
+            .then(blob => {
+                var file = window.URL.createObjectURL(blob);
+                window.open(file, "_blank");
+                //window.location.href = '/bankReport';
+            })
+        .catch((error, response) => {
+
+            console.error('Error:', error);
+        });
+    }
+
+    function getVacationForView(vac_id) {
+		let id = vac_id;
+		let employee_id = document.getElementById("employee_id").value;
+
+        post('/vacation/get_vacation', {id:id, employee_id:employee_id})
+            .then(response => {
+                if (response.ok) {                     
+                    response.json().then(response => set_view_data(response))
+                }
+            })
+    }
+
+ 	function set_view_data(data){
+        console.log(data);
+
+        if(data['rowCount'] === 0){    
+            const viewModalEl = document.getElementById('viewVacation')    
+            viewModalEl.dispose();
+
+		}else{
+
+            let date1 = Date.parse (data['result'].start_date);
+        	let date2 = new Date (data['result'].end_date);
+			let day_count = (Math.round((date2 - date1) / (1000 * 60 * 60 * 24))) + 1 ;
+
+			document.getElementById("view_vacation_type").value = data['result'].vac_type_name;            		
+            document.getElementById("view_start_date").value = data['result'].start_date;
+			document.getElementById("view_end_date").value = data['result'].end_date;
+			document.getElementById("view_mobile").value = data['result'].mobile;
+            document.getElementById("view_phone").value = data['result'].phone;
+			document.getElementById("view_address").value = data['result'].address;
+			document.getElementById("view_notes").value = data['result'].notes;
+			document.getElementById("view_start_balance").value = data['result'].start_balance;
+			document.getElementById("view_current_balance").value = data['result'].current_balance;
+			document.getElementById("view_spent_balance").value = data['result'].spent_balance;
+			document.getElementById("view_day_count").value = day_count;            
+            document.getElementById("view_approve_user").value = data['result'].approve_user_name;
+			document.getElementById("view_vacation_status").value = data['result'].vac_sts;
+			document.getElementById("view_substitute_employee").value = data['result'].substitute_employee;
+            document.getElementById("view_create_user").value = data['result'].create_user_name;
+            document.getElementById("view_create_date").value = data['result'].create_date;
+        }
+
+    }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+    const editModalEl = document.getElementById('editVacation')
+    editModalEl.addEventListener('hidden.bs.modal', event => {
+        editModalEl.dispose();
+    })
+*/
+    function getVacationForEdit(vac_id) {
+		let id = vac_id;
+		let employee_id = document.getElementById("employee_id").value;
+
+        post('/vacation/get_vacation', {id:id, employee_id:employee_id})
+            .then(response => {
+                if (response.ok) {                     
+                    response.json().then(response => set_vacation_data(response))
+                }
+            })
+    }
+
+ 	function set_vacation_data(data){
+        console.log(data);
+
+        if(data['rowCount'] === 0){    
+            const myModalEl = document.getElementById('editVacation')    
+            editModalEl.dispose();
+
+		}else{
+            
+            document.getElementById("id").value = data['result'].id;
+            document.getElementById("employee_id").value = data['result'].employee_id;
+			document.getElementById("vacation_type").value = data['result'].vacation_type;            
+            document.getElementById("annual_vac_type").value = data['result'].annual_vac_type;			
+            document.getElementById("start_date").value = data['result'].start_date;
+			document.getElementById("end_date").value = data['result'].end_date;
+			document.getElementById("mobile").value = data['result'].mobile;
+            document.getElementById("phone").value = data['result'].phone;
+			document.getElementById("address").value = data['result'].address;
+			document.getElementById("notes").value = data['result'].notes;
+			document.getElementById("start_balance").value = data['result'].start_balance;
+			document.getElementById("current_balance").value = data['result'].current_balance;
+			document.getElementById("spent_balance").value = data['result'].spent_balance;
+
+			let date1 = Date.parse (data['result'].start_date);
+        	let date2 = new Date (data['result'].end_date);
+
+			let day_count = (Math.round((date2 - date1) / (1000 * 60 * 60 * 24))) + 1 ;
+
+			document.getElementById("day_count").value = day_count;
+        }
+
+        get_ann_vac_type();
+
+    }
+
+
+    function getbalance() {
+
+        let vacation_type = document.getElementById("vacation_type").value;
+        
+        post('/vacation/get_balance', {vacation_type: vacation_type})
+            .then(response => {
+                if (response.ok) {                     
+                    response.json().then(response => set_balance_data(response))
+                }
+            })
+
+    }
+
+
+    function set_balance_data(data){
+        console.log(data);
+        if(data['result'].length === 0){
+            document.getElementById("start_balance").value = '';
+            document.getElementById("current_balance").value = '';
+            document.getElementById("spent_balance").value = '';
+        }else{
+            document.getElementById("start_balance").value = data['result'].start_balance;
+            document.getElementById("current_balance").value = data['result'].current_balance;
+            document.getElementById("spent_balance").value = (data['result'].start_balance - data['result'].current_balance);
+        }
+       // get_ann_vac_type();
+
+    }
+    
+  
+    function get_ann_vac_type() {
+    
+        var vacation_type = document.getElementById("vacation_type").value;
+
+        if (vacation_type == 1) {        
+            document.getElementById("annual_div").className = "d-block";
+        }else{
+            document.getElementById("annual_div").className = "d-none";
+            document.getElementById("annual_vac_type").value = "null";
+        }
+    }
+
+
+function addClassNameListener(elemId, callback) {
+    var elem = document.getElementById("annual_div");
+    var lastClassName = elem.className;
+     var className = elem.className;
+        if (className !== lastClassName) {
+            callback();   
+            lastClassName = className;
+        }
+   // get_ann_vac_type();
+}
+ 
+addClassNameListener("annual_div", get_ann_vac_type());
+
+  function cal_days() {
+
+    let start_date = document.getElementById("start_date").value;
+    let end_date = document.getElementById("end_date").value;
+    let current_balance = document.getElementById("current_balance").value;
+    
+    let day_count = 0;
+   
+
+    //if(start_date.length !== 0 && end_date.length !== 0 ){
+        
+        let date1 = Date.parse (start_date);
+        let date2 = new Date (end_date);
+        let now = new Date();
+
+        document.getElementById("day_count").value = '';
+        document.getElementById("invalid-dates").style.display = 'none';
+      //  if(start_date.length !== 0 && end_date.length !== 0 ){
+
+
+            if((Math.round((date1 - now) / (1000 * 60 * 60 * 24))) < 0) {
+                 document.getElementById("invalid-dates").style.display = 'block';
+                document.getElementById("invalid-dates").innerHTML ='خطأ في تاريح البداية';   
+
+            }else{
+                document.getElementById("day_count").value = '';
+                day_count = (Math.round((date2 - date1) / (1000 * 60 * 60 * 24))) + 1 ;
+
+                if (day_count > 0) {
+
+                    if(current_balance.length !==0 && current_balance < day_count){
+                        document.getElementById("day_count").value = day_count;
+                        document.getElementById("invalid-dates").style.display = 'block';
+                        document.getElementById("invalid-dates").innerHTML ='الرصيد اقل من عدد ايام الاجازة';
+                    }else{
+                        document.getElementById("day_count").value = day_count;
+                    }
+                
+                }else if (day_count <= 0){
+                    document.getElementById("invalid-dates").style.display = 'block';
+                    document.getElementById("invalid-dates").innerHTML = 'خطأ في ادخال التواريخ';
+
+                }
+            }
+       // }
+  }
+ </script> 
+						
+
+
+{% endblock %}

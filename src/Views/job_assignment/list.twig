@@ -1,0 +1,214 @@
+{% extends "master.twig" %}
+
+
+{% block style %}
+
+{% endblock %}
+
+{% block main %}
+
+<div class="row">
+			<div class="col-12 col-md-12 col-xxl-12 d-flex">
+				<div class="card flex-fill ">
+
+					<div class="card-body">	
+							<h5 class="card-title">قائمة المهمات </h5>
+							<br>
+						<!--  <input type="text" id="search" x-model="searchTerm" class="form-control" placeholder="ابحث عن اجازة ... " >-->
+                            <div class="row"> 
+
+                                <div class="col-2">
+                                    <div class="form-floating mb-4">
+                                        <input type="date" id="date1" name="date1"  class="form-control">
+                                        <label  for="floatingInput">ابحث تاريخ بداية المهمه</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-2">
+                                    <div class="form-floating mb-4">
+                                        <input type="date" id="date2" name="date2"  class="form-control">
+                                        <label  for="floatingInput">ابحث تاريخ نهاية المهمه</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-3">
+                                    <div class="form-floating mb-4">
+                                        <select id="vac_sts" name="vac_sts" class="form-select" >
+										    <option value="null">-- ابحث حالة المهمه --</option>
+										    {% for key, value in lookups.vacation_status %}
+											    <option value="{{ key }}" {{ old.vacation_status == key ? 'selected' : '' }}>{{ value }}</option>
+										    {% endfor %}
+									    </select>
+                                    </div>
+                                </div>
+								 <div class="col-3">
+                                    <div class="form-floating mb-4">
+                                        <select id="mission_type" name="mission_type" class="form-select" >
+										   <option value="null">-- نوع المهمه --</option>
+										{% for key, value in lookups.job_assignment_type %}
+											<option value="{{ key }}" {{ old.mission_type == key ? 'selected' : '' }}>{{ value }}</option>
+										{% endfor %}
+									    </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-1 ">
+                                    <button class="form-control btn btn-outline-success btn-lg" onclick="searchVac()">بحث</button>
+                                </div>
+
+						    </div>
+                        
+                        <div class="table-responsive">
+							<table class="table table-striped table-bordered  table-hover table-sm  align-middle">
+								<thead>
+									<tr>
+										<th class="text-center fit">#</th>
+										<th class="text-center fit">نوع المهمه</th>
+                                       <!-- <th class="text-center fit"> اسم الموظف </th> -->
+										<th class="text-center fit">من تاريخ</th>
+										<th class="text-center fit">إلى تاريخ</th>
+										<th class="text-center fit">عدد الأيام</th>
+										<th class="text-center fit"> موضوع المهمه</th>
+										<th class="text-center fit"> الدولة</th>										
+										<th class="text-center fit">نوع الاستضافة</th>
+                                        <th class="text-center fit">تاريخ نهائي لتقديم</th>
+                                        <th class="text-center fit">حالة المهمه </th>
+                                        <th class="text-center fit">اجراءات </th>
+                                        
+									</tr>
+								</thead>
+								<tbody class="table-group-divider">
+									{% set counter = 1 %}
+                                  
+									{% for key, vac in data %}
+
+										{% set date_from = vac.mission_start_date|date('d-m-Y') %}
+										{% set date_to = vac.mission_end_date|date('d-m-Y') %}
+										{% set difference = date(date_to).diff(date(date_from)) %}
+										{% set day_count = difference.days  + 1 %} 
+										
+										{% set mission_type = lookups.job_assignment_type[vac.mission_type] %}
+
+										{% set mission_supject = lookups.job_assignment_supject[vac.mission_supject] %}
+										
+										<tr>
+											<td class="text-center fit" >{{ counter }}</td>
+											<td class="text-center fit" x-text="mission_type">{{ mission_type }}</td>
+                                           	<td class="text-center fit" x-text="mission_start_date">{{ date_from }}</td>
+											<td class="text-center fit" x-text="mission_end_date">{{ date_to }}</td>
+											<td class="text-center fit" x-text="day_count">{{ day_count }}</td>
+
+											<td class="text-center fit" x-text="mission_supject"><i class = "{{lookups.job_assignment_supject[vac.mission_supject] }}" > </i> {{ lookups.job_assignment_supject[vac.mission_supject] }}</td>
+											<td class="text-center fit" x-text="mission_country"><i class = "{{lookups.country[vac.mission_country]}}" > </i>{{lookups.country[vac.mission_country]}}</td>
+                                            <td class="text-center fit" x-text="hosted_type"><i class = "{{lookups.hosting_type[vac.hosted_type]}}" > </i>{{lookups.hosting_type[vac.hosted_type]}}</td>
+                                            {% set date1 = date()|date('d-m-Y') %}
+										    {% set date_la = vac.last_date|date('d-m-Y') %}
+                                            {% set interval =  date(date1).diff(date(date_la))%}
+                                            {% if interval.days <= 10 %}
+                                            <td class="text-center fit  "><span class="badge top-0 translate-middle badge rounded-pill bg-danger">باقي&nbsp{{ interval.days }} </span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{ vac.last_date }}</td>
+                                            {% elseif interval.days  > 10  %}
+                                            <td class="text-center fit " x-text="mission_funded">{{ vac.last_date }} </td>
+                                            {% else  %}
+                                            <td class="text-center fit " x-text="mission_funded">&nbsp</td>
+                                             {% endif %}
+                                             <td class="text-center fit" x-text="mission_status"><i class = "{{lookups.status_class[vac.mission_status]}}" > </i> {{lookups.vacation_status[vac.mission_status]}}</td>
+											
+
+						                    <td class="text-center fit" >
+                                               <!-- if permission edit_jobassignment and update_jobassignment     -->
+                                                <button  type="button" class="btn btn-outline-dark btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="تعديل المهمه">
+                                                    <a href="/job_assignment/edit/{{vac.id}}" >
+                                                    <i class="bi bi-pencil-fill fs-5"></i></a>
+                                                </button> 
+                                                <!-- end if -->
+                                                <!-- if permission approve_jobassignment     -->
+                                                {% if vac.mission_status == 1 %}
+                                                <button  type="button" class="btn btn-outline-dark btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="موافقه على المهمه">
+                                                    <a href="/job_assignment/approve/{{vac.id}}/{{2}}" >
+                                                    <i class='bi bi-check-lg fs-5'></i></a>
+                                                </button> 
+                                                 <button  type="button" class="btn btn-outline-dark btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title=" رفض المهمه">
+                                                    <a href="/job_assignment/approve/{{vac.id}}/{{3}}" >
+                                                    <i class='bi bi-x-lg fs-5'></i></a>
+                                                </button> 
+                                                {% endif %}
+                                                <!-- end if -->
+                                                <!-- if permission divide_jobassignment     -->
+                                            {% if vac.mission_type == 2  and vac.mission_status == 2 %}
+                                                <button  type="button" class="btn btn-outline-dark btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="تخصيص المهمه">
+                                                    <a href="/job_assignment/customize/{{vac.id}}" >
+                                                    <i class='bi bi-file-earmark-text fs-5'></i></a>
+                                                </button>  
+                                               <!-- end if -->
+                                                <button  type="button" class="btn btn-outline-dark btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="الادارات المخصصه">
+                                                    <a href="/job_assignment/customize/{{vac.id}}" >
+                                                    <i class='bi bi-list-stars fs-5'></i></a>
+                                                </button>                     
+                                                {% endif %}
+                                        </td>																											
+                                            
+											                       
+                                    </tr> 
+
+
+
+
+
+                                      
+
+                                    	{% set counter = counter + 1 %}   
+									{% endfor %}
+                          
+								</tbody>
+							</table>
+						</div>
+					</div>
+                </div>
+
+
+				</div>
+			</div>
+		</div>
+
+  
+<script>
+function searchVac(){
+    
+    const d = new Date();
+    let year = d.getFullYear();
+
+    let mission_type = document.getElementById("mission_type");
+    let date_start = document.getElementById("date1");
+    let date_end = document.getElementById("date2");
+    let $url = '/job_assignment/list1' ;
+
+    if (vac_sts) {
+        sts = mission_type.value;     
+    }
+
+    if (date_start && date_start.value) {
+        date1 = date_start.value; 
+    }else{
+        date1 = year + "-01-01";
+    }
+    
+    if (date_end && date_end.value) {
+        date2 = date_end.value; 
+    }else{
+        date2 = year + "-12-31";
+    }
+
+    $url = $url + '/' + sts + '/' + date1 + '/' + date2 ;    
+
+    window.location=$url ;    
+}
+
+</script
+
+
+
+
+
+
+
+{% endblock %}

@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
+		<meta name="author" content="AdminKit">
+		<meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+
+		<link rel="preconnect" href="https://fonts.gstatic.com">
+		<link rel="shortcut icon" href="img/logo/HR_LOGO.svg"/>
+
+		<title>تسجيل الدخول | HR System</title>
+
+		<link href="css/app.css" rel="stylesheet">
+
+		<style>
+			body {
+				background: url('img/photos/10.webp') no-repeat center center fixed;
+				-webkit-background-size: cover;
+				-moz-background-size: cover;
+				-o-background-size: cover;
+				background-size: cover;
+			}
+			body {
+				font-family: 'Cairo', sans-serif;
+			}
+			.card {
+				border: none;
+			}
+			.form-floating:not(.form-control:disabled):before {
+				background-color: #ffffff00;
+			}
+
+
+			button,
+			input[type="submit"],
+			input[type="reset"] {
+				background: none;
+				color: inherit;
+				border: none;
+				padding: 0;
+				font: inherit;
+				cursor: pointer;
+				outline: inherit;
+
+			}
+			.circle-card {
+				width: 250px;
+				height: 250px;
+				border-radius: 5px;
+				text-align: center;
+				padding: 5px;
+				box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container-fluid">
+
+
+			<main class="d-flex">
+
+				<div class="container d-flex flex-column">
+
+					<div class="row ">
+
+						<div class="col-sm-12 col-md-12 col-lg-12 mx-auto d-table h-100">
+
+							<div class="d-table-cell align-middle">
+								<div class="card mt-2" style="background-color: rgba(255, 255, 255, .15); backdrop-filter: blur(20px);">
+									<div class="card-body">
+										<div class="text-center">
+											<img src="img/logo/HR_LOGO.svg" class="img-fluid" width="200" height="200" alt="HR"/>
+										</div>
+									</div>
+								</div>
+								<br>
+								<div class="card" style=" background-color: rgba(255, 255, 255, .15);backdrop-filter: blur(5px);">
+									<div class="card-body">
+
+
+										<div class="m-sm-5">
+
+											<h5>
+												الدخول كـ
+											</h5>
+											<div class="form-floating mb-5"></div>
+
+
+											<div class="row justify-content-center">
+
+												{% for posi in os %}
+													<div class="col-md-6">
+														<form id="login_os" action="login_os" method="post">
+															{{ csrf.fields | raw }}
+															<div class="row justify-content-center">
+
+																<button type="submit" class="circle-card ">
+																	<div class="card btn-grad text-light p-5 circle-card ">
+																		<div class="card-body ">
+																			<h5 class=" position-absolute top-50 start-50 translate-middle"><input name="os_id" type="hidden" value="{{ posi.os_id }}"/>
+																				{{ posi.os_name }}</h5>
+																		</div>
+																	</div>
+																</button>
+
+															</div>
+														</form>
+													</div>
+												{% endfor %}
+
+											</div>
+										</div>
+										<div class="d-flex flex-row-reverse py-3">
+											<a class="btn btn-warning" href="/logout_os" role="button">تسجيل خروج</a>
+										</div>
+
+									</div>
+
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</main>
+		</div>
+	</body>
+</html>

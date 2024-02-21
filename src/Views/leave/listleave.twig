@@ -1,0 +1,421 @@
+{% extends "master.twig" %}
+
+
+{% block style %}
+
+{% endblock %}
+
+{% block main %}
+
+		<div class="row">
+			<div class="col-12 col-md-12 col-xxl-12 d-flex">
+				<div class="card flex-fill ">
+<ol>
+    {% for jo in date  %}
+        <li>{{data['leave_end']}}</li>
+    {% endfor %}
+  </ol>
+						
+				
+
+					<div class="card-body">	
+							<h5 class="card-title">قائمة المغادرات  الموظف</h5>
+							<br>
+						<div class="table-responsive">
+                            {% if permissions['search_leaves']  %}
+                                <div class="row"> 
+                                                <div class="col-2">
+                                                    <div class="form-floating mb-4">
+                                                        <input type="date" id="start_date" name="start_date"  class="form-control">
+                                                        <label  for="floatingInput">ابحث تاريخ المغادره</label>
+                                                    </div>
+                                                </div>
+                                                 <div class="col-2">
+                                                    <div class="form-floating mb-4">
+                                                        <input type="date" id="end_date" name="end_date"  class="form-control">
+                                                        <label  for="floatingInput">ابحث تاريخ المغادره</label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-3">
+                                                    <div class="form-floating mb-4">
+                                                    <select name="leave_type" id="leave_type"class="form-select form-select-sm {{ errors.leave ? 'is-invalid' : '' }}" aria-label=".form-select-sm example" onchange="showDiv()">
+                                                        <option value="null">-- اختر نوع اذن المغادره --</option>
+                                                        {% for key, value in lookups.leave %}
+                                                            <option value="{{ key }}" {{ old.leave == key ? 'selected' : '' }}>{{ value }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-3">
+                                                    <div class="form-floating mb-4">
+                                                        <select id="vac_sts" name="vac_sts" class="form-select" >
+                                                            <option value="null">-- ابحث حالة المغادره  --</option>
+                                                            {% for key, value in lookups.vacation_status %}
+                                                                <option value="{{ key }}" {{ old.vacation_status == key ? 'selected' : '' }}>{{ value }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            
+                                                <div class="col-1 ">
+                                                    <button class="form-control btn btn-outline-success btn-lg" onclick="searchVac()">بحث</button>
+                                                </div>
+
+                                        </div> 
+                                        {% endif  %}
+
+
+<div class="m-4">
+    <div class="accordion" id="myAccordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+                <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapseOne">1. What is HTML?</button>									
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#myAccordion">
+                <div class="card-body">
+                    <p>HTML stands for HyperText Markup Language. HTML is the standard markup language for describing the structure of web pages. <a href="https://www.tutorialrepublic.com/html-tutorial/" target="_blank">Learn more.</a></p>
+                </div>
+            </div>
+        </div>
+       
+        
+    </div>
+</div>
+
+
+							<table class="table table-striped table-bordered  table-hover table-sm  align-middle" x-ref="dataTable">
+								<thead>
+									<tr>
+										<th class="text-center fit">#</th>
+										<th class="text-center fit">نوع المغادره</th>
+										<th class="text-center fit">من الساعه</th>
+										<th class="text-center fit">إلى ساعة</th>
+										<th class="text-center fit">عدد الدقائق</th>
+										<th class="text-center fit">تاريخ تقديم المغادره</th>						
+										<th class="text-center fit"> حالة المغادره</th>
+										<th class="text-center fit">ملاحظات</th>
+                                        {% if permissions['update_leave_status']  %}
+                                       	    <th class="text-center fit">الاجراءات</th>								
+                                        {% endif %}                                   
+									</tr>
+								</thead>
+								{% set counter = 1 %}
+								{% set approve_vac = 2 %}	
+                                {% set reject_vac = 3 %}								                     
+                                {% set delete_vac = 4 %}
+								<ol>
+									
+									{% for lea in data %}
+									
+									{% set leave_type = leave_types[lea.leave_type]  %}										
+										
+                                   {% set leave_start = lea.leave_start|date('H:i:s') %}
+								   {% set leave_end = lea.leave_end|date('H:i:s') %}
+								   {% set difference = date(lea.leave_end) .diff(date(lea.leave_start)) %}
+								   {% set leave_date = lea.leave_date|date('Y-m-d') %}
+								   {% set leave_status = vacation_type[lea.leave_status] %}
+
+								  
+								<tr>
+											<td class="text-center fit" >{{counter}}</td>
+											<td class="text-center fit"  x-text="leave_type">{{leave_type}}</td>
+											<td class="text-center fit"  x-text="leave_start">{{ leave_start|date('H:i')}}</td>
+											<td class="text-center fit"  x-text="leave_end">{{ leave_end|date('H:i')}}</td>
+											<td class="text-center fit"  x-text="diff">{{ lea.diff }}</td>
+											<td class="text-center fit"  x-text="leave_date">{{leave_date|date('Y-m-d')}}</td>
+											<td class="text-center fit"  x-text="leave_status"><i class = "{{ lookups.status_class[lea.leave_status] }}" > </i> {{  lookups.vacation_status[lea.leave_status] }}</td>
+											<td class="text-center fit"  x-text="leave_dir">{{lea.leave_dir}}</td>
+											<td class="text-center fit" >
+											 {% if (lea.leave_status == 1) %}                                                
+                                               <!--
+                                                <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editVacation" onclick="getleaveForEdit({{lea.id}})">
+                                                    <i class="bi-pencil-square fs-5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="تعديل المغادره"></i>
+                                                </button> -->
+                                                {% if permissions['update_leave_status']  %}
+                                                    <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editLeave{{lea.id}}" >
+                                                        <i class="bi bi-toggles fs-5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="موافقة/رفض"></i>
+                                                    </button>
+            
+                                                    <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{lea.id}}">
+                                                        <i class="bi bi-trash fs-5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="إالغاء المغادره"></i>
+                                                    </button>
+                                                {% endif %}
+                                            {% elseif (lea.leave_status != 1) %}
+                                                
+
+                                            		
+                                                <!--
+                                                <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="popover" data-bs-placement="left" tabindex="0" data-bs-trigger="focus"
+                                                    data-bs-custom-class="custom-error-popover" data-bs-title="المغادره معتمدة" data-bs-content="لايمكن تعديل هذه المغادره">
+                                                    <i class="bi-pencil-square fs-5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="تعديل المغادره"></i>
+                                                </button>  --> 
+
+                                                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="popover" data-bs-placement="left" tabindex="0" data-bs-trigger="focus"
+                                                    data-bs-custom-class="custom-error-popover" data-bs-title="المغادره معتمدة" data-bs-content="لايمكن  رفض / الموافقة على هذه المغادره">
+                                                    <i class="bi bi-toggles fs-5"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="موافقة/رفض"></i>
+                                                </button>
+
+                                                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="popover" data-bs-placement="left" tabindex="0" data-bs-trigger="focus"
+                                                    data-bs-custom-class="custom-error-popover" data-bs-title="المغادره معتمدة" data-bs-content="لا يمكن الغاء هذه المغادره">
+                                                    <i class="bi bi-trash fs-5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="إالغاء المغادره"></i>
+                                                </button>
+
+											{% endif %} 
+                                            <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{lea.id}}">
+                                                    <i class="bi bi-printer fs-5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="إالغاء المغادره"></i>
+                                                </button>
+											</td>
+								</tr>
+
+										<div class="modal fade" id="editLeave{{lea.id}}" tabindex="-1" aria-labelledby="editLeaveLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-primary  text-white">
+                                                       
+                                                        <h1 class="modal-title  fs-5 " id="editLeaveLabel">اعتماد المغادره</h1>
+                                                        <div class="d-flex flex-row-reverse mb-3 ">
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-body" id="editLeaveBody">
+                                                     هل انت متاكد من الموافقة او رفض المغادره
+                                                    </div>
+                                                    <div class="modal-footer ">                                        
+                                                        <a class="btn btn-success btn-sm" href="/leave/getleave/{{lea.id}}/{{approve_vac}}">موافقة</a>
+                                                        <a class="btn btn-danger btn-sm" href="/leave/getleave/{{lea.id}}/{{reject_vac}}">رفض</a>
+                                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">اغلاق</button>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+  <!-- End Modal Approve Vacation -->
+
+
+
+                                        <!-- Modal Delete Vacation -->                                        
+                                        <div class="modal fade" id="deleteModal{{lea.id}}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-primary  text-white">
+                                                       
+                                                        <h1 class="modal-title  fs-5 " id="approveModalLabel">إالغاء اجازة</h1>
+                                                        <div class="d-flex flex-row-reverse mb-3 ">
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-body" id="approveModalBody">
+                                                     هل انت متاكد من حذف الاجازة
+                                                    </div>
+                                                    <div class="modal-footer ">                                        
+                                                        <a class="btn btn-success btn-sm" href="/leave/getleave/{{lea.id}}/{{delete_vac}}">موافقة</a>                              
+                                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">اغلاق</button>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- End Modal Delete Vacation -->
+										{% set counter = counter + 1 %}
+									{% endfor %}
+                            </table>           
+										
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+        <!-- Modal editVacation-->
+	<div class="modal fade" id="editVacation" name="editVacation" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" >
+		<div class="modal-dialog modal-dialog-scrollable modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="staticBackdropLabel">
+						 تعديل المغادره</h1>
+					<div class="d-flex flex-row-reverse mb-3 ">
+						<button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+				</div>
+				<div class="modal-body">
+					  
+
+					<form id="edit_form" name="edit_form" action="/vacation/listEmpVacation" method="post">
+							{{ csrf.fields | raw }}
+
+						<div class="row justify-content-md-center">
+
+							
+                                <input type="hidden" id="id" name="id" value="{{ id }}">
+                                <input type="hidden" id="employee_id" name="employee_id" value="{{ employee_id }}">
+                                
+                                <div class="mb-3">
+                                    <select id="vacation_type" name="vacation_type" value="{{ lea.leave_type }}" class="form-select  {{ errors.leave_type ? 'is-invalid' : '' }}" aria-label=".form-select-sm example" onchange="getbalance()">
+										<option value="null">-- نوع الاجازة --</option>
+										{% for key, value in lookups.leave_type %}
+											<option value="{{ key }}" {{ old.leave_type == key ? 'selected' : '' }}>{{ value }}</option>
+										{% endfor %}
+									</select>
+                                      <div class="invalid-feedback">
+										{{ errors.leave_type | first }}
+									  </div>
+                                </div>
+                                
+                                
+
+                                <div class="row mb-2">                                    
+                                    <div class="col-4">
+                                        <div class="form-floating mb-4" >
+                                            <input type="text" value="{{ lea.leave_start }}" id="start_balance" name="start_balance" class="form-control">
+                                            <label for="floatingInput" >بدلية المغادره</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4">
+                                        <div class="form-floating mb-4">
+                                            <input type="text" value="{{ lea.leave_end }}" id="spent_balance" name="spent_balance" class="form-control" >
+                                            <label for="floatingInput"> نهاية المغادره<label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4">
+                                        <div class="form-floating mb-4">
+                                            <input type="text" value="{{lea.leave_date }}" id="current_balance" name="current_balance" class="form-control  {{ errors.current_balance ? 'is-invalid' : '' }}" placeholder="الرصيد المتبقي" aria-label="الرصيد المتبقي" readonly>
+                                            <label for="floatingInput">تاريخ المغادره<label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                         </div>  
+                                                   
+
+						
+						<br>
+				</form>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>				
+				</div>
+				
+			</div>
+		</div>	
+    </div>
+<!-- End Modal editVacation-->
+
+
+	<script>
+ function getleaveForEdit(vac_id) {
+		let id = vac_id;
+		let employee_id = document.getElementById("employee_id").value;
+
+        post('/leave/listLeave', {id:id, employee_id:employee_id})
+            .then(response => {
+                if (response.ok) {                     
+                    response.json().then(response => set_vacation_data(response))
+                }
+            })
+    }
+
+ 	function set_leave_data(data){
+        console.log(data);
+
+        if(data['rowCount'] === 0){    
+            const myModalEl = document.getElementById('editLeave')    
+            editModalEl.dispose();
+
+		}else{
+            
+            document.getElementById("id").value = data['result'].id;
+            document.getElementById("employee_id").value = data['result'].employee_id;
+			document.getElementById("leave_type").value = data['result'].leave_type;            
+            document.getElementById("leave_date").value = data['result'].leave_date;		
+            document.getElementById("leave_start").value = data['result'].leave_start;
+			document.getElementById("leave_end").value = data['result'].leave_end;
+			
+
+			let date1 = Date.parse (data['result'].leave_start);
+        	let date2 = new Date (data['result'].leave_end);
+
+			
+        }
+
+        get_ann_vac_type();
+
+    }
+
+function searchVac(){
+   
+    let vac_sts = document.getElementById("vac_sts");
+    let leave_type = document.getElementById("leave_type");
+    let start_date = document.getElementById("start_date");
+    let end_date = document.getElementById("end_date");
+    let $url = '/leave/listLeave' ;
+
+    if (vac_sts) {
+        sts = vac_sts.value;     
+    }
+    
+    if (leave_type) {
+        leave_type = leave_type.value; 
+    }
+    
+    if (start_date && start_date.value) {
+        start_date = start_date.value; 
+    }
+    if (end_date && end_date.value) {
+            end_date = end_date.value; 
+        }
+  $url = $url + '/' + sts  + '/' + leave_type + '/' +  start_date + '/' + end_date;    
+    $url = $url   ;
+    window.location=$url ;    
+}
+
+
+	</script>
+						
+<script>
+    const dataTable = () => {
+        return {
+            table: null,
+            options: {
+            searching: false,
+            ordering: true,
+            paging: true,
+            lengthChange: true,
+            info: true,
+            autoWidth: true
+            },
+
+            searchTerm: '',
+
+            rows: [{% for lea in list %}
+            {
+
+                leave_type: '{{ value.device_ip }}',
+                leave_start: '{{ value.name }}',
+                leave_end: '<i class="text-secondary bi bi-exclamation-circle"></i>',
+                leave_status: '{{ lookups.vacation_status[lea.leave_status] }}',
+                created_by: '{{ value.serial }}',
+                created_at: '{{ lea.created_at|date("H:i:s  d/m/Y") }}',
+                data: '---'
+            },
+            {% endfor %}],
+            
+            filteredRows() {
+                if (!this.searchTerm) {
+                    return this.rows;
+                }
+  
+   
+                const term = this.searchTerm.toLowerCase();
+
+                return this.rows.filter(row => {
+                return row.ip.toLowerCase().includes(term) || row.name.toLowerCase().includes(term) || row.area.toLowerCase().includes(term);
+                });
+            },
+        }      
+    };
+</script>
+
+{% endblock %}

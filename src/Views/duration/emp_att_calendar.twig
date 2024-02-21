@@ -1,0 +1,794 @@
+{% extends "master.twig" %}
+
+{% block style %}
+	<style>
+		/* Add your CSS styles here */
+		table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		table,
+		th,
+		td {
+			border: 1px solid #ccc;
+		}
+
+		th,
+		td {
+			padding: 8px;
+			text-align: center;
+		}
+
+		.day-header {
+			background-color: #f2f2f2;
+		}
+
+		.time-slot {
+			font-weight: bold;
+		}
+
+		.timeline {
+			list-style: none;
+			padding: 0;
+		}
+
+		.timeline li {
+			position: relative;
+			margin-bottom: 30px;
+		}
+
+		.timeline-badge {
+			width: 20px;
+			height: 20px;
+			border-radius: 50%;
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+
+		.th-table {
+
+
+			border-top-left-radius: 10px; /* Rounded top-left corner */
+			border-top-right-radius: 10px; /* Rounded top-right corner */
+			overflow: hidden;
+
+		}
+		.th-table th {
+			background-color: #f2f2f2; /* Background color */
+
+			font-weight: bold; /* Bold text */
+			text-align: center; /* Center-align text */
+
+			padding-top: 20px;
+
+		}
+
+
+		.htimeline {
+			list-style: none;
+			padding: 0;
+			margin: 20px 0 0;
+			width: 100%
+		}
+
+		.htimeline .step {
+			float: right;
+			border-top-style: solid;
+			border-top-width: 5px;
+			position: relative;
+			margin-bottom: 25px;
+			text-align: right;
+			padding: 3px 0 5px 10px;
+			background-color: #ddd;
+			color: #333;
+			height: 105px;
+			vertical-align: middle;
+			border-right: solid 1px #bbb;
+			transition: all 0.5s ease;
+		}
+
+		.htimeline .step:nth-child(odd) {
+			background-color: #eee;
+		}
+
+		.htimeline .step:first-child {
+			border-right: solid 1px #bbb;
+		}
+
+		.htimeline .step:hover {
+			background-color: #ccc;
+			border-bottom-width: 6px;
+		}
+
+		.htimeline .step > div {
+			margin: 0 5px;
+			font-size: 16px;
+			vertical-align: top;
+			padding: 0;
+		}
+
+		.htimeline .step.green {
+			border-top-color: var(--bs-success);
+		}
+		.htimeline .step.yellow {
+			border-top-color: var(--bs-warning);
+		}
+
+		.htimeline .step.orange {
+			border-top-color: #f77c25;
+		}
+
+		.htimeline .step.red {
+			border-top-color: var(--bs-danger);
+		}
+
+		.htimeline .step.blue {
+			border-top-color: var(--bs-info);
+		}
+
+		.htimeline .step::before {
+			width: 15px;
+			height: 15px;
+			border-radius: 50px;
+			content: ' ';
+			background-color: white;
+			position: absolute;
+			top: -10px;
+			right: 0;
+			border-style: solid;
+			border-width: 3px;
+			transition: all 0.5s ease;
+		}
+
+		.htimeline .step:hover::before {
+			width: 18px;
+			height: 18px;
+			bottom: -12px;
+		}
+
+		.htimeline .step.green::before {
+			border-color: var(--bs-success);
+		}
+
+		.htimeline .step.yellow::before {
+			border-color: var(--bs-warning);
+		}
+
+		.htimeline .step.orange::before {
+			border-color: #f77c25;
+		}
+
+		.htimeline .step.red::before {
+			border-color: var(--bs-danger);
+		}
+
+		.htimeline .step.blue::before {
+			border-color: var(--bs-info);
+		}
+
+
+		.htimeline .step::after {
+			content: attr(data-date);
+			position: absolute;
+			top: -31px;
+			right: 14px;
+			font-size: 14px;
+			font-weight: 600;
+			color: #000;
+			background-color: var(--bs-light);
+			padding: 2px;
+		}
+
+		/*TASKS*/
+		.htimeline .step .tasks {
+			margin-top: 10px;
+		}
+
+		.htimeline .step .tasks .resource {
+			position: relative;
+			height: 40px;
+		}
+
+		.htimeline .step .tasks .resource::before {
+			position: absolute;
+			bottom: 2px;
+			right: -5px;
+			content: attr(data-name);
+			font-size: 10px;
+			font-style: italic;
+			color: #888
+		}
+
+		.htimeline .step .tasks .task {
+			overflow: hidden;
+			font-size: 14px;
+			padding: 3px;
+			border: solid 1px white;
+			border-radius: 4px;
+			min-height: 20px;
+		}
+
+		.htimeline .step.green .tasks .task {
+			background-color: var(--bs-success);
+			color: white;
+		}
+		.htimeline .step.yellow .tasks .task {
+			background-color: var(--bs-warning);
+			color: white;
+		}
+
+		.htimeline .step.orange .tasks .task {
+			background-color: #f77c25;
+			color: white;
+		}
+
+		.htimeline .step.red .tasks .task {
+			background-color: var(--bs-danger);
+			color: white;
+		}
+
+		.htimeline .step.blue .tasks .task {
+			background-color: var(--bs-info);
+			color: white;
+		}
+
+		/***/
+
+		.brown {
+			background-color: #A52A2A;
+		}
+		.htimeline .step-end {
+			float: right;
+			border-top-style: solid;
+			border-top-width: 5px;
+			position: relative;
+			margin-bottom: 25px;
+			text-align: right;
+			padding: 3px 0 5px 10px;
+			color: #adb5bd;
+			height: 105px;
+			vertical-align: middle;
+			border-right: solid 1px #bbb;
+			transition: all 0.5s ease;
+		}
+
+		.htimeline .step-end:nth-child(odd) {
+			background-color: #eee;
+		}
+
+		.htimeline .step-end:first-child {
+			border-right: solid 1px #bbb;
+		}
+
+		.htimeline .step-end:hover {
+			background-color: #ccc;
+			border-bottom-width: 6px;
+		}
+
+		.htimeline .step-end > div {
+			margin: 0 5px;
+			font-size: 16px;
+			vertical-align: top;
+			padding: 0;
+		}
+
+		.htimeline .step-end.green {
+			border-top-color: var(--bs-success);
+		}
+		.htimeline .step-end.yellow {
+			border-top-color: var(--bs-warning);
+		}
+
+		.htimeline .step-end.orange {
+			border-top-color: var(--bs-warning);
+		}
+
+		.htimeline .step-end.red {
+			border-top-color: var(--bs-danger);
+		}
+
+		.htimeline .step-end.blue {
+			border-top-color: var(--bs-info);
+		}
+
+		.htimeline .step-end::before {
+			width: 15px;
+			height: 15px;
+			border-radius: 50px;
+			content: ' ';
+			background-color: white;
+			position: absolute;
+			top: -10px;
+			left: 0;
+			border-style: solid;
+			border-width: 3px;
+			transition: all 0.5s ease;
+		}
+
+		.htimeline .step-end:hover::before {
+			width: 18px;
+			height: 18px;
+			bottom: -12px;
+		}
+
+		.htimeline .step-end.green::before {
+			border-color: var(--bs-success);
+		}
+
+		.htimeline .step-end.yellow::before {
+			border-color: var(--bs-warning);
+		}
+
+		.htimeline .step-end.red::before {
+			border-color: var(--bs-danger);
+		}
+
+		.htimeline .step-end.blue::before {
+			border-color: var(--bs-info);
+		}
+
+
+		.htimeline .step-end::after {
+			content: attr(data-date);
+			position: absolute;
+			top: -31px;
+			right: 14px;
+			font-size: 14px;
+			font-weight: 600;
+			color: #000;
+			background-color: var(--bs-light);
+			padding: 2px;
+		}
+
+		/*TASKS*/
+		.htimeline .step-end .tasks {
+			margin-top: 10px;
+		}
+
+		.htimeline .step-end .tasks .resource {
+			position: relative;
+			height: 40px;
+		}
+
+		.htimeline .step-end .tasks .resource::before {
+			position: absolute;
+			bottom: 2px;
+			right: -5px;
+			content: attr(data-name);
+			font-size: 10px;
+
+			color: #888
+		}
+
+		.htimeline .step-end .tasks .task {
+			overflow: hidden;
+			font-size: 14px;
+			padding: 3px;
+			border: solid 1px white;
+			border-radius: 4px;
+			min-height: 20px;
+		}
+
+		.htimeline .step-end.green .tasks .task {
+			background-color: var(--bs-success);
+			color: white;
+		}
+		.htimeline .step-end.yellow .tasks .task {
+			background-color: var(--bs-warning);
+			color: white;
+		}
+
+		.htimeline .step-end.yellow .tasks .task {
+			background-color: var(--bs-warning);
+			color: white;
+		}
+
+		.htimeline .step-end.red .tasks .task {
+			background-color: var(--bs-danger);
+			color: white;
+		}
+
+		.htimeline .step-end.blue .tasks .task {
+			background-color: var(--bs-info);
+			color: white;
+		}
+	</style>
+{% endblock %}
+
+{% block main %}
+	<main class="col ms-1">
+		<div class="row">
+			<div class="card">
+				<div class="card-header row justify-content-between p-3 border-bottom">
+					<div class="col-md-6 d-flex">
+						<h4 class="text-end me-3 mt-3">
+							سجل الدوام لشهر
+							{{ lookups.arabic_months[month] }}
+							للموظف/ة:
+						</h4>
+						<h4 class="text-end me-3 mt-3 text-primary">
+							{{ employee.f_name }}
+							{{ employee.s_name }}
+							{{ employee.t_name }}
+							{{ employee.l_name }}
+						</h4>
+					</div>
+				</div>
+
+				<div class="card-body">
+					<div class="d-flex flex-row-reverse py-3">
+						<button class="btn btn-primary">
+							<i class="bi bi-calendar"></i>
+							اتفاقية الموظف
+						</button>
+					</div>
+
+					<div class="w-100">
+						{% for key, item in data %}
+							{% if key != null %}
+								{% set dateParts = key|split('-') %}
+								{% set minutes_in = item.diff * -1 %}
+								{# التأخير الصباحي #}
+								{% set h_in = minutes_in // 60  %}
+								{% set m_in = minutes_in % 60 %}
+								{% set minutes_out = item.diff_out * -1 %}
+								{# الانصراف المبكر  #}
+								{% set h_out = minutes_out // 60 %}
+								{% set m_out = minutes_out % 60 %}
+								<div class="card mb-3">
+									<div class="card-body p-2 pt-4">
+										<div class="row">
+											{% if item.att_status == 5 %}
+												<div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+													<div class="card bg-white mb-1">
+														<div class="card-header text-center brown text-white">
+															{{ lookups.arabic_months[month] }}
+														</div>
+														<div class="card-body p-0">
+															<div class="text-center fs-2 font-weight-bold">{{ dateParts[2] }}</div>
+															<div class="text-center fs-5 font-weight-bold">{{ lookups.days[item.day] }}</div>
+															<div class="text-center font-weight-normal p-0 font-weight-bolder pb-1">
+																{{ item.start_time|date("H:i") }}
+																-
+																{{ item.end_time|date("H:i") }}
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class=" col-lg-10 col-md-3 col-sm-3 col-xs-12 d-flex justify-content-center align-items-center">
+													<h5 class=" p-2  text-center text-light bg-danger rounded">عطلة رسمية حسب الاتفاقية</h5>
+												</div>
+
+
+											{% elseif item.start_date != null and item.end_time != null %}
+												<div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+													<div class="card bg-white mb-1">
+														<div class="card-header text-center brown text-white">
+															{{ lookups.arabic_months[month] }}
+														</div>
+														<div class="card-body p-0">
+															<div class="text-center fs-2 font-weight-bold">{{ dateParts[2] }}</div>
+															<div class="text-center fs-5 font-weight-bold">{{ lookups.days[item.day] }}</div>
+															<div class="text-center font-weight-normal p-0 font-weight-bolder pb-1">
+																{{ item.start_time|date("H:i") }}
+																-
+																{{ item.end_time|date("H:i") }}
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class=" col-lg-10 col-md-3 col-sm-3 col-xs-12 d-flex flex-column justify-content-center align-items-center">
+													<h5 class=" p-2  text-center text-light bg-primary rounded-top rounded-bottom rounded-end">
+														{{ item.vacation_name }}</h5>
+													<button type="button" class="btn p-2 bg-light text-center">
+														<i class="bi bi-file-text"></i>
+														تفاصيل
+													</button>
+												</div>
+
+											{% else %}
+												<div class="col-lg-2 col-md-3 col-sm-3 col-xs-12">
+													<div class="card bg-white mb-1">
+														<div class="card-header text-center brown text-white">
+															{{ lookups.arabic_months[month] }}
+														</div>
+														<div class="card-body p-0">
+															<div class="text-center fs-2 font-weight-bold">{{ dateParts[2] }}</div>
+															<div class="text-center fs-5 font-weight-bold">{{ lookups.days[item.day] }}</div>
+															<div class="text-center font-weight-normal p-0 font-weight-bolder pb-1">
+																{{ item.start_time|date("H:i") }}
+																-
+																{{ item.end_time|date("H:i") }}
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col-lg-10 col-md-9 col-sm-9 col-xs-12">
+													<div class="row">
+														<ul class="htimeline">
+
+															{% if item.check_in != null and item.check_in <= item.check_in_end %}
+																{% if item.diff >= 0 %}
+																	<li data-date='{{item.check_in|date("H:i")}}' class='step col-2 green'>
+																		<div>الحضور</div>
+																		<div class='tasks container-fluid'>
+																			<div class="task col text-right align-middle text-center border text-dark bg-success bg-opacity-25">
+																				حضور مبكر
+																			</div>
+																			<div class="task col  text-center ">
+																				{{item.check_in|date("H:i")}}
+																			</div>
+																		</div>
+																	</li>
+
+																{% elseif item.diff < 0 and item.diff >= (item.allowed_time_check_in *-1 )%}
+
+																	<li data-date='{{item.check_in|date("H:i")}}' class='step col-2 yellow'>
+																		<div>الحضور</div>
+																		<div class='tasks container-fluid'>
+																			<div class="task col text-right align-middle text-center border bg-warning text-dark bg-opacity-25">
+																				حضور في فترة السماح
+																			</div>
+																			<div class="task col text-center ">
+																				{{item.check_in|date("H:i")}}
+																			</div>
+																		</div>
+																	</li>
+
+																{% elseif item.diff < (item.allowed_time_check_in *-1) %}
+
+																	<li data-date='{{item.check_in|date("H:i")}}' class='step col-2 red'>
+																		<div>الحضور</div>
+																		<div class='tasks container-fluid'>
+																			<div class="task col text-right align-middle text-center text-dark border bg-danger  bg-opacity-25 ">
+																				تأخير صباحي
+																			</div>
+																			<div class="task col  text-center ">
+																				<div class=" rounded-0">
+																					<span class="spinner-grow spinner-grow-sm" aria-hidden="true"></span>
+																					<span role="status">{{ h_in }}:{{ '%02d'|format(m_in) }}
+																						ساعة
+																					</span>
+																				</div>
+
+																			</div>
+																		</div>
+																	</li>
+
+
+																{% endif %}
+															{% elseif  item.check_in > item.check_in_end %}
+																<li data-date='{{item.check_in|date("H:i")}}' class='step col-2 orange'>
+																	<div>الحضور</div>
+																	<div class='tasks container-fluid'>
+																		<div class="task col text-right align-middle text-center border bg-opacity-25">
+																			<span class="spinner-grow spinner-grow-sm " aria-hidden="true"></span>
+																			غير مطابق للاتفاقية
+																		</div>
+																		<div class="task col  text-center ">
+																			<div class=" rounded-0">
+																				<span class="spinner-grow spinner-grow-sm" aria-hidden="true"></span>
+																				<span role="status">{{ h_in }}:{{ '%02d'|format(m_in) }}
+																					ساعة
+																				</span>
+																			</div>
+
+																		</div>
+																	</div>
+																</li>
+
+															{% else %}
+
+																<li data-date='{{item.check_in}}' class='step col-2 '>
+																	<div class="d-flex justify-content-between">
+																		<div>الحضور</div>
+																		<div class="">
+																			<button class="btn text-primary">
+																				<i class="bi bi-pencil-square"></i>
+																			</button>
+																		</div>
+																	</div>
+																	<div class='tasks container-fluid'>
+
+																		<div class="task col">
+
+																			<span class="spinner-grow spinner-grow-sm" aria-hidden="true"></span>
+																			<span role="status">
+																				لم يتم اثبات الحضور
+																			</span>
+
+
+																		</div>
+																	</div>
+																</li>
+
+															{% endif %}
+
+
+															{% if item.check_in != null and item.leaves != null %}
+																{% set dividend =  (item.leaves|length * 2)  %}
+																{% set divisor = 7 %}
+																{% if dividend is divisible by divisor %}
+																	{% set result = divisor / dividend %}
+																	{% set result_mi = 0 %}
+
+																{% else %}
+																	{% set result = (divisor + 1) / dividend %}
+																	{% set result_mi = 1 %}
+																{% endif %}
+																{% for leave in item.leaves %}
+																	<li data-date='{{leave.leave_start}}' class='step col-{{result-result_mi}} yellow'>
+																		<div>مغادرة</div>
+																		<div class='tasks container-fluid'>
+																			<div class='task col'>
+																				{{lookups.leave[leave.leave_type]}}</div>
+																			<div class='task col'>{{leave.leave_start}}</div>
+																		</div>
+																	</li>
+																	<li data-date='{{leave.leave_end}}' class='step col-{{result}} blue'>
+																		<div>العودة إلى الدوام
+																		</div>
+																		<div class='tasks container-fluid'>
+
+																			<div class='task col'>{{leave.leave_end}}</div>
+																		</div>
+																	</li>
+																	{% set result_mi = 0 %}
+																{% endfor %}
+
+
+															{% elseif item.check_in != null and item.leaves == null %}
+
+																<li data-date='{{item.check_in}}' class='step col-7 blue'>
+																	<div>دوام</div>
+																	<div class='tasks container-fluid'></div>
+																</li>
+
+															{% elseif item.check_in == null  %}
+
+																<li data-date='{{item.check_in}}' class='step col-7 '>
+																	<div>الدوام غير مثبت</div>
+																	<div class='tasks container-fluid'></div>
+																</li>
+
+															{% endif %}
+
+
+															{% if item.check_out != null and item.att_hours >= item.min_att_hours %}
+																{% if item.diff_out >= 0  %}
+																	<li data-date='{{item.check_out}}' class='step col-2 green'>
+																		<div>الانصراف</div>
+																		<div class='tasks container-fluid'>
+																			<div class='task col'>{{item.check_out}}
+																			</div>
+
+																		</div>
+																	</li>
+																	<li data-date='انتهاء الدوام' class='step-end'></li>
+
+																{% elseif item.diff_out < 0 and item.diff_out >= (item.allowed_time_check_out * -1 )%}
+																	<li data-date='{{item.check_out}}' class=' step-end step col-2 yellow'>
+																		<div>الانصراف</div>
+																		<div class='tasks container-fluid'>
+																			<div class='task col'>{{item.check_out}}
+																			</div>
+
+																		</div>
+																	</li>
+																	<li data-date='انتهاء الدوام' class='step-end'></li>
+																{% elseif item.diff_out < (item.allowed_time_check_out * -1 ) %}
+																	<li data-date='{{item.check_out|date("H:i")}}' class='step col-2 red'>
+																		<div>الانصراف</div>
+																		<div class='tasks container-fluid'>
+																			<div class="task col text-right align-middle text-center border bg-danger  bg-opacity-25 ">
+																				{{item.check_out|date("H:i")}}
+																			</div>
+																			<div class="task col">
+																				<div class=" rounded-0">
+																					<span class="spinner-grow spinner-grow-sm" aria-hidden="true"></span>
+																					<span role="status">{{item.diff *-1 }}
+																						دقيقة
+																					</span>
+																				</div>
+
+																			</div>
+																		</div>
+																	</li>
+																	<li data-date='انتهاء الدوام' class='step-end '></li>
+
+																{% endif %}
+															{% elseif item.check_out != null and item.att_hours < item.min_att_hours %}
+																<li data-date='{{item.check_out|date("H:i")}}' class='step col-2 red'>
+																	<div>الانصراف</div>
+																	<div class='tasks container-fluid'>
+																		<div class="task col text-right align-middle text-center border bg-danger  bg-opacity-25 ">
+																			{{item.check_out|date("H:i")}}
+																		</div>
+																		<div class="task col">
+																			لم يتم استيفاء الحد الأدنى لساعات الدوام
+																			<div class=" rounded-0">
+																				<span class="spinner-grow spinner-grow-sm" aria-hidden="true"></span>
+																				<span role="status">{{item.diff *-1 }}
+																					دقيقة
+																				</span>
+																			</div>
+
+																		</div>
+																	</div>
+																</li>
+																<li data-date='انتهاء الدوام' class='step-end'></li>
+															{% else %}
+																<li data-date='{{item.check_out}}' class='step col-2 '>
+																	<div class="d-flex justify-content-between">
+																		<div>الانصراف</div>
+																		<div class="">
+																			<button class="btn text-primary">
+																				<i class="bi bi-pencil-square"></i>
+																			</button>
+																		</div>
+																	</div>
+																	<div class='tasks container-fluid'>
+																		<div class="task col align-self-center">
+																			<span class="spinner-grow spinner-grow-sm" aria-hidden="true"></span>
+																			<span role="status">
+																				لم يتم اثبات الانصراف
+																			</span>
+
+																		</div>
+																	</div>
+																</li>
+																<li data-date='انتهاء الدوام' class='step-end'></li>
+															{% endif %}
+
+
+														</ul>
+													</div>
+												</div>
+											{% endif %}
+										</div>
+									</div>
+								</div>
+							{% endif %}
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.5.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+	const header = document.getElementById('calendarHeader');
+const monthYear = document.getElementById('monthYear');
+
+const months = [
+'January',
+'February',
+'March',
+'April',
+'May',
+'June',
+'July',
+'August',
+'September',
+'October',
+'November',
+'December'
+];
+
+const currentDate = new Date();
+const currentMonth = currentDate.getMonth();
+const currentYear = currentDate.getFullYear();
+
+header.style.backgroundColor = getRandomColor();
+monthYear.textContent = `${
+months[currentMonth]
+} ${currentYear}`;
+
+function getRandomColor() {
+const colors = ['#257fbc', '#19a2a3', '#2182c1', '#14a5bc'];
+return colors[Math.floor(Math.random() * colors.length)];
+}
+</script>{% endblock %}
